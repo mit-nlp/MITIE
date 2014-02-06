@@ -1,0 +1,15 @@
+
+# Don't add mitie if it's already been added to the cmake project
+if (NOT TARGET mitie)
+
+    # Determine the path to mitie.
+    string(REPLACE "cmake" "" mitie_path ${CMAKE_CURRENT_LIST_FILE})
+
+    include(${mitie_path}/../dlib/dlib/cmake)
+
+    # Add folder containing mitie to the include search path.
+    INCLUDE_DIRECTORIES(${mitie_path}/include)
+
+    add_subdirectory(${mitie_path} mitie_build)
+endif()
+
