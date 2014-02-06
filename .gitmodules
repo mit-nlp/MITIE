@@ -1,0 +1,6 @@
+[submodule "MITIE-models"]
+	path = MITIE-models
+	url = ../MITIE-models
+[submodule "dlib"]
+	path = dlib
+	url = ../dlib
