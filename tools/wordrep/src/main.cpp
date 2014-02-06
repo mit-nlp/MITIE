@@ -85,6 +85,11 @@ int main(int argc, char** argv)
     {
         command_line_parser parser;
         parser.add_option("h","Display this help message.");
+
+        parser.add_option("e", "Make a total_word_feature_extractor from a folder of text files.   This option is a shortcut for executing"
+                               " the following options together --count-words 100000 --word-vects --basic-morph --cca-morph.");
+
+        parser.set_group_name("Other Options");
         parser.add_option("convert-gigaword", "Take a folder of gigaword XML documents and convert them "
             "into a regular ASCII file named <arg>.",1);
         parser.add_option("count-words", "Make a file containing the top <arg> most common words and their occurrence counts.",1);
@@ -109,7 +114,7 @@ int main(int argc, char** argv)
 
         if (parser.option("h"))
         {
-            cout << "Usage: wordrep [options]\n";
+            cout << "Main Usage: wordrep -e <folder of text files>\n";
             parser.print_options(); 
             cout << endl;
             return 0;
@@ -125,6 +130,15 @@ int main(int argc, char** argv)
             while (reader(data))
                 fout << data << "\n\n";
 
+        }
+
+        if (parser.option("e"))
+        {
+            count_words(parser);
+            word_vects(parser);
+            basic_morph(parser);
+            cca_morph(parser);
+            return 0;
         }
 
         if (parser.option("count-words"))
@@ -238,7 +252,7 @@ void cluster_words(const command_line_parser& parser)
 
 void count_words(const command_line_parser& parser)
 {
-    const unsigned long num_top_words = sa = parser.option("count-words").argument();
+    const unsigned long num_top_words = get_option(parser, "count-words", 100000);
 
     std::vector<dlib::file> files = get_files_in_directory_tree(directory(parser[0]), match_all());
     cout << "number of raw ASCII files found: " << files.size() << endl;

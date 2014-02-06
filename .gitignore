@@ -1,3 +1,5 @@
 dlib/
 MITIE-models
 tags
+build
+*.swp
