@@ -20,6 +20,7 @@ if (NOT TARGET mitie)
 
    set(source_files 
          src/stemmer.cpp
+         src/ner_feature_extraction.cpp
          src/stem.c
          )
 
