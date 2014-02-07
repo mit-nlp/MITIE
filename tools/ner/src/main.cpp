@@ -183,7 +183,7 @@ void train_chunker(const command_line_parser& parser)
     ner_feature_extractor nfe(fe.get_num_dimensions());
     structural_sequence_segmentation_trainer<ner_feature_extractor> trainer(nfe);
 
-    const double C = get_option(parser, "C", 1.0);
+    const double C = get_option(parser, "C", 15.0);
     const double eps = get_option(parser, "eps", 0.01);
     const unsigned long num_threads = get_option(parser, "threads", 4);
     const unsigned long cache_size = get_option(parser, "cache-size", 5);
