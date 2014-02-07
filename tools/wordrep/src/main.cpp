@@ -111,6 +111,10 @@ int main(int argc, char** argv)
         parser.check_option_arg_range("count-words", 1, 1000000000);
         parser.check_option_arg_range("dims", 1, 100000);
         parser.check_sub_option("doc-vects", "dims");
+        parser.check_incompatible_options("e", "word-vects");
+        parser.check_incompatible_options("e", "count-words");
+        parser.check_incompatible_options("e", "basic-morph");
+        parser.check_incompatible_options("e", "cca-morph");
 
         if (parser.option("h"))
         {
