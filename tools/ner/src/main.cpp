@@ -108,7 +108,7 @@ public:
 
     unsigned long num_feats;
 
-    const static bool use_BIO_model           = true;
+    const static bool use_BIO_model           = false;
     const static bool use_high_order_features = false;
     const static bool allow_negative_weights  = true;
 
@@ -237,7 +237,7 @@ void test_chunker(const command_line_parser& parser)
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-const unsigned long max_feat = 300000;
+const unsigned long max_feat = 500000;
 inline std::pair<dlib::uint32,double> make_feat (
     const std::pair<uint64,uint64>& hash
 )
@@ -689,9 +689,9 @@ void test_id(const command_line_parser& parser)
     cout << "iv/oov: " << iv/oov << endl;
 
 
-    std::vector<double> num_targets(5);
-    std::vector<double> num_dets(5);
-    std::vector<double> num_true_dets(5);
+    std::vector<double> num_targets(4);
+    std::vector<double> num_dets(4);
+    std::vector<double> num_true_dets(4);
 
     for (unsigned long i = 0; i < sentences.size(); ++i)
     {
@@ -705,8 +705,9 @@ void test_id(const command_line_parser& parser)
             const unsigned long predicted_label = (unsigned long)df(extract_chunk_features(sentences, i, sent, ranges[j]));
             const unsigned long true_label = get_label(chunks[i], chunk_labels[i], ranges[j]);
 
-            num_dets[predicted_label]++;
-            if (predicted_label == true_label)
+            if (predicted_label != NOT_ENTITY)
+                num_dets[predicted_label]++;
+            if (predicted_label == true_label && true_label != NOT_ENTITY)
                 num_true_dets[true_label]++;
         }
         for (unsigned long j = 0; j < chunk_labels[i].size(); ++j)
