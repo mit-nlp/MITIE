@@ -25,6 +25,7 @@ void test_chunker(const command_line_parser& parser);
 void train_id(const command_line_parser& parser);
 void test_id(const command_line_parser& parser);
 void tag_file(const command_line_parser& parser);
+void tag_conll_file(const command_line_parser& parser);
 
 // ----------------------------------------------------------------------------------------
 
@@ -44,6 +45,7 @@ int main(int argc, char** argv)
         parser.add_option("cache-size", "Set the max cutting plane cache size to <arg> (default: 5).",1);
 
         parser.add_option("tag-file", "Read in a text file and tag it with the ner model in file <arg>.",1);
+        parser.add_option("tag-conll-file", "Read in a CoNLL annotation file and output a copy that is tagged with the NER model from the file <arg>.",1);
 
         parser.parse(argc,argv);
         parser.check_option_arg_range("C", 1e-9, 1e9);
@@ -64,6 +66,12 @@ int main(int argc, char** argv)
         if (parser.option("tag-file"))
         {
             tag_file(parser);
+            return 0;
+        }
+
+        if (parser.option("tag-conll-file"))
+        {
+            tag_conll_file(parser);
             return 0;
         }
 
@@ -863,6 +871,60 @@ void tag_file(const command_line_parser& parser)
         cout << words[i] << "/" << tags[word_tags[i]] << " ";
     }
 
+}
+
+// ----------------------------------------------------------------------------------------
+
+void tag_conll_file(const command_line_parser& parser)
+{
+    string ner_model = parser.option("tag-conll-file").argument();
+    ifstream fin(ner_model.c_str(), ios::binary);
+    named_entity_extractor ner;
+    deserialize(ner, fin);
+
+
+    std::vector<labeled_sentence> conll_data = parse_conll_data (parser[0]);
+    std::vector<std::vector<std::string> > tokens;
+    std::vector<std::vector<BIO_label> > labels;
+    separate_labels_from_tokens(conll_data, tokens, labels);
+
+    std::vector<std::pair<unsigned long, unsigned long> > ranges;
+    std::vector<unsigned long> predicted_labels;
+    for (unsigned long i = 0; i < tokens.size(); ++i)
+    {
+        ner(tokens[i], ranges, predicted_labels);
+        labels[i].assign(labels[i].size(),O);
+        for (unsigned long j = 0; j < ranges.size(); ++j)
+        {
+            for (unsigned long k = ranges[j].first; k < ranges[j].second; ++k)
+            {
+                if (j > 0 && ranges[j].first == ranges[j-1].second && predicted_labels[j] == predicted_labels[j-1])
+                {
+                    if (predicted_labels[j] == PER)
+                        labels[i][k] = B_PER; 
+                    else if (predicted_labels[j] == ORG)
+                        labels[i][k] = B_ORG; 
+                    else if (predicted_labels[j] == LOC)
+                        labels[i][k] = B_LOC; 
+                    else if (predicted_labels[j] == MISC)
+                        labels[i][k] = B_MISC; 
+                }
+                else
+                {
+                    if (predicted_labels[j] == PER)
+                        labels[i][k] = I_PER; 
+                    else if (predicted_labels[j] == ORG)
+                        labels[i][k] = I_ORG; 
+                    else if (predicted_labels[j] == LOC)
+                        labels[i][k] = I_LOC; 
+                    else if (predicted_labels[j] == MISC)
+                        labels[i][k] = I_MISC; 
+                }
+            }
+        }
+    }
+
+    print_conll_data(conll_data, labels);
 }
 
 // ----------------------------------------------------------------------------------------
