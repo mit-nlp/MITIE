@@ -204,7 +204,7 @@ std::map<std::string, unsigned long> make_word_to_int_mapping (
 
 void word_vects(const dlib::command_line_parser& parser)
 {
-    const long vocab_size = 200000;
+    const long vocab_size = 100000;
     const long window_size = 7;
     const long num_contexts = 40000000;
     const long num_correlations = 60;
