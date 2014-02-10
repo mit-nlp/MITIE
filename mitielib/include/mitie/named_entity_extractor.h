@@ -1,0 +1,114 @@
+// Created by Davis E. King on Feb 10, 2014
+#ifndef MIT_LL_MITIE_NaMED_ENTITY_EXTRACTOR_H__
+#define MIT_LL_MITIE_NaMED_ENTITY_EXTRACTOR_H__
+
+#include <map>
+#include <mitie/total_word_feature_extractor.h>
+#include <mitie/ner_feature_extraction.h>
+#include <dlib/svm.h>
+
+namespace mitie
+{
+    class named_entity_extractor
+    {
+        /*!
+            WHAT THIS OBJECT REPRESENTS
+                This object is a simple tool for identifying the named entities in
+                tokenized text.  In particular, it's just a wrapper around a
+                dlib::sequence_segmenter and a multiclass classifier that predicts the type
+                of each named entity.
+        !*/
+    public:
+
+        named_entity_extractor(){}
+        /*!
+            ensures
+                - When used this object won't output any entities.   You need to either use
+                  the other constructor or deserialize a saved named_entity_extractor to
+                  get something that is useful.
+        !*/
+
+        named_entity_extractor(
+            const std::map<unsigned long, std::string>& possible_tags,
+            const total_word_feature_extractor& fe,
+            const dlib::sequence_segmenter<ner_feature_extractor>& segmenter,
+            const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& df
+        ); 
+        /*!
+            requires
+                - segmenter.get_feature_extractor().num_features() == fe.get_num_dimensions() 
+                - df must be designed to work with fe (i.e. it must have been trained with
+                  features from fe and extract_ner_chunk_features()).
+                - df.number_of_classes() == possible_tags.size()+1
+                  (i.e. the classifier needs to predict all the possible tags and also a final "not entity" tag)
+                - for all i where 0 <= i <= possible_tags.size():
+                    - df.get_labels() contains an element equal to i.
+                      (All we are saying there is that the labels need to be contiguous
+                      integers and that the possible_tags map and the decision function
+                      need to agree on the set of labels)
+                    - if (i < possible_tags.size()) then
+                        - possible_tags.count(i) == 1
+            ensures
+                - Just loads the given objects into *this.  
+        !*/
+
+        void operator() (
+            const std::vector<std::string>& sentence,
+            std::vector<std::pair<unsigned long, unsigned long> >& chunks,
+            std::vector<unsigned long>& chunk_tags
+        ) const;
+        /*!
+            ensures
+                - Runs the named entity recognizer on the sequence of tokenized words
+                  inside sentence.  The detected named entities are stored into chunks.  
+                - #chunks == the locations of the named entities. 
+                - #chunks.size() == #chunk_tags.size()
+                - for all valid i:
+                    - #chunk_tags[i] == the label for the entity at location #chunks[i].  Moreover, 
+                      chunk tag ID numbers are contiguous and start at 0.  Therefore we have:
+                        - 0 <= #chunk_tags[i] < get_possible_tags().size()
+                    - #chunks[i] == a half open range indicating where the entity is within
+                      sentence.  In particular, the entity is composed of the tokens
+                      sentence[#chunks[i].first] through sentence[#chunks[i].second-1].
+                    - The textual label for the i-th entity is get_possible_tags()[#chunk_tags[i]].
+        !*/
+
+        const std::map<unsigned long, std::string>& get_possible_tags (
+        ) const { return possible_tags; }
+        /*!
+            ensures
+                - Returns a map that maps entity numeric ID tags into their string labels.  
+        !*/
+
+        friend void serialize(const named_entity_extractor& item, std::ostream& out)
+        {
+            int version = 1;
+            dlib::serialize(version, out);
+            dlib::serialize(item.possible_tags, out);
+            serialize(item.fe, out);
+            serialize(item.segmenter, out);
+            serialize(item.df, out);
+        }
+
+        friend void deserialize(named_entity_extractor& item, std::istream& in)
+        {
+            int version = 0;
+            dlib::deserialize(version, in);
+            if (version != 1)
+                throw dlib::serialization_error("Unexpected version found while deserializing mitie::named_entity_extractor.");
+            dlib::deserialize(item.possible_tags, in);
+            deserialize(item.fe, in);
+            deserialize(item.segmenter, in);
+            deserialize(item.df, in);
+        }
+
+    private:
+        std::map<unsigned long, std::string> possible_tags;
+        total_word_feature_extractor fe;
+        dlib::sequence_segmenter<ner_feature_extractor> segmenter;
+        dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
+    };
+}
+
+#endif // MIT_LL_MITIE_NaMED_ENTITY_EXTRACTOR_H__
+
