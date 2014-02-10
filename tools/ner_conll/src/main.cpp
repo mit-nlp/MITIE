@@ -1,3 +1,4 @@
+#include <assert.h>
 
 
 #include <mitie/named_entity_extractor.h>
@@ -304,7 +305,7 @@ void train_id(const command_line_parser& parser)
     cout << "epsilon:     "<< eps << endl;
     cout << "num_threads: "<< num_threads << endl;
 
-    std::map<unsigned long,std::string> ner_labels;
+    std::vector<std::string> ner_labels(4);
     ner_labels[PER] = "PERSON";
     ner_labels[LOC] = "LOCATION";
     ner_labels[ORG] = "ORGANIZATION";
@@ -329,7 +330,7 @@ void test_id(const command_line_parser& parser)
     cout << "number of sentences loaded: "<< sentences.size() << endl;
 
 
-    const unsigned long num_labels = ner.get_possible_tags().size();
+    const unsigned long num_labels = ner.get_tag_name_strings().size();
     std::vector<double> num_targets(num_labels);
     std::vector<double> num_dets(num_labels);
     std::vector<double> num_true_dets(num_labels);
@@ -379,6 +380,266 @@ void test_id(const command_line_parser& parser)
 
 // ----------------------------------------------------------------------------------------
 
+extern "C"
+{
+    /*!
+        MITIE RESOURCE MANAGEMENT POLICY
+            Unless explicitly noted, you do NOT need to call free() or mitie_free() on the
+            pointers returned from any MITIE API calls.  That is, if it is the caller's
+            responsibility to free an object created by a MITIE API call then the
+            documentation for that routine will explicitly say the caller needs to free the
+            object.
+    !*/
+
+// ----------------------------------------------------------------------------------------
+
+    typedef struct mitie_named_entity_extractor  mitie_named_entity_extractor;
+    typedef struct mitie_named_entity_detections mitie_named_entity_detections;
+
+    void mitie_free (
+        void* object 
+    );
+    /*!
+        ensures
+            - Frees the resources associated with any MITIE object.
+    !*/
+
+// ----------------------------------------------------------------------------------------
+
+    mitie_named_entity_extractor* mitie_load_named_entity_extractor (
+        const char* filename
+    );
+    /*!
+        ensures
+            - The returned object MUST BE FREED by a call to mitie_free().
+    !*/
+
+    unsigned long mitie_get_num_possible_ner_tags (
+        const mitie_named_entity_extractor* ner
+    );
+    /*!
+        ensures
+            - A named entity extractor tags each entity with a tag.  This function returns
+              the number of different tags which can be produced by the given named entity
+              extractor.  Moreover, each tag is uniquely identified by a numeric ID which
+              is just the index of the tag.  For example, if there are 4 possible tags then
+              the numeric IDs are just 0, 1, 2, and 3.  
+    !*/
+
+    const char* mitie_get_named_entity_tagstr (
+        const mitie_named_entity_extractor* ner,
+        unsigned long idx
+    );
+    /*!
+        requires
+            - idx < mitie_get_num_possible_ner_tags(ner)
+        ensures
+            - Each named entity tag, in addition to having a numeric ID which uniquely
+              identifies it, has a text string name.  For example, if a named entity tag
+              logically identifies a person then the tag string might be "PERSON". 
+            - This function takes a tag ID number and returns the tag string for that tag.
+    !*/
+
+// ----------------------------------------------------------------------------------------
+
+    mitie_named_entity_detections* mitie_extract_entities (
+        const mitie_named_entity_extractor* ner,
+        const char* text
+    );
+    /*!
+        requires
+            - text == a null terminated C string
+        ensures
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - Runs the supplied named entity extractor on text and returns a set of
+              named entity detections.
+    !*/
+
+    unsigned long mitie_ner_get_num_detections (
+        const mitie_named_entity_detections* dets
+    );
+    /*!
+        ensures
+            - returns the number of named entity detections inside the dets object.
+    !*/
+
+    unsigned long mitie_ner_get_detection_position (
+        const mitie_named_entity_detections* dets,
+        unsigned long idx
+    );
+    /*!
+        requires
+            - idx < mitie_ner_get_num_detections(dets)
+        ensures
+            - This function returns the position of the idx-th named entity within the
+              input text.  That is, if dets was created by calling
+              mitie_extract_entities(ner, TEXT) then the return value of
+              mitie_ner_get_detection_position() is an index I such that TEXT[I] is the
+              first character in the input text that is part of the named entity.
+            - The named entity detections are stored in the order they appeared in the
+              input text.  That is, for all valid IDX it is true that:
+                - mitie_ner_get_detection_position(dets,IDX) < mitie_ner_get_detection_position(dets,IDX+1)
+    !*/
+
+    unsigned long mitie_ner_get_detection_length (
+        const mitie_named_entity_detections* dets,
+        unsigned long idx
+    );
+    /*!
+        requires
+            - idx < mitie_ner_get_num_detections(dets)
+        ensures
+            - returns the length of the idx-th named entity.  That is, this function
+              returns the number of chars from the input text which comprise the idx-th
+              named entity detection.  
+    !*/
+
+    unsigned long mitie_ner_get_detection_tag (
+        const mitie_named_entity_detections* dets,
+        unsigned long idx
+    );
+    /*!
+        requires
+            - idx < mitie_ner_get_num_detections(dets)
+        ensures
+            - returns a numeric value that identifies the type of the idx-th named entity.
+    !*/
+
+    const char* mitie_ner_get_detection_tagstr (
+        const mitie_named_entity_detections* dets,
+        unsigned long idx
+    );
+    /*!
+        requires
+            - idx < mitie_ner_get_num_detections(dets)
+        ensures
+            - returns a NULL terminated C string that identifies the type of the idx-th
+              named entity. 
+    !*/
+
+// ----------------------------------------------------------------------------------------
+
+}
+
+extern "C"
+{
+
+// ----------------------------------------------------------------------------------------
+
+    enum mitie_object_type
+    {
+        MITIE_NOT_A_MITIE_OBJECT = 0,
+        MITIE_NAMED_ENTITY_EXTRACTOR = 1234,
+        MITIE_NAMED_ENTITY_DETECTIONS
+    };
+
+    struct mitie_named_entity_extractor_impl
+    {
+        named_entity_extractor ner;
+    };
+    struct mitie_named_entity_detections_impl
+    {
+    };
+
+    // The reason for the impl objects is to ensure that the types in the public interface
+    // are POD types.  This will let us have one single free function (mitie_free()) which
+    // just looks at the headers for each object and then decides how to free them.  
+    struct mitie_named_entity_extractor
+    {
+        mitie_object_type type;
+        mitie_named_entity_extractor* impl;
+    };
+
+    struct mitie_named_entity_detections
+    {
+        mitie_object_type type;
+        mitie_named_entity_detections* impl;
+    };
+
+    void mitie_free (
+        void* object 
+    )
+    {
+        switch(*((mitie_object_type*)object))
+        {
+            case MITIE_NAMED_ENTITY_EXTRACTOR:
+                {
+                    mitie_named_entity_extractor* obj;
+                    obj = static_cast<mitie_named_entity_extractor*>(object);
+                    // set this because it can help detect multiple frees
+                    obj->type = MITIE_NOT_A_MITIE_OBJECT;
+                    delete obj->impl;
+                    delete obj;
+                } break;
+            case MITIE_NAMED_ENTITY_DETECTIONS:
+                {
+                    mitie_named_entity_detections* obj;
+                    obj = static_cast<mitie_named_entity_detections*>(object);
+                    // set this because it can help detect multiple frees
+                    obj->type = MITIE_NOT_A_MITIE_OBJECT;
+                    delete obj->impl;
+                    delete obj;
+                } break;
+                break;
+            default:
+                std::cerr << "ERROR, mitie_free() called on non-MITIE object or called twice." << std::endl;
+                assert(false);
+        }
+
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    mitie_named_entity_extractor* mitie_load_named_entity_extractor (
+        const char* filename
+    );
+
+    unsigned long mitie_get_num_possible_ner_tags (
+        const mitie_named_entity_extractor* ner
+    );
+
+    const char* mitie_get_named_entity_tagstr (
+        const mitie_named_entity_extractor* ner,
+        unsigned long idx
+    );
+
+// ----------------------------------------------------------------------------------------
+
+    mitie_named_entity_detections* mitie_extract_entities (
+        const mitie_named_entity_extractor* ner,
+        const char* text
+    );
+
+    unsigned long mitie_ner_get_num_detections (
+        const mitie_named_entity_detections* dets
+    );
+
+    unsigned long mitie_ner_get_detection_position (
+        const mitie_named_entity_detections* dets,
+        unsigned long idx
+    );
+
+    unsigned long mitie_ner_get_detection_length (
+        const mitie_named_entity_detections* dets,
+        unsigned long idx
+    );
+
+    unsigned long mitie_ner_get_detection_tag (
+        const mitie_named_entity_detections* dets,
+        unsigned long idx
+    );
+
+    const char* mitie_ner_get_detection_tagstr (
+        const mitie_named_entity_detections* dets,
+        unsigned long idx
+    );
+
+// ----------------------------------------------------------------------------------------
+
+}
+
+// ----------------------------------------------------------------------------------------
+
 void tag_file(const command_line_parser& parser)
 {
     string ner_model = parser.option("tag-file").argument();
@@ -398,8 +659,8 @@ void tag_file(const command_line_parser& parser)
 
     std::vector<std::pair<unsigned long, unsigned long> > ranges;
     std::vector<unsigned long> predicted_labels;
-    std::map<unsigned long, std::string> tags = ner.get_possible_tags();
-    tags[tags.size()] = "O";
+    std::vector<std::string> tags = ner.get_tag_name_strings();
+    tags.push_back("O");
     ner(words, ranges, predicted_labels);
 
     std::vector<unsigned long> word_tags(words.size(), tags.size()-1);

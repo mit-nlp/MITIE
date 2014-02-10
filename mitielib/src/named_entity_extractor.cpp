@@ -12,23 +12,19 @@ namespace mitie
 
     named_entity_extractor::
     named_entity_extractor(
-        const std::map<unsigned long, std::string>& possible_tags_,
+        const std::vector<std::string>& tag_name_strings_,
         const total_word_feature_extractor& fe_,
         const dlib::sequence_segmenter<ner_feature_extractor>& segmenter_,
         const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& df_
-    ) : possible_tags(possible_tags_), fe(fe_), segmenter(segmenter_), df(df_) 
+    ) : tag_name_strings(tag_name_strings_), fe(fe_), segmenter(segmenter_), df(df_) 
     { 
         // make sure the requirements are not violated.
-        DLIB_CASSERT(df.number_of_classes() == possible_tags.size()+1,"invalid inputs"); 
+        DLIB_CASSERT(df.number_of_classes() == tag_name_strings.size()+1,"invalid inputs"); 
         DLIB_CASSERT(segmenter.get_feature_extractor().num_features() == fe.get_num_dimensions(),"invalid inputs"); 
         std::set<unsigned long> df_tags(df.get_labels().begin(), df.get_labels().end());
-        for (unsigned long i = 0; i <= possible_tags.size(); ++i)
+        for (unsigned long i = 0; i <= tag_name_strings.size(); ++i)
         {
             DLIB_CASSERT(df_tags.count(i) == 1, "invalid inputs");
-            if (i < possible_tags.size())
-            {
-                DLIB_CASSERT(possible_tags.count(i) == 1, "invalid inputs");
-            }
         }
     }
 
