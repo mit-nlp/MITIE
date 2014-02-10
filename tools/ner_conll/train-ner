@@ -1,0 +1,28 @@
+#!/bin/bash
+
+export MITIE_MODELS=../../../MITIE-models
+
+go()
+{
+    LOG=test_$1_$2.txt
+    ./ner --train-chunker -C$1  eng.train_all --threads=16 > $LOG
+    ./ner --train-id -C$2  --threads 16 eng.train_all >> $LOG
+    ./ner --test-id eng.testb >> $LOG
+    echo $LOG
+    tail -n1 $LOG 
+}
+
+go2()
+{
+    LOG=test_$1_$2.txt
+    ./ner --train-chunker eng.train_all --threads=16 > $LOG
+    ./ner --train-id  --threads=16 eng.train_all >> $LOG
+    ./ner --test-id eng.testb >> $LOG
+    echo $LOG
+    tail -n1 $LOG 
+}
+
+#go 15 450
+#go 15 450
+
+go2
