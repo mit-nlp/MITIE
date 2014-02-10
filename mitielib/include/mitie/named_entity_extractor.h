@@ -17,6 +17,11 @@ namespace mitie
                 tokenized text.  In particular, it's just a wrapper around a
                 dlib::sequence_segmenter and a multiclass classifier that predicts the type
                 of each named entity.
+
+            THREAD SAFETY
+                Note that this object uses mutable internal scratch space.  Therefore, it is
+                unsafe for two threads to touch the same instance of this object at a time
+                without mutex locking it first.
         !*/
     public:
 
