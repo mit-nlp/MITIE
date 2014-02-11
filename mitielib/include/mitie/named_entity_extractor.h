@@ -66,6 +66,8 @@ namespace mitie
                 - Runs the named entity recognizer on the sequence of tokenized words
                   inside sentence.  The detected named entities are stored into chunks.  
                 - #chunks == the locations of the named entities. 
+                - The identified named entities are listed inside chunks in the order in
+                  which they appeared in the input sentence.  
                 - #chunks.size() == #chunk_tags.size()
                 - for all valid i:
                     - #chunk_tags[i] == the label for the entity at location #chunks[i].  Moreover, 

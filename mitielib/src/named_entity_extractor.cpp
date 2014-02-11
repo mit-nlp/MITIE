@@ -42,25 +42,23 @@ namespace mitie
 
         const unsigned long NOT_AN_ENTITY = df.number_of_classes()-1;
 
-        chunk_tags.resize(chunks.size());
+        std::vector<std::pair<unsigned long, unsigned long> > final_chunks;
+        final_chunks.reserve(chunks.size());
+        chunk_tags.clear();
         // now label each chunk
-        for (unsigned long j = 0; j < chunks.size(); )
+        for (unsigned long j = 0; j < chunks.size(); ++j)
         {
-            chunk_tags[j] = df(extract_ner_chunk_features(sentence, sent, chunks[j]));
+            const unsigned long tag = df(extract_ner_chunk_features(sentence, sent, chunks[j]));
 
-            // if this chunk is predicted to not be an entity then erase it
-            if (chunk_tags[j] == NOT_AN_ENTITY)
+            // if this chunk is predicted to not be an entity then don't output it 
+            if (tag != NOT_AN_ENTITY)
             {
-                std::swap(chunk_tags[j], chunk_tags.back());
-                std::swap(chunks[j], chunks.back());
-                chunk_tags.resize(chunk_tags.size()-1);
-                chunks.resize(chunks.size()-1);
-            }
-            else
-            {
-                ++j;
+                final_chunks.push_back(chunks[j]);
+                chunk_tags.push_back(tag);
             }
         }
+
+        final_chunks.swap(chunks);
     }
 
 // ----------------------------------------------------------------------------------------
