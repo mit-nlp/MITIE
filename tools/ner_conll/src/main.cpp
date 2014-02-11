@@ -380,51 +380,8 @@ void test_id(const command_line_parser& parser)
 
 // ----------------------------------------------------------------------------------------
 
-
-
-// ----------------------------------------------------------------------------------------
-
 void tag_file(const command_line_parser& parser)
 {
-
-    string ner_model = parser.option("tag-file").argument();
-    mitie_named_entity_extractor* ner = mitie_load_named_entity_extractor(ner_model.c_str());
-    if (ner == NULL)
-    {
-        cout << "couldn't load model file" << endl;
-        return;
-    }
-
-    ifstream fin(parser[0].c_str());
-    ostringstream sout;
-    sout << fin.rdbuf();
-    const string text = sout.str();
-
-    const unsigned long num_tags = mitie_get_num_possible_ner_tags(ner);
-    cout << "NER tags: "<< num_tags << endl;
-    for(unsigned long i = 0; i < num_tags; ++i)
-        cout << "   " << mitie_get_named_entity_tagstr(ner, i) << endl;
-
-    mitie_named_entity_detections* dets = mitie_extract_entities(ner, text.c_str());
-
-    const unsigned long num_dets = mitie_ner_get_num_detections(dets);
-    cout << "num_dets: "<< num_dets << endl;
-    for (unsigned long i = 0; i < num_dets; ++i)
-    {
-        const unsigned long begin = mitie_ner_get_detection_position(dets, i);
-        const unsigned long len = mitie_ner_get_detection_length(dets, i);
-        string temp(&text[begin], &text[begin]+len);
-
-        cout << "   " << mitie_ner_get_detection_tagstr(dets,i) << "("<< 
-                         mitie_ner_get_detection_tag(dets,i) << "),  " << temp << endl;
-
-    }
-
-
-    mitie_free(dets);
-    mitie_free(ner);
-
-    /*
     string ner_model = parser.option("tag-file").argument();
     ifstream fin(ner_model.c_str(), ios::binary);
     named_entity_extractor ner;
@@ -459,8 +416,6 @@ void tag_file(const command_line_parser& parser)
     {
         cout << words[i] << "/" << tags[word_tags[i]] << " ";
     }
-    */
-
 }
 
 // ----------------------------------------------------------------------------------------
