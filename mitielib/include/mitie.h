@@ -24,6 +24,8 @@ extern "C"
         void* object 
     );
     /*!
+        requires
+            - object is either NULL or a pointer to an object from the MITIE API.
         ensures
             - Frees the resources associated with any MITIE object.
     !*/
