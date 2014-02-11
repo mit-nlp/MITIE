@@ -23,6 +23,7 @@ if (NOT TARGET mitie)
          src/ner_feature_extraction.cpp
          src/named_entity_extractor.cpp
          src/stem.c
+         src/mitie.cpp
          )
 
    add_library(mitie ${source_files})
