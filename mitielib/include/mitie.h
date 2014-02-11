@@ -2,8 +2,10 @@
 #ifndef MITLL_MITIe_H__
 #define MITLL_MITIe_H__
 
+#ifdef __cplusplus
 extern "C"
 {
+#endif
     /*!
         MITIE RESOURCE MANAGEMENT POLICY
             Unless explicitly noted, you do NOT need to call free() or mitie_free() on the
@@ -28,12 +30,28 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
+    char* mitie_load_entire_file (
+        const char* filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads in the entire contents of the file with the given name and returns it
+              as a NULL terminated C string.
+            - If the file can't be loaded or read then this function returns NULL.
+            - It is the responsibility of the caller to free the returned string.  You free
+              it by calling free() on the pointer to the string.
+    !*/
+
+// ----------------------------------------------------------------------------------------
+
     mitie_named_entity_extractor* mitie_load_named_entity_extractor (
         const char* filename
     );
     /*!
         requires
-            - filename == a valid pointer to a null terminated C string
+            - filename == a valid pointer to a NULL terminated C string
         ensures
             - The returned object MUST BE FREED by a call to mitie_free().
             - If the object can't be created then this function returns NULL
@@ -78,7 +96,7 @@ extern "C"
     /*!
         requires
             - ner != NULL
-            - text == a null terminated C string
+            - text == a NULL terminated C string
         ensures
             - The returned object MUST BE FREED by a call to mitie_free().
             - Runs the supplied named entity extractor on text and returns a set of
@@ -157,7 +175,9 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
+#ifdef __cplusplus
 }
+#endif
 
 #endif // MITLL_MITIe_H__
 

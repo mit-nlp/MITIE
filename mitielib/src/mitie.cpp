@@ -1,11 +1,14 @@
 // Created by Davis E. King on Feb 11, 2014
 #include <mitie.h>
 
+#include <cstring>
+#include <cstdlib>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <assert.h>
+#include <dlib/vectorstream.h>
 #include <mitie/named_entity_extractor.h>
 #include <mitie/unigram_tokenizer.h>
 
@@ -13,6 +16,23 @@ using namespace mitie;
 
 extern "C"
 {
+
+// ----------------------------------------------------------------------------------------
+
+    char* mitie_load_entire_file (
+        const char* filename
+    )
+    {
+        ifstream fin(filename);
+        std::vector<char> buf;
+        dlib::vectorstream out(buf);
+        out << fin.rdbuf();
+
+        char* final_buf = (char*)malloc(buf.size()+1);
+        memcpy(final_buf, &buf[0], buf.size());
+        final_buf[buf.size()] = '\0';
+        return final_buf;
+    }
 
 // ----------------------------------------------------------------------------------------
 
