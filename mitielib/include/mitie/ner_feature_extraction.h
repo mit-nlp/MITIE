@@ -20,7 +20,7 @@ namespace mitie
     public:
         typedef std::vector<dlib::matrix<float,0,1> > sequence_type;
 
-        ner_feature_extractor() :num_feats(0) {}
+        ner_feature_extractor() :num_feats(1) {}
 
         ner_feature_extractor (
             unsigned long num_feats_
