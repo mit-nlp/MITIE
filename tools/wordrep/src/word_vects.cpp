@@ -116,7 +116,7 @@ void do_cca_on_windows (
     right_contexts.set_max_size(0);
     
     cout << "Now do CCA (left size: " << left.size() << ", right size: " << right.size() << ")." << endl;
-    cout << "correlations: "<< trans(cca(left, right, Ltrans, Rtrans, num_correlations, 100, 2));
+    cout << "correlations: "<< trans(cca(left, right, Ltrans, Rtrans, num_correlations, 40, 5));
     //print_true_correlations(left, right, Ltrans, Rtrans);
 }
 
@@ -204,10 +204,10 @@ std::map<std::string, unsigned long> make_word_to_int_mapping (
 
 void word_vects(const dlib::command_line_parser& parser)
 {
-    const long vocab_size = 100000;
-    const long window_size = 7;
-    const long num_contexts = 40000000;
-    const long num_correlations = 60;
+    const long vocab_size = 150000;
+    const long window_size = 9;
+    const long num_contexts = 50000000;
+    const long num_correlations = 90;
 
     ifstream fin("top_word_counts.dat", ios::binary);
     std::map<std::string, unsigned long> words;

@@ -66,7 +66,7 @@ void learn_morphological_dimension_reduction (
 
 void cca_morph(const dlib::command_line_parser& parser)
 {
-    const long num_morph_correlations = 60;
+    const long num_morph_correlations = 90;
 
     std::ifstream fin("word_vects.dat", ios::binary);
     std::map<std::string, matrix<float,0,1> > word_vectors;

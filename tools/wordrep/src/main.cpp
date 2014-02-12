@@ -87,7 +87,7 @@ int main(int argc, char** argv)
         parser.add_option("h","Display this help message.");
 
         parser.add_option("e", "Make a total_word_feature_extractor from a folder of text files.   This option is a shortcut for executing"
-                               " the following options together --count-words 100000 --word-vects --basic-morph --cca-morph.");
+                               " the following options together --count-words 150000 --word-vects --basic-morph --cca-morph.");
 
         parser.set_group_name("Other Options");
         parser.add_option("convert-gigaword", "Take a folder of gigaword XML documents and convert them "
@@ -256,7 +256,7 @@ void cluster_words(const command_line_parser& parser)
 
 void count_words(const command_line_parser& parser)
 {
-    const unsigned long num_top_words = get_option(parser, "count-words", 100000);
+    const unsigned long num_top_words = get_option(parser, "count-words", 150000);
 
     std::vector<dlib::file> files = get_files_in_directory_tree(directory(parser[0]), match_all());
     cout << "number of raw ASCII files found: " << files.size() << endl;
