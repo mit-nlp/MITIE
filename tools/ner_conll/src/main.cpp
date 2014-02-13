@@ -42,22 +42,27 @@ int main(int argc, char** argv)
         parser.add_option("test-chunker", "test NER chunker on conll data.");
         parser.add_option("train-id", "train NER ID/classification on conll data.");
         parser.add_option("test-id", "test NER ID/classification on conll data.");
-        parser.add_option("C", "Set SVM C parameter to <arg> (default 100.0).",1);
+        parser.add_option("C", "Set SVM C parameter to <arg>.",1);
         parser.add_option("eps", "Set SVM stopping epsilon parameter to <arg> (default 0.1).",1);
         parser.add_option("threads", "Use <arg> threads when doing training (default: 4).",1);
         parser.add_option("cache-size", "Set the max cutting plane cache size to <arg> (default: 5).",1);
+        parser.add_option("miss-loss", "Set the loss per missed chunk to <arg> (default 1.0).",1);
+        parser.add_option("v", "When training the chunker, split the training data and output a test a validation set.");
 
         parser.add_option("tag-file", "Read in a text file and tag it with the ner model in file <arg>.",1);
         parser.add_option("tag-conll-file", "Read in a CoNLL annotation file and output a copy that is tagged with the NER model from the file <arg>.",1);
 
         parser.parse(argc,argv);
         parser.check_option_arg_range("C", 1e-9, 1e9);
+        parser.check_option_arg_range("miss-loss", 1e-9, 1e9);
         parser.check_option_arg_range("threads", 1, 64);
         parser.check_option_arg_range("cache-size", 0, 500);
 
         const char* training_ops[] = {"train-chunker", "train-id"};
         const char* training_subops[] = {"C", "eps", "threads", "cache-size"};
         parser.check_sub_options(training_ops, training_subops);
+        parser.check_sub_option("train-chunker", "miss-loss");
+        parser.check_sub_option("train-chunker", "v");
 
         if (parser.option("h"))
         {
@@ -124,7 +129,7 @@ std::string get_mitie_models_path()
 void train_chunker(const command_line_parser& parser)
 {
     std::vector<std::vector<std::string> > sentences;
-    std::vector<std::vector<std::pair<unsigned long, unsigned long> > > chunks;
+    std::vector<std::vector<std::pair<unsigned long, unsigned long> > > chunks, chunks_test;
     std::vector<std::vector<unsigned long> > chunk_labels;
     parse_conll_data(parser[0], sentences, chunks, chunk_labels);
     cout << "number of sentences loaded: "<< sentences.size() << endl;
@@ -140,11 +145,19 @@ void train_chunker(const command_line_parser& parser)
 
 
     // do the feature extraction for all the sentences
-    std::vector<std::vector<matrix<float,0,1> > > samples;
+    std::vector<std::vector<matrix<float,0,1> > > samples, samples_test;
     samples.reserve(sentences.size());
     for (unsigned long i = 0; i < sentences.size(); ++i)
     {
         samples.push_back(sentence_to_feats(fe, sentences[i]));
+    }
+
+    randomize_samples(samples, chunks);
+    if (parser.option("v"))
+    {
+        const double trainfrac = 0.7;
+        split_array(samples, samples_test, trainfrac);
+        split_array(chunks, chunks_test, trainfrac);
     }
 
     cout << "now do training" << endl;
@@ -152,24 +165,29 @@ void train_chunker(const command_line_parser& parser)
     ner_feature_extractor nfe(fe.get_num_dimensions());
     structural_sequence_segmentation_trainer<ner_feature_extractor> trainer(nfe);
 
-    const double C = get_option(parser, "C", 15.0);
+    const double C = get_option(parser, "C", 20.0);
     const double eps = get_option(parser, "eps", 0.01);
+    const double loss_per_missed_segment = get_option(parser, "miss-loss", 3.0);
     const unsigned long num_threads = get_option(parser, "threads", 4);
     const unsigned long cache_size = get_option(parser, "cache-size", 5);
     cout << "C:           "<< C << endl;
     cout << "epsilon:     "<< eps << endl;
     cout << "num threads: "<< num_threads << endl;
     cout << "cache size:  "<< cache_size << endl;
+    cout << "loss per missed segment:  "<< loss_per_missed_segment << endl;
     trainer.set_c(C);
     trainer.set_epsilon(eps);
     trainer.set_num_threads(num_threads);
     trainer.set_max_cache_size(cache_size);
+    trainer.set_loss_per_missed_segment(loss_per_missed_segment);
     trainer.be_verbose();
 
     sequence_segmenter<ner_feature_extractor> segmenter = trainer.train(samples, chunks);
 
     cout << "num feats in chunker model: "<< segmenter.get_weights().size() << endl;
-    cout << "precision, recall, f1-score: "<< test_sequence_segmenter(segmenter, samples, chunks) << endl;
+    cout << "train: precision, recall, f1-score: "<< test_sequence_segmenter(segmenter, samples, chunks);
+    if (samples_test.size() != 0)
+        cout << "test:  precision, recall, f1-score: "<< test_sequence_segmenter(segmenter, samples_test, chunks_test);
 
     ofstream fout("trained_segmenter.dat", ios::binary);
     serialize(fe, fout);
