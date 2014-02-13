@@ -460,7 +460,7 @@ namespace mitie
                 // figure out the chunk boundaries
                 const unsigned long begin = i;
                 ++i;
-                while (i < sent.size() && is_I(sent[i].second))
+                while (i < sent.size() && is_I(sent[i].second) && to_chunk_label(sent[i].second)==chunk_labels.back())
                     ++i;
                 const unsigned long end = i;
                 --i;
