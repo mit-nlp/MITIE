@@ -165,9 +165,9 @@ void train_chunker(const command_line_parser& parser)
     ner_feature_extractor nfe(fe.get_num_dimensions());
     structural_sequence_segmentation_trainer<ner_feature_extractor> trainer(nfe);
 
-    const double C = get_option(parser, "C", 20.0);
-    const double eps = get_option(parser, "eps", 0.01);
-    const double loss_per_missed_segment = get_option(parser, "miss-loss", 3.0);
+    const double C = get_option(parser, "C", 29.0);
+    const double eps = get_option(parser, "eps", 0.001);
+    const double loss_per_missed_segment = get_option(parser, "miss-loss", 4.2);
     const unsigned long num_threads = get_option(parser, "threads", 4);
     const unsigned long cache_size = get_option(parser, "cache-size", 5);
     cout << "C:           "<< C << endl;
@@ -295,8 +295,8 @@ void train_id(const command_line_parser& parser)
 
     svm_multiclass_linear_trainer<sparse_linear_kernel<ner_sample_type>,unsigned long> trainer;
 
-    const double C = get_option(parser, "C", 450.0);
-    const double eps = get_option(parser, "eps", 0.001);
+    const double C = get_option(parser, "C", 600.0);
+    const double eps = get_option(parser, "eps", 0.0001);
     const unsigned long num_threads = get_option(parser, "threads", 4);
     cout << "C:           "<< C << endl;
     cout << "epsilon:     "<< eps << endl;
