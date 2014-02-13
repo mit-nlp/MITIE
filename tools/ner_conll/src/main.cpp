@@ -42,6 +42,7 @@ int main(int argc, char** argv)
         parser.add_option("test-chunker", "test NER chunker on conll data.");
         parser.add_option("train-id", "train NER ID/classification on conll data.");
         parser.add_option("test-id", "test NER ID/classification on conll data.");
+        parser.add_option("print-mistakes", "When running test-id, print out the entities we get wrong.");
         parser.add_option("C", "Set SVM C parameter to <arg>.",1);
         parser.add_option("eps", "Set SVM stopping epsilon parameter to <arg> (default 0.1).",1);
         parser.add_option("threads", "Use <arg> threads when doing training (default: 4).",1);
@@ -63,6 +64,7 @@ int main(int argc, char** argv)
         parser.check_sub_options(training_ops, training_subops);
         parser.check_sub_option("train-chunker", "miss-loss");
         parser.check_sub_option("train-chunker", "v");
+        parser.check_sub_option("test-id", "print-mistakes");
 
         if (parser.option("h"))
         {
@@ -367,11 +369,74 @@ void test_id(const command_line_parser& parser)
 
             num_dets[predicted_label]++;
             if (predicted_label == true_label)
+            {
                 num_true_dets[true_label]++;
+            }
+            else if (parser.option("print-mistakes"))
+            {
+                // print out the entities we get wrong
+                ostringstream sout;
+                if (true_label < ner.get_tag_name_strings().size())
+                    sout << ner.get_tag_name_strings()[true_label] << "->" << ner.get_tag_name_strings()[predicted_label] << ": ";
+                else
+                    sout << "NOT ENTITY" << "->" << ner.get_tag_name_strings()[predicted_label] << ": ";
+                std::string temp = sout.str();
+                temp.resize(27, ' ');
+                cout << temp;
+                unsigned long left = std::max(0L, (long)ranges[j].first-5);
+                unsigned long right = std::min(sentences[i].size(), ranges[j].second+5);
+                for (unsigned long k = left; k < ranges[j].first; ++k)
+                    cout << sentences[i][k] << " ";
+                cout << "[[";
+                for (unsigned long k = ranges[j].first; k < ranges[j].second; ++k)
+                {
+                    cout << sentences[i][k];
+                    if (k+1 < ranges[j].second)
+                        cout << " ";
+                }
+                cout << "]] ";
+                for (unsigned long k = ranges[j].second; k < right; ++k)
+                    cout << sentences[i][k] << " ";
+                cout << endl;
+            }
         }
         for (unsigned long j = 0; j < chunk_labels[i].size(); ++j)
         {
             num_targets[chunk_labels[i][j]]++;
+        }
+
+
+
+
+        if (parser.option("print-mistakes"))
+        {
+            // now print out the true entities we didn't detect at all
+            for (unsigned long j = 0; j < chunks[i].size(); ++j)
+            {
+                if (get_label(ranges, predicted_labels, chunks[i][j]) >= ner.get_tag_name_strings().size())
+                {
+                    ostringstream sout;
+                    sout << "MISSED " << ner.get_tag_name_strings()[chunk_labels[i][j]] << ": ";
+                    std::string temp = sout.str();
+                    temp.resize(27, ' ');
+                    cout << temp;
+                    unsigned long left = std::max(0L, (long)chunks[i][j].first-5);
+                    unsigned long right = std::min(sentences[i].size(), chunks[i][j].second+5);
+                    for (unsigned long k = left; k < chunks[i][j].first; ++k)
+                        cout << sentences[i][k] << " ";
+                    cout << "[[";
+                    for (unsigned long k = chunks[i][j].first; k < chunks[i][j].second; ++k)
+                    {
+                        cout << sentences[i][k];
+                        if (k+1 < chunks[i][j].second)
+                            cout << " ";
+                    }
+                    cout << "]] ";
+                    for (unsigned long k = chunks[i][j].second; k < right; ++k)
+                        cout << sentences[i][k] << " ";
+                    cout << endl;
+                }
+            }
         }
     }
 
