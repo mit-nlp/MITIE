@@ -4,25 +4,48 @@ export MITIE_MODELS=../../../MITIE-models
 
 go()
 {
+    THREADS="--threads=16"
     LOG=test_$1_$2.txt
-    ./ner --train-chunker -C$1  eng.train_all --threads=16 > $LOG
-    ./ner --train-id -C$2  --threads 16 eng.train_all >> $LOG
+    #./ner --train-chunker eng.train_all $THREADS > $LOG
+    ./ner --train-id -C$1     eng.train_all $THREADS >> $LOG
     ./ner --test-id eng.testb >> $LOG
+    ./ner --tag-conll-file ner_model.dat eng.testb | ./conlleval 
     echo $LOG
     tail -n1 $LOG 
 }
 
-go2()
+
+
+run_default_params()
 {
-    LOG=test_$1_$2.txt
-    ./ner --train-chunker eng.train_all --threads=16 > $LOG
-    ./ner --train-id  --threads=16 eng.train_all >> $LOG
+    THREADS="--threads=16"
+    LOG=test_default.txt
+    ./ner --train-chunker eng.train_all $THREADS > $LOG
+    ./ner --train-id      eng.train_all $THREADS >> $LOG
     ./ner --test-id eng.testb >> $LOG
+    ./ner --tag-conll-file ner_model.dat eng.testb | ./conlleval 
     echo $LOG
     tail -n1 $LOG 
 }
 
-#go 15 450
+run_default_params
+#go 400
+#go 450
+#go 650
+#go 800
+
+#go 15 4 
+#go 29 4 
+#go 29 3.8 
+#go 45 4 
+#go 65 4 
+#go 55 5 
+#go 75 4 
+
+#go 55 5 
+#go 55 6 
+#go 105 3 
+#go 105 4 
 #go 15 450
 
-go2
+#go2 550 
