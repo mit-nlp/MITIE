@@ -1,4 +1,6 @@
-// Created by Davis E. King on July 11, 2013
+// Copyright (C) 2013 Massachusetts Institute of Technology, Lincoln Laboratory
+// License: Boost Software License   See LICENSE.txt for the full license.
+// Authors: Davis E. King (davis.king@ll.mit.edu)
 #ifndef MIT_LL_CCa_MORPH_H__
 #define MIT_LL_CCa_MORPH_H__
 

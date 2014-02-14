@@ -1,4 +1,6 @@
-// Created by Davis E. King on Feb 10, 2014
+// Copyright (C) 2014 Massachusetts Institute of Technology, Lincoln Laboratory
+// License: Boost Software License   See LICENSE.txt for the full license.
+// Authors: Davis E. King (davis.king@ll.mit.edu)
 #ifndef MIT_LL_MITIE_NaMED_ENTITY_EXTRACTOR_H__
 #define MIT_LL_MITIE_NaMED_ENTITY_EXTRACTOR_H__
 

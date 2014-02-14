@@ -1,4 +1,6 @@
-
+// Copyright (C) 2013 Massachusetts Institute of Technology, Lincoln Laboratory
+// License: Boost Software License   See LICENSE.txt for the full license.
+// Authors: Davis E. King (davis.king@ll.mit.edu)
 #include <mitie.h>
 
 #include <mitie/named_entity_extractor.h>

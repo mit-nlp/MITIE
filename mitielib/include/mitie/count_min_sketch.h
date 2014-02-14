@@ -1,4 +1,6 @@
-// Created by Davis E. King on Oct 10, 2012
+// Copyright (C) 2012 Massachusetts Institute of Technology, Lincoln Laboratory
+// License: Boost Software License   See LICENSE.txt for the full license.
+// Authors: Davis E. King (davis.king@ll.mit.edu)
 #ifndef MIT_LL_CoUNT_MIN_SKETCH_H__
 #define MIT_LL_CoUNT_MIN_SKETCH_H__
 

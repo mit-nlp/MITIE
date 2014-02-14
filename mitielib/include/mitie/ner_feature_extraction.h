@@ -1,4 +1,6 @@
-// Created by Davis E. King on Feb 2, 2014
+// Copyright (C) 2014 Massachusetts Institute of Technology, Lincoln Laboratory
+// License: Boost Software License   See LICENSE.txt for the full license.
+// Authors: Davis E. King (davis.king@ll.mit.edu)
 #ifndef MIT_LL_MITIE_NeR_FEATURE_EXTRACTION_H__
 #define MIT_LL_MITIE_NeR_FEATURE_EXTRACTION_H__
 
