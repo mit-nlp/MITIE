@@ -297,7 +297,7 @@ void train_id(const command_line_parser& parser)
 
     svm_multiclass_linear_trainer<sparse_linear_kernel<ner_sample_type>,unsigned long> trainer;
 
-    const double C = get_option(parser, "C", 400.0);
+    const double C = get_option(parser, "C", 500.0);
     const double eps = get_option(parser, "eps", 0.0001);
     const unsigned long num_threads = get_option(parser, "threads", 4);
     cout << "C:           "<< C << endl;
