@@ -36,6 +36,42 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
+    char** mitie_tokenize (
+        const char* text
+    )
+    {
+        // first tokenize the text
+        istringstream sin(text);
+        unigram_tokenizer tok(sin);
+        std::vector<std::string> words;
+        string word;
+        size_t data_size = 0;
+        while(tok(word))
+        {
+            words.push_back(word);
+            data_size += word.size() + 1; // +1 for the NULL terminator
+        }
+
+        // account for the size of the char** array.  +1 for the NULL terminator
+        const size_t array_size = sizeof(char*)*(words.size() + 1);
+
+        // now allocate enough space for the result
+        char* buf = (char*)malloc(array_size + data_size);
+
+        char** array = (char**)buf;
+        char* next = buf+array_size;
+        for (unsigned long i = 0; i < words.size(); ++i)
+        {
+            array[i] = next;
+            strcpy(next, words[i].c_str());
+            next += words[i].size()+1;
+        }
+        array[words.size()] = 0;
+        return array;
+    }
+
+// ----------------------------------------------------------------------------------------
+
     enum mitie_object_type
     {
         MITIE_NOT_A_MITIE_OBJECT = 0,
@@ -167,11 +203,11 @@ extern "C"
 
     mitie_named_entity_detections* mitie_extract_entities (
         const mitie_named_entity_extractor* ner,
-        const char* text
+        char** tokens 
     )
     {
         assert(ner != NULL);
-        assert(text != NULL);
+        assert(tokens != NULL);
 
         mitie_named_entity_detections* obj = 0;
         mitie_named_entity_detections_impl* impl = 0;
@@ -182,35 +218,12 @@ extern "C"
             obj->type = MITIE_NAMED_ENTITY_DETECTIONS;
             obj->impl = impl = new mitie_named_entity_detections_impl;
 
-            istringstream sin(text);
-            unigram_tokenizer tok(sin);
             std::vector<std::string> words;
-            std::vector<unsigned long> word_pos;
-            string word;
-            unsigned long pos;
-            while(tok(word, pos))
-            {
-                words.push_back(word);
-                word_pos.push_back(pos);
-            }
+            for (unsigned long i = 0; tokens[i]; ++i)
+                words.push_back(tokens[i]);
 
             (*ner->impl)(words, impl->ranges, impl->predicted_labels);
             impl->tags = ner->impl->get_tag_name_strings();
-
-            // map the ranges from token indices to character indices 
-            for (unsigned long i = 0; i < impl->ranges.size(); ++i)
-            {
-                unsigned long begin, end;
-                begin = impl->ranges[i].first;
-                end = impl->ranges[i].second;
-
-                begin = word_pos[begin];
-                end = word_pos[end-1] + words[end-1].size();
-
-                impl->ranges[i].first = begin;
-                impl->ranges[i].second = end;
-            }
-
             return obj;
         }
         catch(...)

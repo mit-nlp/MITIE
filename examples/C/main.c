@@ -10,8 +10,9 @@ int main(int argc, char** argv)
     unsigned long num_tags = 0;
     unsigned long num_dets = 0;
     unsigned long i = 0;
-    unsigned long begin, len;
+    unsigned long pos, len;
     char* text_data = 0;
+    char** tokens = 0;
 
     if (argc != 3)
     {
@@ -33,6 +34,7 @@ int main(int argc, char** argv)
     for (i = 0; i < num_tags; ++i)
         printf("   %s\n", mitie_get_named_entity_tagstr(ner, i));
 
+    // Now get some text and turn it into an array of tokens.
     text_data = mitie_load_entire_file(argv[2]);
     if (!text_data)
     {
@@ -40,25 +42,30 @@ int main(int argc, char** argv)
         mitie_free(ner);
         return EXIT_FAILURE;
     }
+    tokens = mitie_tokenize(text_data);
 
     // Now detect all the entities in the text file we loaded and print them to the screen.
-    dets = mitie_extract_entities(ner, text_data);
+    dets = mitie_extract_entities(ner, tokens);
     num_dets = mitie_ner_get_num_detections(dets);
     printf("\nNumber of named entities detected: %lu\n", num_dets);
     for (i = 0; i < num_dets; ++i)
     {
-        begin = mitie_ner_get_detection_position(dets, i);
+        pos = mitie_ner_get_detection_position(dets, i);
         len = mitie_ner_get_detection_length(dets, i);
         // Print the label for each named entity and also the text of the named entity
         // itself.
-        printf("   Tag %lu:%s: %.*s\n", 
-            mitie_ner_get_detection_tag(dets,i),
-            mitie_ner_get_detection_tagstr(dets,i),
-            len, text_data+begin);
+        printf("   Tag %lu:%s: ", mitie_ner_get_detection_tag(dets,i), mitie_ner_get_detection_tagstr(dets,i));
+        while(len > 0)
+        {
+            printf("%s ", tokens[pos++]);
+            --len;
+        }
+        printf("\n");
     }
 
 
     free(text_data);
+    free(tokens);
     mitie_free(dets);
     mitie_free(ner);
 

@@ -9,7 +9,7 @@ extern "C"
     /*!
         MITIE RESOURCE MANAGEMENT POLICY
             Unless explicitly noted, you do NOT need to call free() or mitie_free() on the
-            pointers returned from any MITIE API calls.  That is, if it is the caller's
+            pointers returned from MITIE API calls.  That is, if it is the caller's
             responsibility to free an object created by a MITIE API call then the
             documentation for that routine will explicitly say the caller needs to free the
             object.
@@ -44,6 +44,27 @@ extern "C"
             - If the file can't be loaded or read then this function returns NULL.
             - It is the responsibility of the caller to free the returned string.  You free
               it by calling free() on the pointer to the string.
+    !*/
+
+// ----------------------------------------------------------------------------------------
+
+    char** mitie_tokenize (
+        const char* text
+    );
+    /*!
+        requires
+            - text == a valid pointer to a NULL terminated C string
+        ensures
+            - returns an array that contains a tokenized copy of the input text.  
+            - The returned array is an array of pointers to NULL terminated C strings.  The
+              array itself is terminated with a NULL.  So for example, if text was "some text" 
+              then the returned array, TOK, would contain:
+                - TOK[0] == "some"
+                - TOK[1] == "text"
+                - TOK[2] == NULL
+            - It is the responsibility of the caller to free the returned array.  You free
+              it by calling free() once on the entire array.  So to use the above
+              nomenclature, you call free(TOK).  DO NOT CALL FREE ON ELEMENTS OF TOK.
     !*/
 
 // ----------------------------------------------------------------------------------------
@@ -93,16 +114,18 @@ extern "C"
 
     mitie_named_entity_detections* mitie_extract_entities (
         const mitie_named_entity_extractor* ner,
-        const char* text
+        char** tokens 
     );
     /*!
         requires
             - ner != NULL
-            - text == a NULL terminated C string
+            - tokens == An array of NULL terminated C strings.  The end of the array must
+              be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
+              array of tokens).  
         ensures
             - The returned object MUST BE FREED by a call to mitie_free().
-            - Runs the supplied named entity extractor on text and returns a set of
-              named entity detections.
+            - Runs the supplied named entity extractor on the tokenized text and returns a
+              set of named entity detections.
             - If the object can't be created then this function returns NULL
     !*/
 
@@ -127,9 +150,9 @@ extern "C"
         ensures
             - This function returns the position of the idx-th named entity within the
               input text.  That is, if dets was created by calling
-              mitie_extract_entities(ner, TEXT) then the return value of
-              mitie_ner_get_detection_position() is an index I such that TEXT[I] is the
-              first character in the input text that is part of the named entity.
+              mitie_extract_entities(ner, TOKENS) then the return value of
+              mitie_ner_get_detection_position() is an index I such that TOKENS[I] is the
+              first token in the input text that is part of the named entity.
             - The named entity detections are stored in the order they appeared in the
               input text.  That is, for all valid IDX it is true that:
                 - mitie_ner_get_detection_position(dets,IDX) < mitie_ner_get_detection_position(dets,IDX+1)
@@ -145,7 +168,7 @@ extern "C"
             - idx < mitie_ner_get_num_detections(dets)
         ensures
             - returns the length of the idx-th named entity.  That is, this function
-              returns the number of chars from the input text which comprise the idx-th
+              returns the number of tokens from the input text which comprise the idx-th
               named entity detection.  
     !*/
 
