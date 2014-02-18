@@ -35,9 +35,9 @@ $(TARGET): $(OBJ)
 
 install: $(TARGET)
 	@echo copying $(TARGET) to $(INSTALL_PREFIX)/lib
-	@cp $(TARGET) $(INSTALL_PREFIX)/lib
+	@cp $(TARGET) $(INSTALL_PREFIX)/lib/
 	@echo copying $(HEADERS) to $(INSTALL_PREFIX)/include
-	@cp $(HEADERS) $(INSTALL_PREFIX)/include
+	@cp $(HEADERS) $(INSTALL_PREFIX)/include/
 
 clean:
 	@rm -f $(OBJ) $(TARGET)
