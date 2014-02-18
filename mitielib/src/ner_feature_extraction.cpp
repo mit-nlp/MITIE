@@ -33,7 +33,7 @@ namespace mitie
     {
         const double feat_weight = 1.5;
         const double rand_sign = (hash.first&1) ? 1 : -1;
-        return std::make_pair(hash.second%max_feat, rand_sign*feat_weight);
+        return std::make_pair((dlib::uint32)(hash.second%max_feat), rand_sign*feat_weight);
     }
 
     inline std::pair<uint64,uint64> shash ( 
@@ -185,8 +185,8 @@ namespace mitie
         result.reserve(1000);
 
         const std::pair<unsigned long, unsigned long> wide_range(
-            std::max(0L, (long)chunk_range.first-8),
-            std::min(words.size(), chunk_range.second+8));
+            std::max<long>(0L, (long)chunk_range.first-8),
+            std::min<long>(words.size(), chunk_range.second+8));
         for (unsigned long i = wide_range.first; i < chunk_range.first; ++i)
             result.push_back(make_feat(shash(words[i],1000)));
         for (unsigned long i = chunk_range.second; i < wide_range.second; ++i)
