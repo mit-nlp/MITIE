@@ -13,7 +13,7 @@ if (NOT TARGET mitie)
     # When using this cmake file a user will be building both MITIE and their
     # application simultaneously.  So statically link them all together since
     # that makes the mose sense in this case.
-    set(BUILD_MITIE_STATIC 1)
+    set(BUILD_SHARED_LIBS 0)
 
     add_subdirectory(${mitie_path} mitie_build)
 endif()

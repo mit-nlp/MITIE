@@ -15,13 +15,8 @@ endif()
 
 
 if (NOT TARGET mitie)
-   if (NOT BUILD_SHARED_LIBS)
+   if (NOT DEFINED BUILD_SHARED_LIBS)
       set(BUILD_SHARED_LIBS 1)
-   endif()
-   # setting BUILD_MITIE_STATIC overrules any kind of inherited default value
-   # for BUILD_SHARED_LIBS.
-   if (BUILD_MITIE_STATIC)
-      set(BUILD_SHARED_LIBS 0)
    endif()
 
    include(../dlib/dlib/cmake)
