@@ -4,3 +4,4 @@ build
 *.swo
 *.o
 *.so
+a.out
