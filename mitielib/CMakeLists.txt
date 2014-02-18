@@ -15,6 +15,15 @@ endif()
 
 
 if (NOT TARGET mitie)
+   if (NOT BUILD_SHARED_LIBS)
+      set(BUILD_SHARED_LIBS 1)
+   endif()
+   # setting BUILD_MITIE_STATIC overrules any kind of inherited default value
+   # for BUILD_SHARED_LIBS.
+   if (BUILD_MITIE_STATIC)
+      set(BUILD_SHARED_LIBS 0)
+   endif()
+
    include(../dlib/dlib/cmake)
    include_directories(include)
 
@@ -28,4 +37,14 @@ if (NOT TARGET mitie)
 
    add_library(mitie ${source_files})
    target_link_libraries(mitie dlib)
+
+   install(TARGETS mitie
+      RUNTIME DESTINATION bin
+      LIBRARY DESTINATION lib
+      ARCHIVE DESTINATION lib
+      )
+   install(DIRECTORY include/ DESTINATION include/
+      FILES_MATCHING PATTERN "*.h"
+      )
+
 endif()

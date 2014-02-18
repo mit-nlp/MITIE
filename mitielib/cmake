@@ -10,6 +10,11 @@ if (NOT TARGET mitie)
     # Add folder containing mitie to the include search path.
     INCLUDE_DIRECTORIES(${mitie_path}/include)
 
+    # When using this cmake file a user will be building both MITIE and their
+    # application simultaneously.  So statically link them all together since
+    # that makes the mose sense in this case.
+    set(BUILD_MITIE_STATIC 1)
+
     add_subdirectory(${mitie_path} mitie_build)
 endif()
 
