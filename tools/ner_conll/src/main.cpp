@@ -385,8 +385,8 @@ void test_id(const command_line_parser& parser)
                 std::string temp = sout.str();
                 temp.resize(27, ' ');
                 cout << temp;
-                unsigned long left = std::max(0L, (long)ranges[j].first-5);
-                unsigned long right = std::min(sentences[i].size(), ranges[j].second+5);
+                unsigned long left = std::max<unsigned long>(0L, (long)ranges[j].first-5);
+                unsigned long right = std::min<unsigned long>(sentences[i].size(), ranges[j].second+5);
                 for (unsigned long k = left; k < ranges[j].first; ++k)
                     cout << sentences[i][k] << " ";
                 cout << "[[";
@@ -422,8 +422,8 @@ void test_id(const command_line_parser& parser)
                     std::string temp = sout.str();
                     temp.resize(27, ' ');
                     cout << temp;
-                    unsigned long left = std::max(0L, (long)chunks[i][j].first-5);
-                    unsigned long right = std::min(sentences[i].size(), chunks[i][j].second+5);
+                    unsigned long left = std::max<unsigned long>(0L, (long)chunks[i][j].first-5);
+                    unsigned long right = std::min<unsigned long>(sentences[i].size(), chunks[i][j].second+5);
                     for (unsigned long k = left; k < chunks[i][j].first; ++k)
                         cout << sentences[i][k] << " ";
                     cout << "[[";
