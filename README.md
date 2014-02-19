@@ -1,7 +1,7 @@
 MITIE: MIT Information Extraction
 =====
 
-This project provides free (even for commercial use) [state-of-the-art](wiki/Evaluation) information extraction 
+This project provides free (even for commercial use) [state-of-the-art](../../wiki/Evaluation) information extraction 
 tools. This first release includes a named entity recognizer.  Subsequent versions will add tools for part 
 of speech tagging, relationship extraction, interfaces for training your own custom extractors, and various other tools.  
 
