@@ -360,6 +360,9 @@ void test_id(const command_line_parser& parser)
     std::vector<std::pair<unsigned long, unsigned long> > ranges;
     std::vector<unsigned long> predicted_labels;
 
+    if (parser.option("print-mistakes"))
+        cout << "True label -> predicted label" << endl;
+
     for (unsigned long i = 0; i < sentences.size(); ++i)
     {
         ner(sentences[i], ranges, predicted_labels);
