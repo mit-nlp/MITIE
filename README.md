@@ -15,7 +15,7 @@ There is also an [example C program](examples/C/main.c) that shows how to use it
 
 If you obtained MITIE by cloning the main repository then you must first fetch the two 
 submodules (dlib and MITIE-models).  Do this by running fetch_submodules.sh. 
-The, to compile the example program type the following commands:
+Then, to compile the example program type the following commands:
 ```
 cd examples/C
 make
