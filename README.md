@@ -5,7 +5,7 @@ This project provides free (even for commercial use) [state-of-the-art](../../wi
 tools. This first release includes a named entity recognizer.  Subsequent versions will add tools for part 
 of speech tagging, relationship extraction, interfaces for training your own custom extractors, and various other tools.  
 
-This first release of MITIE includes a C API.  However the next releases will add 
+The first release of MITIE includes only a C API.  However the next releases will add 
 easy to use bindings to other langauges beginning with python and java.
 
 # Using MITIE
