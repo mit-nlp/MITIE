@@ -98,11 +98,18 @@ namespace mitie
                     ch == '|' ||
                     ch == '?')
                 {
-                    if (token.size() == 0 || (ch == '.' && token.size() == 1))
+                    if (token.size() == 0 )
                     {
                         token += (char)in->get();
                         ++offset;
                         return true;
+                    }
+                    else if (ch == '.' && (token.size() == 1 || 
+                            (token.size() >= 1 && token[token.size()-1] == '.') ||
+                            (token.size() >= 2 && token[token.size()-2] == '.')))
+                    {
+                        token += (char)in->get();
+                        ++offset;
                     }
                     else
                     {
