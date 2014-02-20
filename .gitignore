@@ -6,3 +6,4 @@ build
 *.so
 a.out
 examples/C/mitie_example
+makefile.bak
