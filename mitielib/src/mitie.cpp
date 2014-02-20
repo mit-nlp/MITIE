@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <dlib/vectorstream.h>
 #include <mitie/named_entity_extractor.h>
-#include <mitie/unigram_tokenizer.h>
+#include <mitie/conll_tokenizer.h>
 
 using namespace mitie;
 
@@ -44,7 +44,7 @@ extern "C"
     {
         // first tokenize the text
         istringstream sin(text);
-        unigram_tokenizer tok(sin);
+        conll_tokenizer tok(sin);
         std::vector<std::string> words;
         string word;
         size_t data_size = 0;
