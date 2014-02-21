@@ -151,6 +151,21 @@ namespace mitie
         return false;
     }
 
+    inline bool is_caps (const char& ch)
+    {
+        return 'A' <= ch && ch <= 'Z';
+    }
+
+    inline bool alternating_caps_in_middle (const std::string& word)  
+    {
+        for (unsigned long i = 1; i < word.size(); ++i)
+        {
+            if (is_caps(word[i]) && !is_caps(word[i-1]))
+                return true;
+        }
+        return false;
+    }
+
     inline std::pair<uint64,uint64> caps_pattern ( 
         const std::vector<std::string>& words,
         const std::pair<unsigned long, unsigned long>& pos
@@ -200,12 +215,20 @@ namespace mitie
             result.push_back(make_feat(shash(stem_word(words[i]),10)));
 
             if (is_caps(words[i]))                      result.push_back(make_feat(ifeat(21)));
-            if (is_all_caps(words[i]))                  result.push_back(make_feat(ifeat(22)));
+            if (is_all_caps(words[i]))                  
+            {
+                result.push_back(make_feat(ifeat(22)));
+                if (words[i].size() == 1) result.push_back(make_feat(ifeat(6622)));
+                if (words[i].size() == 2) result.push_back(make_feat(ifeat(6623)));
+                if (words[i].size() == 3) result.push_back(make_feat(ifeat(6624)));
+                if (words[i].size() == 4) result.push_back(make_feat(ifeat(6625)));
+            }
             if (contains_numbers(words[i]))             result.push_back(make_feat(ifeat(23)));
             if (contains_letters(words[i]))             result.push_back(make_feat(ifeat(24)));
             if (contains_letters_and_numbers(words[i])) result.push_back(make_feat(ifeat(25)));
             if (is_all_numbers(words[i]))               result.push_back(make_feat(ifeat(26)));
             if (contains_hyphen(words[i]))              result.push_back(make_feat(ifeat(27)));
+            if (alternating_caps_in_middle(words[i]))   result.push_back(make_feat(ifeat(500)));
 
             result.push_back(make_feat(prefix(words[i],50)));
             result.push_back(make_feat(suffix(words[i],51)));
@@ -227,20 +250,36 @@ namespace mitie
         result.push_back(make_feat(suffix(words[chunk_range.second-1],55)));
 
         if (is_caps(words[chunk_range.first]))                      result.push_back(make_feat(ifeat(27)));
-        if (is_all_caps(words[chunk_range.first]))                  result.push_back(make_feat(ifeat(28)));
+        if (is_all_caps(words[chunk_range.first]))                  
+        {
+            result.push_back(make_feat(ifeat(28)));
+            if (words[chunk_range.first].size() == 1) result.push_back(make_feat(ifeat(6628)));
+            if (words[chunk_range.first].size() == 2) result.push_back(make_feat(ifeat(6629)));
+            if (words[chunk_range.first].size() == 3) result.push_back(make_feat(ifeat(6630)));
+            if (words[chunk_range.first].size() == 4) result.push_back(make_feat(ifeat(6631)));
+        }
         if (contains_numbers(words[chunk_range.first]))             result.push_back(make_feat(ifeat(29)));
         if (contains_letters(words[chunk_range.first]))             result.push_back(make_feat(ifeat(30)));
         if (contains_letters_and_numbers(words[chunk_range.first])) result.push_back(make_feat(ifeat(31)));
         if (is_all_numbers(words[chunk_range.first]))               result.push_back(make_feat(ifeat(32)));
         if (contains_hyphen(words[chunk_range.first]))              result.push_back(make_feat(ifeat(33)));
+        if (alternating_caps_in_middle(words[chunk_range.first]))   result.push_back(make_feat(ifeat(501)));
 
         if (is_caps(words[chunk_range.second-1]))                      result.push_back(make_feat(ifeat(34)));
-        if (is_all_caps(words[chunk_range.second-1]))                  result.push_back(make_feat(ifeat(35)));
+        if (is_all_caps(words[chunk_range.second-1]))                  
+        {
+            result.push_back(make_feat(ifeat(35)));
+            if (words[chunk_range.second-1].size() == 1) result.push_back(make_feat(ifeat(6635)));
+            if (words[chunk_range.second-1].size() == 2) result.push_back(make_feat(ifeat(6636)));
+            if (words[chunk_range.second-1].size() == 3) result.push_back(make_feat(ifeat(6637)));
+            if (words[chunk_range.second-1].size() == 4) result.push_back(make_feat(ifeat(6638)));
+        }
         if (contains_numbers(words[chunk_range.second-1]))             result.push_back(make_feat(ifeat(36)));
         if (contains_letters(words[chunk_range.second-1]))             result.push_back(make_feat(ifeat(37)));
         if (contains_letters_and_numbers(words[chunk_range.second-1])) result.push_back(make_feat(ifeat(38)));
         if (is_all_numbers(words[chunk_range.second-1]))               result.push_back(make_feat(ifeat(39)));
         if (contains_hyphen(words[chunk_range.second-1]))              result.push_back(make_feat(ifeat(40)));
+        if (alternating_caps_in_middle(words[chunk_range.second-1]))   result.push_back(make_feat(ifeat(502)));
 
         matrix<float,0,1> before, after;
         if (chunk_range.first != 0)
@@ -253,12 +292,20 @@ namespace mitie
             result.push_back(make_feat(suffix(words[chunk_range.first-1],57)));
 
             if (is_caps(words[chunk_range.first-1]))                      result.push_back(make_feat(ifeat(60)));
-            if (is_all_caps(words[chunk_range.first-1]))                  result.push_back(make_feat(ifeat(61)));
+            if (is_all_caps(words[chunk_range.first-1]))
+            {
+                result.push_back(make_feat(ifeat(61)));
+                if (words[chunk_range.first-1].size() == 1) result.push_back(make_feat(ifeat(6661)));
+                if (words[chunk_range.first-1].size() == 2) result.push_back(make_feat(ifeat(6662)));
+                if (words[chunk_range.first-1].size() == 3) result.push_back(make_feat(ifeat(6663)));
+                if (words[chunk_range.first-1].size() == 4) result.push_back(make_feat(ifeat(6664)));
+            }
             if (contains_numbers(words[chunk_range.first-1]))             result.push_back(make_feat(ifeat(62)));
             if (contains_letters(words[chunk_range.first-1]))             result.push_back(make_feat(ifeat(63)));
             if (contains_letters_and_numbers(words[chunk_range.first-1])) result.push_back(make_feat(ifeat(64)));
             if (is_all_numbers(words[chunk_range.first-1]))               result.push_back(make_feat(ifeat(65)));
             if (contains_hyphen(words[chunk_range.first-1]))              result.push_back(make_feat(ifeat(66)));
+            if (alternating_caps_in_middle(words[chunk_range.first-1]))   result.push_back(make_feat(ifeat(503)));
         }
         else
         {
@@ -274,12 +321,20 @@ namespace mitie
             result.push_back(make_feat(suffix(words[chunk_range.first-2],157)));
 
             if (is_caps(words[chunk_range.first-2]))                      result.push_back(make_feat(ifeat(160)));
-            if (is_all_caps(words[chunk_range.first-2]))                  result.push_back(make_feat(ifeat(161)));
+            if (is_all_caps(words[chunk_range.first-2]))
+            {
+                result.push_back(make_feat(ifeat(161)));
+                if (words[chunk_range.first-2].size() == 1) result.push_back(make_feat(ifeat(66161)));
+                if (words[chunk_range.first-2].size() == 2) result.push_back(make_feat(ifeat(66162)));
+                if (words[chunk_range.first-2].size() == 3) result.push_back(make_feat(ifeat(66163)));
+                if (words[chunk_range.first-2].size() == 4) result.push_back(make_feat(ifeat(66164)));
+            }
             if (contains_numbers(words[chunk_range.first-2]))             result.push_back(make_feat(ifeat(162)));
             if (contains_letters(words[chunk_range.first-2]))             result.push_back(make_feat(ifeat(163)));
             if (contains_letters_and_numbers(words[chunk_range.first-2])) result.push_back(make_feat(ifeat(164)));
             if (is_all_numbers(words[chunk_range.first-2]))               result.push_back(make_feat(ifeat(165)));
             if (contains_hyphen(words[chunk_range.first-2]))              result.push_back(make_feat(ifeat(166)));
+            if (alternating_caps_in_middle(words[chunk_range.first-2]))   result.push_back(make_feat(ifeat(504)));
         }
 
         if (chunk_range.second+1 < feats.size())
@@ -291,12 +346,20 @@ namespace mitie
             result.push_back(make_feat(suffix(words[chunk_range.second+1],159)));
 
             if (is_caps(words[chunk_range.second+1]))                      result.push_back(make_feat(ifeat(167)));
-            if (is_all_caps(words[chunk_range.second+1]))                  result.push_back(make_feat(ifeat(168)));
+            if (is_all_caps(words[chunk_range.second+1]))                  
+            {
+                result.push_back(make_feat(ifeat(168)));
+                if (words[chunk_range.second+1].size() == 1) result.push_back(make_feat(ifeat(66168)));
+                if (words[chunk_range.second+1].size() == 2) result.push_back(make_feat(ifeat(66169)));
+                if (words[chunk_range.second+1].size() == 3) result.push_back(make_feat(ifeat(66170)));
+                if (words[chunk_range.second+1].size() == 4) result.push_back(make_feat(ifeat(66171)));
+            }
             if (contains_numbers(words[chunk_range.second+1]))             result.push_back(make_feat(ifeat(169)));
             if (contains_letters(words[chunk_range.second+1]))             result.push_back(make_feat(ifeat(170)));
             if (contains_letters_and_numbers(words[chunk_range.second+1])) result.push_back(make_feat(ifeat(171)));
             if (is_all_numbers(words[chunk_range.second+1]))               result.push_back(make_feat(ifeat(172)));
             if (contains_hyphen(words[chunk_range.second+1]))              result.push_back(make_feat(ifeat(173)));
+            if (alternating_caps_in_middle(words[chunk_range.second+1]))   result.push_back(make_feat(ifeat(505)));
         }
 
         if (chunk_range.second < feats.size())
@@ -309,12 +372,20 @@ namespace mitie
             result.push_back(make_feat(suffix(words[chunk_range.second],59)));
 
             if (is_caps(words[chunk_range.second]))                      result.push_back(make_feat(ifeat(67)));
-            if (is_all_caps(words[chunk_range.second]))                  result.push_back(make_feat(ifeat(68)));
+            if (is_all_caps(words[chunk_range.second]))                  
+            {
+                result.push_back(make_feat(ifeat(68)));
+                if (words[chunk_range.second].size() == 1) result.push_back(make_feat(ifeat(6668)));
+                if (words[chunk_range.second].size() == 2) result.push_back(make_feat(ifeat(6669)));
+                if (words[chunk_range.second].size() == 3) result.push_back(make_feat(ifeat(6670)));
+                if (words[chunk_range.second].size() == 4) result.push_back(make_feat(ifeat(6671)));
+            }
             if (contains_numbers(words[chunk_range.second]))             result.push_back(make_feat(ifeat(69)));
             if (contains_letters(words[chunk_range.second]))             result.push_back(make_feat(ifeat(70)));
             if (contains_letters_and_numbers(words[chunk_range.second])) result.push_back(make_feat(ifeat(71)));
             if (is_all_numbers(words[chunk_range.second]))               result.push_back(make_feat(ifeat(72)));
             if (contains_hyphen(words[chunk_range.second]))              result.push_back(make_feat(ifeat(73)));
+            if (alternating_caps_in_middle(words[chunk_range.second]))   result.push_back(make_feat(ifeat(506)));
         }
         else
         {

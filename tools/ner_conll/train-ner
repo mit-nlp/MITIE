@@ -5,15 +5,30 @@ export MITIE_MODELS=../../../MITIE-models
 go()
 {
     THREADS="--threads=16"
-    LOG=test_$1_$2.txt
-    #./ner --train-chunker eng.train_all $THREADS > $LOG
-    ./ner --train-id -C$1     eng.train_all $THREADS >> $LOG
+    LOG=test_$1_$2_$3.txt
+    echo $1 $2 $3
+    ./ner --train-chunker -C$1  --miss-loss $2 eng.train_all_some_sentences_combined $THREADS > $LOG
+    ./ner --test-chunker eng.testb #>> $LOG
+    ./ner --test-chunker nw.all.adj #>> $LOG
+    ./ner --train-id -C$3     eng.train_all_some_sentences_combined $THREADS >> $LOG
     ./ner --test-id eng.testb >> $LOG
-    ./ner --tag-conll-file ner_model.dat eng.testb | ./conlleval 
+    ./ner --tag-conll-file ner_model.dat eng.testb | ./conlleval >> $LOG
+    ./ner --tag-conll-file ner_model.dat nw.all.adj | ./conlleval >> $LOG
+    tail -n20 $LOG 
+}
+
+go2()
+{
+    THREADS="--threads=16"
+    LOG=test_$1_$2.txt
+    ./$1 --train-chunker eng.train_all_some_sentences_combined $THREADS > $LOG
+    ./$1 --train-id -C$2     eng.train_all_some_sentences_combined $THREADS >> $LOG
+    ./$1 --test-id eng.testb >> $LOG
+    ./$1 --tag-conll-file ner_model.dat eng.testb | ./conlleval 
+    ./$1 --tag-conll-file ner_model.dat nw.all.adj | ./conlleval 
     echo $LOG
     tail -n1 $LOG 
 }
-
 
 
 run_default_params()
@@ -29,7 +44,14 @@ run_default_params()
 }
 
 run_default_params
+#go 500
 #go 400
+#go 20 3.0 300 
+
+#go 20 3.0 250
+#go 20 3.0 300
+#go 20 3.0 300
+
 #go 450
 #go 650
 #go 800

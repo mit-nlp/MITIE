@@ -29,6 +29,19 @@ namespace mitie
                 without mutex locking it first.
         !*/
 
+        inline static std::string convert_numbers (
+            const std::string& str_
+        )
+        {
+            std::string str(str_);
+            for (unsigned long i = 0; i < str.size(); ++i)
+            {
+                if ('0' <= str[i] && str[i] <= '9')
+                    str[i] = '#';
+            }
+            return str;
+        }
+
     public:
 
         total_word_feature_extractor() : non_morph_feats(0) {}
@@ -72,7 +85,7 @@ namespace mitie
         }
 
         void get_feature_vector(
-            const std::string& word,
+            const std::string& word_,
             dlib::matrix<float,0,1>& feats
         ) const
         /*!
@@ -81,6 +94,7 @@ namespace mitie
                 - #feats.size() == get_num_dimensions()
         !*/
         {
+            const std::string word = convert_numbers(word_);
             std::map<std::string, dlib::matrix<float,0,1> >::const_iterator i;
             i = total_word_vectors.find(word);
             if (i != total_word_vectors.end())
