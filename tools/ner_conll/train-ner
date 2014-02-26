@@ -37,6 +37,9 @@ run_default_params()
     LOG=test_default.txt
     ./ner --train-chunker eng.train_all_some_sentences_combined $THREADS > $LOG
     ./ner --train-id      eng.train_all_some_sentences_combined $THREADS >> $LOG
+    #./ner --train-chunker conll2_and_ace $THREADS > $LOG
+    #./ner --train-id      conll2_and_ace $THREADS >> $LOG
+
     ./ner --test-id eng.testb >> $LOG
     ./ner --tag-conll-file ner_model.dat eng.testb | ./conlleval 
     echo $LOG
