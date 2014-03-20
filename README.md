@@ -21,7 +21,7 @@ make examples
 ```
 Then you can run the example by typing:
 ```
-./mitie_ner ../../MITIE-models/ner_model.dat sample_text.txt 
+./mitie_ner MITIE-models/ner_model.dat sample_text.txt 
 ```
 
 The above works on most Unix like systems.  For Windows and other platforms we have provided [CMake](http://www.cmake.org)
