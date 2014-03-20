@@ -11,18 +11,17 @@ easy to use bindings to other langauges beginning with python and java.
 # Using MITIE
 
 The MITIE C API is documented in the [mitie.h](mitielib/include/mitie.h) header file.
-There is also an [example C program](examples/C/main.c) that shows how to use it in the examples folder.  
+There is also an [example NER program](examples/C/ner_example.c) that shows how to use it in the examples folder.  
 
 If you obtained MITIE by cloning the main repository then you must first fetch the two 
 submodules (dlib and MITIE-models).  Do this by running fetch_submodules.sh. 
 Then, to compile the example program type the following commands:
 ```
-cd examples/C
-make
+make examples
 ```
 Then you can run the example by typing:
 ```
-./mitie_example ../../MITIE-models/ner_model.dat sample_text.txt 
+./mitie_ner ../../MITIE-models/ner_model.dat sample_text.txt 
 ```
 
 The above works on most Unix like systems.  For Windows and other platforms we have provided [CMake](http://www.cmake.org)
