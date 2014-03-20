@@ -1,5 +1,5 @@
 
-SRC = main.c
+SRC = ner_example.c
 SRC += ../../mitielib/src/mitie.cpp
 SRC += ../../mitielib/src/named_entity_extractor.cpp
 SRC += ../../mitielib/src/ner_feature_extraction.cpp
@@ -8,10 +8,17 @@ SRC += ../../mitielib/src/stemmer.cpp
 
 
 CFLAGS = -Wall -W -O3 -I../../mitielib/include -I../../dlib
-LFLAGS = 
+LDFLAGS = 
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	LDFLAGS += -static
+endif
+#ifeq ($(UNAME_S),Darwin)
+#	LDFLAGS += 
+#endif
 CC = g++
 
-TARGET = mitie_example 
+TARGET = mitie_ner
 
 ####################################################
 
@@ -19,8 +26,8 @@ TMP = $(SRC:.cpp=.o)
 OBJ = $(TMP:.c=.o)
 
 $(TARGET): $(OBJ) 
-	@echo Linking $@
-	@$(CC) $(OBJ) -o $@ $(LFLAGS) 
+	@echo Linking $@ with flags: $(LDFLAGS)
+	@$(CC) $(OBJ) -o $@ $(LDFLAGS) 
 	@echo Build Complete
 
 .cpp.o: $<
