@@ -10,11 +10,13 @@ extern "C"
 #endif
     /*!
         MITIE RESOURCE MANAGEMENT POLICY
-            Unless explicitly noted, you do NOT need to call free() or mitie_free() on the
-            pointers returned from MITIE API calls.  That is, if it is the caller's
-            responsibility to free an object created by a MITIE API call then the
-            documentation for that routine will explicitly say the caller needs to free the
-            object.
+            Unless explicitly noted, you do NOT need to call mitie_free() on the pointers
+            returned from MITIE API calls.  That is, if it is the caller's responsibility
+            to free an object created by a MITIE API call then the documentation for that
+            routine will explicitly say the caller needs to free the object.
+
+            Moreover, all resources allocated by MITIE should always be freed by calling
+            mitie_free().  So never call free() on a MITIE object.
     !*/
 
 // ----------------------------------------------------------------------------------------
@@ -45,7 +47,7 @@ extern "C"
               as a NULL terminated C string.
             - If the file can't be loaded or read then this function returns NULL.
             - It is the responsibility of the caller to free the returned string.  You free
-              it by calling free() on the pointer to the string.
+              it by calling mitie_free() on the pointer to the string.
     !*/
 
 // ----------------------------------------------------------------------------------------
@@ -65,8 +67,8 @@ extern "C"
                 - TOK[1] == "text"
                 - TOK[2] == NULL
             - It is the responsibility of the caller to free the returned array.  You free
-              it by calling free() once on the entire array.  So to use the above
-              nomenclature, you call free(TOK).  DO NOT CALL FREE ON ELEMENTS OF TOK.
+              it by calling mitie_free() once on the entire array.  So to use the above
+              nomenclature, you call mitie_free(TOK).  DO NOT CALL FREE ON ELEMENTS OF TOK.
     !*/
 
 // ----------------------------------------------------------------------------------------

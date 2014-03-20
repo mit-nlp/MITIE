@@ -64,8 +64,8 @@ int main(int argc, char** argv)
     }
 
 
-    free(text_data);
-    free(tokens);
+    mitie_free(text_data);
+    mitie_free(tokens);
     mitie_free(dets);
     mitie_free(ner);
 
