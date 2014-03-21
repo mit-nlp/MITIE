@@ -9,3 +9,5 @@ examples/C/mitie_example
 examples/C/mitie_ner
 makefile.bak
 mitie_ner
+ner_stream
+tools/ner_stream/ner_stream

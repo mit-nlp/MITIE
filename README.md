@@ -15,13 +15,18 @@ There is also an [example NER program](examples/C/ner_example.c) that shows how 
 
 If you obtained MITIE by cloning the main repository then you must first fetch the two 
 submodules (dlib and MITIE-models).  Do this by running fetch_submodules.sh. 
-Then, to compile the example program type the following commands:
+Then, to compile the examples type the following command:
 ```
 make examples
 ```
 Then you can run the example by typing:
 ```
 ./mitie_ner MITIE-models/ner_model.dat sample_text.txt 
+```
+Or alternatively, you can tell MITIE to process each line of a text file independently and output marked up
+text with the command:
+```
+cat sample_text.txt | ./ner_stream MITIE-models/ner_model.dat  
 ```
 
 The above works on most Unix like systems.  For Windows and other platforms we have provided [CMake](http://www.cmake.org)
