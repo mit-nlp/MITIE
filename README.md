@@ -92,6 +92,13 @@ cmake ..
 cmake --build . --config Release
 ```
 
+# Precompiled binaries
+
+We have built binaries packaged with sample models for Macos and Linux (64 and 32-bit).  These packages are downloadable here:
+[Linux32](http://sourceforge.net/projects/mitie/files/binaries/MITIE-0.1-linux32.zip)
+[Linux64](http://sourceforge.net/projects/mitie/files/binaries/MITIE-0.1-linux64.zip)
+[Macos](http://sourceforge.net/projects/mitie/files/binaries/MITIE-0.1-osx.zip)
+
 # License
 
 MITIE is licensed under the Boost Software License - Version 1.0 - August 17th, 2003.  
