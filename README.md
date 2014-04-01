@@ -59,7 +59,7 @@ make test
 
 `make test` builds both the example programs and downloads required
 example models.  If you require a non-standard C++ compiler, change
-`CC` in `examples/C/makefile`.
+`CC` in `examples/C/makefile` and in `tools/ner_stream/makefile`.
 
 # Building MITIE (non-Unix systems)
 
