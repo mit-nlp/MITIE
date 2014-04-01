@@ -18,7 +18,7 @@ endif
 #endif
 CC = g++
 
-TARGET = mitie_ner
+TARGET = ner_example
 
 ####################################################
 

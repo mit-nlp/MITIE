@@ -1,36 +1,71 @@
 MITIE: MIT Information Extraction
 =====
 
-This project provides free (even for commercial use) [state-of-the-art](../../wiki/Evaluation) information extraction 
-tools. This first release includes a named entity recognizer.  Subsequent versions will add tools for part 
-of speech tagging, relationship extraction, interfaces for training your own custom extractors, and various other tools.  
+This project provides free (even for commercial use)
+[state-of-the-art](../../wiki/Evaluation) information extraction
+tools. This first release includes a named entity recognizer.
+Subsequent versions will add tools for part of speech tagging,
+relationship extraction, interfaces for training your own custom
+extractors, and various other tools.
 
-The first release of MITIE includes only a C API.  However the next releases will add 
-easy to use bindings to other langauges beginning with python and java.
+The first release of MITIE includes only a C API.  However the next
+releases will add easy to use bindings to other langauges beginning
+with python and java.
 
 # Using MITIE
 
-The MITIE C API is documented in the [mitie.h](mitielib/include/mitie.h) header file.
-There is also an [example NER program](examples/C/ner_example.c) that shows how to use it in the examples folder.  
+The MITIE C API is documented in the
+[mitie.h](mitielib/include/mitie.h) header file.  There is also an
+[example NER program](examples/C/ner_example.c) that shows how to use
+it in the examples folder.
 
-If you obtained MITIE by cloning the main repository then you must first fetch the two 
-submodules (dlib and MITIE-models).  Do this by running fetch_submodules.sh. 
+# Building MITIE (Unix-like systems)
+
+If you obtained MITIE by cloning the main repository then you must first fetch the
+submodules (dlib).  Do this by running `fetch_submodules.sh`. 
 Then, to compile the examples type the following command:
+
 ```
 make examples
 ```
-Then you can run the example by typing:
+
+You can download example models trained on English texts here:
 ```
-./mitie_ner MITIE-models/ner_model.dat sample_text.txt 
+make MITIE-models
 ```
-Or alternatively, you can tell MITIE to process each line of a text file independently and output marked up
-text with the command:
+These models are required for the examples below:
+
+```
+./ner_example MITIE-models/ner_model.dat sample_text.txt 
+```
+
+This command runs `ner_example` using the `ner_model.dat` sample
+model. A summary of the entities found in `sample_text.txt` will be
+printed out to the `STDOUT`.
+
+Alternatively, you can tell MITIE to process each line of a text file
+independently and output marked up text with the command:
+
 ```
 cat sample_text.txt | ./ner_stream MITIE-models/ner_model.dat  
 ```
 
-The above works on most Unix like systems.  For Windows and other platforms we have provided [CMake](http://www.cmake.org)
+You can also run a simple regression test to validate your build, run
+the following command:
+
+```
+make test
+```
+
+`make test` builds both the example programs and downloads required
+example models.  If you require a non-standard C++ compiler, change
+`CC` in `examples/C/makefile`.
+
+# Building MITIE (non-Unix systems)
+
+The above works on most Unix-like systems.  For Windows and other platforms we have provided [CMake](http://www.cmake.org)
 build scripts.  To compile using CMake you would use this alternative set of commands:
+
 ```
 cd examples/C
 mkdir build
@@ -40,12 +75,15 @@ cmake --build . --config Release
 ```
 
 Finally, you can create a MITIE shared library by executing:
+
 ```
 cd mitielib
 make
 ```
+
 And again, ths will work on most Unix systems but if you are on a platform where it doesn't you can use
 the provided CMake files in the mitielib folder.  So type the following to compile MITIE as a shared library using CMake:
+
 ```
 cd mitielib
 mkdir build
