@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 2.6)
 
 set(project_name ner_example)
 set(source
-   main.c
+   ner_example.c
    )
 
 
