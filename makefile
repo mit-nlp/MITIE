@@ -1,7 +1,7 @@
 examples: ner_example ner_stream
 
 MITIE-models:
-	wget -O - http://sourceforge.net/projects/mitie/files/binaries/example-models.zip > examples-models.zip
+	wget -O - http://sourceforge.net/projects/mitie/files/binaries/example-models.zip > example-models.zip
 	unzip example-models.zip
 
 ner_example:
