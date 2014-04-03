@@ -2,6 +2,7 @@ tags
 build
 *.swp
 *.swo
+*.pyc
 *.o
 *.so
 a.out
