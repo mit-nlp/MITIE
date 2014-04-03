@@ -27,15 +27,33 @@ else:
 
 _f.mitie_free.restype = None
 _f.mitie_free.argtypes = ctypes.c_void_p,
+
 _f.mitie_get_named_entity_tagstr.restype = ctypes.c_char_p
+_f.mitie_get_named_entity_tagstr.argtypes = ctypes.c_void_p, ctypes.c_ulong
+
 _f.mitie_get_num_possible_ner_tags.restype = ctypes.c_ulong
+_f.mitie_get_num_possible_ner_tags.argtypes = ctypes.c_void_p,
+
 _f.mitie_extract_entities.restype = ctypes.c_void_p
+_f.mitie_extract_entities.argtypes = ctypes.c_void_p, ctypes.c_void_p
+
 _f.mitie_load_named_entity_extractor.restype = ctypes.c_void_p
+_f.mitie_load_named_entity_extractor.argtypes = ctypes.c_char_p,
+
 _f.mitie_load_entire_file.restype = ctypes.c_void_p
+_f.mitie_load_entire_file.argtypes = ctypes.c_char_p,
+
 _f.mitie_ner_get_detection_position.restype = ctypes.c_void_p
+_f.mitie_ner_get_detection_position.argtypes = ctypes.c_void_p, ctypes.c_ulong
+
 _f.mitie_ner_get_detection_length.restype = ctypes.c_void_p
+_f.mitie_ner_get_detection_length.argtypes = ctypes.c_void_p, ctypes.c_ulong
+
 _f.mitie_ner_get_detection_tag.restype = ctypes.c_ulong
+_f.mitie_ner_get_detection_tag.argtypes = ctypes.c_void_p, ctypes.c_ulong
+
 _f.mitie_ner_get_num_detections.restype = ctypes.c_void_p
+_f.mitie_ner_get_num_detections.argtypes = ctypes.c_void_p,
 
 def load_entire_file(filename):
     x = _f.mitie_load_entire_file(filename)
