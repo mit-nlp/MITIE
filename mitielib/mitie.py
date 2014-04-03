@@ -64,4 +64,5 @@ class named_entity_extractor:
             _f.mitie_ner_get_detection_position(dets,i)+_f.mitie_ner_get_detection_length(dets,i)),
             tags[_f.mitie_ner_get_detection_tag(dets,i)]
             ) for i in xrange(num)])
+        _f.mitie_free(dets)
 
