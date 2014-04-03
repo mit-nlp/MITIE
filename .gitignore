@@ -5,6 +5,7 @@ build
 *.pyc
 *.o
 *.so
+*.dll
 a.out
 examples/C/mitie_example
 examples/C/mitie_ner
