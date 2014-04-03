@@ -1,7 +1,10 @@
 import ctypes, os
 
 parent = os.path.dirname(os.path.realpath(__file__))
-_f = ctypes.CDLL(parent+'/libmitie.so')
+if os.name == 'nt':
+    _f = ctypes.CDLL(parent+'/mitie')
+else:
+    _f = ctypes.CDLL(parent+'/libmitie.so')
 
 _f.mitie_free.restype = None
 _f.mitie_free.argtypes = ctypes.c_void_p,
