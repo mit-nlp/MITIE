@@ -6,6 +6,7 @@ build
 *.o
 *.so
 *.dll
+*.dylib
 a.out
 examples/C/mitie_example
 examples/C/mitie_ner
