@@ -26,7 +26,7 @@ namespace mitie
         typedef std::string token_type;
 
         conll_tokenizer (
-        ) : offset(0),in(0) {}
+        ) : in(0) {}
         /*!
             ensures
                 - any attempts to get a token will return false.  I.e. this will look like a 
@@ -35,27 +35,17 @@ namespace mitie
 
         conll_tokenizer (
             std::istream& in_
-        ) : offset(0),in(&in_) { }
+        ) : in(&in_) { }
         /*!
             ensures
                 - This object will read tokens from the supplied input stream.
         !*/
 
         bool operator() (std::string& token)
-        {
-            unsigned long junk;
-            return (*this)(token, junk);
-        }
-
-        bool operator() (std::string& token, unsigned long& pos)
         /*!
             ensures
                 - reads the next token from the input stream given to this object's constructor
                   and stores it in #token. 
-                - #pos == the number of characters read from the input stream prior to
-                  encountering the returned token.  That is, this value is the character
-                  offset from the beginning of the stream that indicates the position of the
-                  first character in token.
                 - if (there is not a next token) then
                     - #token.size() == 0
                     - returns false
@@ -64,16 +54,45 @@ namespace mitie
                     - returns true
         !*/
         {
-            pos = offset;
+            bool result = get_next_token(token);
+
+            // Check if token has a UTF-8 ’ character in it and if so then split it into
+            // two tokens based on that.
+            for (unsigned long i = 0; i < token.size(); ++i)
+            {
+                if ((unsigned char)token[i]   == 0xE2 &&
+                    i+2 < token.size() && 
+                    (unsigned char)token[i+1] == 0x80 &&
+                    (unsigned char)token[i+2] == 0x99)
+                {
+                    // Save the second half of the string as the next token and return the
+                    // first half.
+                    next_token = token.substr(i+2);
+                    next_token[0] = '\'';
+                    token.resize(i);
+                    return result;
+                }
+            }
+
+            return result;
+        }
+
+    private:
+
+        bool get_next_token (std::string& token)
+        {
+            if (next_token.size() != 0)
+            {
+                token.swap(next_token);
+                next_token.clear();
+                return true;
+            }
             token.clear();
             if (!in)
                 return false;
 
             while (in->peek() != EOF)
             {
-                if (token.size() == 0)
-                    pos = offset;
-
                 const char ch = (char)in->peek();
 
                 if (ch == '\'')
@@ -85,7 +104,6 @@ namespace mitie
                     else
                     {
                         token += (char)in->get();
-                        ++offset;
                     }
                 }
                 else if (ch == '[' ||
@@ -101,7 +119,6 @@ namespace mitie
                     if (token.size() == 0 )
                     {
                         token += (char)in->get();
-                        ++offset;
                         return true;
                     }
                     else if (ch == '.' && (token.size() == 1 || 
@@ -109,7 +126,6 @@ namespace mitie
                             (token.size() >= 2 && token[token.size()-2] == '.')))
                     {
                         token += (char)in->get();
-                        ++offset;
                     }
                     else
                     {
@@ -119,7 +135,6 @@ namespace mitie
                         if ((ch == ',' || ch == '.') && '0' <= last && last <= '9')
                         {
                             token += (char)in->get();
-                            ++offset;
                         }
                         else
                         {
@@ -131,14 +146,12 @@ namespace mitie
                 {
                     // discard whitespace
                     in->get();
-                    ++offset;
                     if (token.size() != 0)
                         return true;
                 }
                 else
                 {
                     token += (char)in->get();
-                    ++offset;
                 }
             }
 
@@ -150,10 +163,8 @@ namespace mitie
             return false;
         }
 
-    private:
-
-        unsigned long offset;
         std::istream* in;
+        std::string next_token;
     };
 
 // ----------------------------------------------------------------------------------------

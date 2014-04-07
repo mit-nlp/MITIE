@@ -40,13 +40,6 @@ namespace mitie
             return result;
         }
 
-        bool operator() (std::string& token, unsigned long& pos)
-        {
-            const bool result = tok(token, pos);
-            convert_numbers(token);
-            return result;
-        }
-
     private:
 
         static inline void convert_numbers (

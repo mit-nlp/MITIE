@@ -60,16 +60,18 @@ int main(int argc, char** argv)
 
         // Push an empty chunk onto the end so we can avoid complicated bounds checking in
         // the following loop.
-        chunks.push_back(make_pair(tokens.size(), tokens.size()));
+        chunks.push_back(make_pair(tokens.size()+1, tokens.size()+1));
 
         unsigned long next = 0;
-        for (unsigned long i = 0; i < tokens.size(); ++i)
+        for (unsigned long i = 0; i <= tokens.size(); ++i)
         {
             if (i == chunks[next].second)
             {
                 cout << "] ";
                 ++next;
             }
+            if (i == tokens.size())
+                break;
 
             if (i == chunks[next].first)
                 cout << "[" << tags[chunk_tags[next]] << " ";
