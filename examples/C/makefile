@@ -7,7 +7,7 @@ SRC += ../../mitielib/src/stem.c
 SRC += ../../mitielib/src/stemmer.cpp
 
 
-CFLAGS = -Wall -W -O3 -I../../mitielib/include -I../../dlib
+CFLAGS = -fPIC -Wall -W -O3 -I../../mitielib/include -I../../dlib
 LDFLAGS = 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
