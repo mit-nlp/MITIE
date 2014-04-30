@@ -23,6 +23,11 @@ extern "C"
 
             Moreover, all resources allocated by MITIE should always be freed by calling
             mitie_free().  So never call free() on a MITIE object.
+
+        THREAD SAFETY
+            Unless otherwise specified, you must not touch the MITIE objects returned from
+            this API from multiple threads without serializing access to them via a mutex
+            or some other kind of synchronization that prevents concurrent accesses.
     !*/
 
 // ----------------------------------------------------------------------------------------
