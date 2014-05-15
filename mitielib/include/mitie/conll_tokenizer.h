@@ -7,6 +7,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <ctype.h>
 
 namespace mitie
 {
@@ -126,6 +127,12 @@ namespace mitie
                             (token.size() >= 2 && token[token.size()-2] == '.')))
                     {
                         token += (char)in->get();
+                    }
+                    // catch stuff like Jr.  or St.
+                    else if (ch == '.' && token.size() == 2 && isupper(token[0]) && islower(token[1]))
+                    {
+                        in->get(); // but drop the trailing .
+                        return true;
                     }
                     else
                     {
