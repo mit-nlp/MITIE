@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 
 
         named_entity_extractor ner;
-        ifstream fin(parser[0], ios::binary);
+        ifstream fin(parser[0].c_str(), ios::binary);
         if (!fin)
         {
             cerr << "Error, unable to open file: " << parser[0] << endl;
