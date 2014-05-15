@@ -110,6 +110,8 @@ namespace mitie
                 else if (ch == '[' ||
                     ch == ']' ||
                     ch == '.' ||
+                    ch == '(' ||
+                    ch == ')' ||
                     ch == '!' ||
                     ch == ',' ||
                     ch == '"' ||
