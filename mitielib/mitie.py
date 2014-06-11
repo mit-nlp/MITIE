@@ -52,7 +52,7 @@ _f.mitie_ner_get_detection_length.argtypes = ctypes.c_void_p, ctypes.c_ulong
 _f.mitie_ner_get_detection_tag.restype = ctypes.c_ulong
 _f.mitie_ner_get_detection_tag.argtypes = ctypes.c_void_p, ctypes.c_ulong
 
-_f.mitie_ner_get_num_detections.restype = ctypes.c_void_p
+_f.mitie_ner_get_num_detections.restype = ctypes.c_ulong
 _f.mitie_ner_get_num_detections.argtypes = ctypes.c_void_p,
 
 def load_entire_file(filename):
