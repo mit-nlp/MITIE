@@ -110,6 +110,9 @@ namespace mitie
             deserialize(item.df, in);
         }
 
+        const total_word_feature_extractor& get_word_feature_extractor(
+        ) const { return fe; }
+
     private:
         std::vector<std::string> tag_name_strings;
         total_word_feature_extractor fe;
