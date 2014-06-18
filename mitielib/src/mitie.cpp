@@ -45,7 +45,7 @@ namespace
     void destroy(void* object)
     /*!
         ensures
-            - frees and object allocated by the allocate() or allocate_bytes() method defined below.
+            - frees an object allocated by the allocate() or allocate_bytes() method defined below.
     !*/
     {
         ((T*)object)->~T();
@@ -221,12 +221,12 @@ extern "C"
 #ifndef NDEBUG
             cerr << "Error loading MITIE model file: " << e.what() << endl;
 #endif
-            delete impl;
+            mitie_free(impl);
             return NULL;
         }
         catch(...)
         {
-            delete impl;
+            mitie_free(impl);
             return NULL;
         }
     }
@@ -279,7 +279,7 @@ extern "C"
         }
         catch(...)
         {
-            delete impl;
+            mitie_free(impl);
             return NULL;
         }
 
