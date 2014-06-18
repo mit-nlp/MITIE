@@ -58,14 +58,9 @@ int main(int argc, char** argv)
 
 
         named_entity_extractor ner;
-        ifstream fin(parser[0].c_str(), ios::binary);
-        if (!fin)
-        {
-            cerr << "Error, unable to open file: " << parser[0] << endl;
-            return 1;
-        }
         cerr << "Loading MITIE NER model file...";
-        TIME_THIS_TO(deserialize(ner, fin), cerr);
+        TIME_THIS_TO(deserialize(parser[0]) >> ner, cerr);
+
         cerr << "Now running NER tool..." << endl;
 
         if (parser.option("o"))
