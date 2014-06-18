@@ -7,6 +7,8 @@
 #include <map>
 #include "word_morphology_feature_extractor.h"
 #include <dlib/statistics.h>
+#include <dlib/vectorstream.h>
+#include <dlib/hash.h>
 
 namespace mitie 
 {
@@ -44,7 +46,7 @@ namespace mitie
 
     public:
 
-        total_word_feature_extractor() : non_morph_feats(0) {}
+        total_word_feature_extractor() : fingerprint(0), non_morph_feats(0) {}
 
         total_word_feature_extractor(
             const std::map<std::string, dlib::matrix<float,0,1> >& word_vectors,
@@ -82,7 +84,25 @@ namespace mitie
                 morph_fe.get_feature_vector(i->first, feats);
                 total_word_vectors[i->first] = join_cols(join_cols(dlib::zeros_matrix<float>(1,1), scale*i->second), feats);
             }
+
+
+            // finally, don't forget to set the fingerprint to something
+            compute_fingerprint();
         }
+
+        dlib::uint64 get_fingerprint(
+        ) const { return fingerprint; }
+        /*!
+            ensures
+                - returns a 64bit ID number that uniquely identifies this object instance.
+                  The ID is computed based on the state of this object, so any copy of it
+                  that has the same state will have the same fingerprint ID number.  This
+                  is useful since down stream models that have been trained to use a
+                  specific total_word_feature_extractor instance can record the fingerprint
+                  of the total_word_feature_extractor they used and use that fingerprint ID
+                  to verify that the same total_word_feature_extractor is being used later
+                  on.
+        !*/
 
         void get_feature_vector(
             const std::string& word_,
@@ -148,8 +168,9 @@ namespace mitie
 
         friend void serialize(const total_word_feature_extractor& item, std::ostream& out)
         {
-            int version = 1;
+            int version = 2;
             dlib::serialize(version, out);
+            dlib::serialize(item.fingerprint, out);
             dlib::serialize(item.non_morph_feats, out);
             dlib::serialize(item.total_word_vectors, out);
             serialize(item.morph_fe, out);
@@ -159,8 +180,9 @@ namespace mitie
         {
             int version = 0;
             dlib::deserialize(version, in);
-            if (version != 1)
+            if (version != 2)
                 throw dlib::serialization_error("Unexpected version found while deserializing total_word_feature_extractor.");
+            dlib::deserialize(item.fingerprint, in);
             dlib::deserialize(item.non_morph_feats, in);
             dlib::deserialize(item.total_word_vectors, in);
             deserialize(item.morph_fe, in);
@@ -168,6 +190,19 @@ namespace mitie
 
     private:
 
+        void compute_fingerprint()
+        {
+            std::vector<char> buf;
+            dlib::vectorstream sout(buf);
+            sout << "fingerprint";
+            dlib::serialize(non_morph_feats, sout);
+            dlib::serialize(total_word_vectors, sout);
+            serialize(morph_fe, sout);
+
+            fingerprint = dlib::murmur_hash3_128bit(&buf[0], buf.size()).first;
+        }
+
+        dlib::uint64 fingerprint;
         long non_morph_feats;
         std::map<std::string, dlib::matrix<float,0,1> > total_word_vectors;
         word_morphology_feature_extractor morph_fe;

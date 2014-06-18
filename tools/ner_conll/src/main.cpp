@@ -140,9 +140,9 @@ void train_chunker(const command_line_parser& parser)
 
     const std::string models_path = get_mitie_models_path();
 
+    string classname;
     total_word_feature_extractor fe;
-    std::ifstream fin((models_path + "/total_word_feature_extractor.dat").c_str(), ios::binary);
-    deserialize(fe, fin);
+    deserialize(models_path + "/total_word_feature_extractor.dat") >> classname >> fe;
 
     cout << "words in dictionary: " << fe.get_num_words_in_dictionary() << endl;
     cout << "num features: " << fe.get_num_dimensions() << endl;
@@ -193,9 +193,7 @@ void train_chunker(const command_line_parser& parser)
     if (samples_test.size() != 0)
         cout << "test:  precision, recall, f1-score: "<< test_sequence_segmenter(segmenter, samples_test, chunks_test);
 
-    ofstream fout("trained_segmenter.dat", ios::binary);
-    serialize(fe, fout);
-    serialize(segmenter, fout);
+    serialize("trained_segmenter.dat") << fe << segmenter;
 }
 
 // ----------------------------------------------------------------------------------------
@@ -208,11 +206,9 @@ void test_chunker(const command_line_parser& parser)
     parse_conll_data(parser[0], sentences, chunks, chunk_labels);
     cout << "number of sentences loaded: "<< sentences.size() << endl;
 
-    ifstream fin("trained_segmenter.dat", ios::binary);
     total_word_feature_extractor fe;
     sequence_segmenter<ner_feature_extractor> segmenter;
-    deserialize(fe, fin);
-    deserialize(segmenter, fin);
+    deserialize("trained_segmenter.dat") >> fe >> segmenter;
 
     std::vector<std::vector<matrix<float,0,1> > > samples;
     samples.reserve(sentences.size());
@@ -264,11 +260,9 @@ void train_id(const command_line_parser& parser)
     cout << "number of sentences loaded: "<< sentences.size() << endl;
 
 
-    ifstream fin("trained_segmenter.dat", ios::binary);
     total_word_feature_extractor fe;
     sequence_segmenter<ner_feature_extractor> segmenter;
-    deserialize(fe, fin);
-    deserialize(segmenter, fin);
+    deserialize("trained_segmenter.dat") >> fe >> segmenter;
 
     std::vector<ner_sample_type> samples;
     std::vector<unsigned long> labels;
@@ -333,17 +327,16 @@ void train_id(const command_line_parser& parser)
     ner_labels[ORG] = "ORGANIZATION";
     ner_labels[MISC] = "MISC";
     named_entity_extractor ner(ner_labels, fe, segmenter, df);
-    ofstream fout("ner_model.dat", ios::binary);
-    serialize(ner, fout);
+    serialize("ner_model.dat") << "mitie::named_entity_extractor" << ner;
 }
 
 // ----------------------------------------------------------------------------------------
 
 void test_id(const command_line_parser& parser)
 {
+    string classname;
     named_entity_extractor ner;
-    ifstream fin("ner_model.dat", ios::binary);
-    deserialize(ner, fin);
+    deserialize("ner_model.dat") >> classname >> ner;
 
     std::vector<std::vector<std::string> > sentences;
     std::vector<std::vector<std::pair<unsigned long, unsigned long> > > chunks;
@@ -471,12 +464,11 @@ void test_id(const command_line_parser& parser)
 void tag_file(const command_line_parser& parser)
 {
     string ner_model = parser.option("tag-file").argument();
-    ifstream fin(ner_model.c_str(), ios::binary);
+    string classname;
     named_entity_extractor ner;
-    deserialize(ner, fin);
+    deserialize(ner_model) >> classname >> ner;
 
-    fin.close();
-    fin.open(parser[0].c_str());
+    ifstream fin(parser[0].c_str());
 
     unigram_tokenizer tok(fin);
 
@@ -511,9 +503,9 @@ void tag_file(const command_line_parser& parser)
 void tag_conll_file(const command_line_parser& parser)
 {
     string ner_model = parser.option("tag-conll-file").argument();
-    ifstream fin(ner_model.c_str(), ios::binary);
+    string classname;
     named_entity_extractor ner;
-    deserialize(ner, fin);
+    deserialize(ner_model) >> classname >> ner;
 
 
     std::vector<labeled_sentence> conll_data = parse_conll_data (parser[0]);

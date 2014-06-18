@@ -7,6 +7,8 @@
 #include <mitie/total_word_feature_extractor.h>
 #include <mitie/ner_feature_extraction.h>
 #include <dlib/svm.h>
+#include <dlib/vectorstream.h>
+#include <dlib/hash.h>
 
 namespace mitie
 {
@@ -26,7 +28,7 @@ namespace mitie
         !*/
     public:
 
-        named_entity_extractor(){}
+        named_entity_extractor():fingerprint(0){}
         /*!
             ensures
                 - When used this object won't output any entities.   You need to either use
@@ -56,6 +58,19 @@ namespace mitie
                 - Just loads the given objects into *this.  
                 - The interpretation of tag_name_strings is that it maps the output of df
                   into a meaningful text name for the NER tag.  
+        !*/
+
+        dlib::uint64 get_fingerprint(
+        ) const { return fingerprint; }
+        /*!
+            ensures
+                - returns a 64bit ID number that uniquely identifies this object instance.
+                  The ID is computed based on the state of this object, so any copy of it
+                  that has the same state will have the same fingerprint ID number.  This
+                  is useful since down stream models that have been trained to use a
+                  specific named_entity_extractor instance can record the fingerprint of
+                  the named_entity_extractor they used and use that fingerprint ID to
+                  verify that the same named_entity_extractor is being used later on.
         !*/
 
         void operator() (
@@ -90,8 +105,9 @@ namespace mitie
 
         friend void serialize(const named_entity_extractor& item, std::ostream& out)
         {
-            int version = 1;
+            int version = 2;
             dlib::serialize(version, out);
+            dlib::serialize(item.fingerprint, out);
             dlib::serialize(item.tag_name_strings, out);
             serialize(item.fe, out);
             serialize(item.segmenter, out);
@@ -102,8 +118,9 @@ namespace mitie
         {
             int version = 0;
             dlib::deserialize(version, in);
-            if (version != 1)
+            if (version != 2)
                 throw dlib::serialization_error("Unexpected version found while deserializing mitie::named_entity_extractor.");
+            dlib::deserialize(item.fingerprint, in);
             dlib::deserialize(item.tag_name_strings, in);
             deserialize(item.fe, in);
             deserialize(item.segmenter, in);
@@ -114,6 +131,20 @@ namespace mitie
         ) const { return fe; }
 
     private:
+        void compute_fingerprint()
+        {
+            std::vector<char> buf;
+            dlib::vectorstream sout(buf);
+            sout << "fingerprint";
+            dlib::serialize(tag_name_strings, sout);
+            serialize(fe.get_fingerprint(), sout);
+            serialize(segmenter, sout);
+            serialize(df, sout);
+
+            fingerprint = dlib::murmur_hash3_128bit(&buf[0], buf.size()).first;
+        }
+
+        dlib::uint64 fingerprint;
         std::vector<std::string> tag_name_strings;
         total_word_feature_extractor fe;
         dlib::sequence_segmenter<ner_feature_extractor> segmenter;

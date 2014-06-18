@@ -196,9 +196,9 @@ int main(int argc, char** argv)
 
 void cluster_words(const command_line_parser& parser)
 {
+    string classname;
     total_word_feature_extractor fe;
-    std::ifstream fin("total_word_feature_extractor.dat", ios::binary);
-    deserialize(fe, fin);
+    deserialize("total_word_feature_extractor.dat") >> classname >> fe;
 
     cout << "words in dictionary: " << fe.get_num_words_in_dictionary() << endl;
     cout << "num features: " << fe.get_num_dimensions() << endl;
@@ -291,9 +291,9 @@ void count_words(const command_line_parser& parser)
 
 void test(const command_line_parser& parser)
 {
+    string classname;
     total_word_feature_extractor fe;
-    std::ifstream fin("total_word_feature_extractor.dat", ios::binary);
-    deserialize(fe, fin);
+    deserialize("total_word_feature_extractor.dat") >> classname >> fe;
 
     cout << "words in dictionary: " << fe.get_num_words_in_dictionary() << endl;
     cout << "num features: " << fe.get_num_dimensions() << endl;

@@ -28,6 +28,8 @@ namespace mitie
         {
             DLIB_CASSERT(df_tags.count(i) == 1, "invalid inputs");
         }
+
+        compute_fingerprint();
     }
 
 // ----------------------------------------------------------------------------------------

@@ -45,9 +45,14 @@ int main(int argc, char** argv)
             return EXIT_FAILURE;
         }
 
-        // Load MITIE's named entity extractor from disk.
+        // Load MITIE's named entity extractor from disk.  Each file in the MITIE-models
+        // folder begins with a string containing the name of the serialized class.  In
+        // this case classname contains "mitie::named_entity_extractor".  It can be used to
+        // identify what is in any particular file.  However, in this example we don't need
+        // it so it is just ignored.
+        string classname;
         named_entity_extractor ner;
-        dlib::deserialize(argv[1]) >> ner;
+        dlib::deserialize(argv[1]) >> classname >> ner;
 
         // Print out what kind of tags this tagger can predict.
         const vector<string> tagstr = ner.get_tag_name_strings();

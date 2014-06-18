@@ -103,9 +103,7 @@ void cca_morph(const dlib::command_line_parser& parser)
 
     total_word_feature_extractor tfe(word_vectors, fe);
     cout << "total word feature dimensionality: "<< tfe.get_num_dimensions() << endl;
-    fout.close();
-    fout.open("total_word_feature_extractor.dat", ios::binary);
-    serialize(tfe, fout);
+    serialize("total_word_feature_extractor.dat") << "mitie::total_word_feature_extractor" << tfe;
 }
 
 // ----------------------------------------------------------------------------------------

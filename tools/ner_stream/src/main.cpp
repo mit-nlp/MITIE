@@ -57,9 +57,14 @@ int main(int argc, char** argv)
         }
 
 
+        string classname;
         named_entity_extractor ner;
-        cerr << "Loading MITIE NER model file...";
-        TIME_THIS_TO(deserialize(parser[0]) >> ner, cerr);
+        cerr << "Loading MITIE NER model file..." << endl;
+        // All the models saved in the MITIE-models folder contain a serialized string that
+        // indicates the name of the class saved in the file (e.g. "mitie::named_entity_extractor")
+        // and then the instance of that class.  So here we read those two things from the
+        // given model file.
+        TIME_THIS_TO(deserialize(parser[0]) >> classname >> ner, cerr);
 
         cerr << "Now running NER tool..." << endl;
 

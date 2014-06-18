@@ -203,23 +203,15 @@ extern "C"
         named_entity_extractor* impl = 0;
         try
         {
-            ifstream fin(filename, ios::binary);
-            if (!fin)
-            {
-#ifndef NDEBUG
-                cerr << "Error loading MITIE model file, file not found." << endl;
-#endif
-                return NULL;
-            }
-
+            string classname;
             impl = allocate<named_entity_extractor>(MITIE_NAMED_ENTITY_EXTRACTOR);
-            deserialize(*impl, fin);
+            dlib::deserialize(filename) >> classname >> *impl;
             return (mitie_named_entity_extractor*)impl;
         }
         catch(std::exception& e)
         {
 #ifndef NDEBUG
-            cerr << "Error loading MITIE model file: " << e.what() << endl;
+            cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
 #endif
             mitie_free(impl);
             return NULL;
