@@ -1,27 +1,31 @@
-examples: ner_example ner_stream mitie
+
+# A list of all the folders that have makefiles in them.  Running make all builds all these things
+SUBDIRS = tools/ner_stream examples/C examples/cpp
+
+examples: tools/ner_stream examples/C 
+	cp examples/C/ner_example .
+	cp tools/ner_stream/ner_stream .
 
 MITIE-models:
 	wget -O - http://sourceforge.net/projects/mitie/files/binaries/example-models.zip > example-models.zip
 	unzip example-models.zip
 
-ner_example:
-	(cd examples/C; make)
-	cp examples/C/ner_example .
-
-ner_stream:
-	(cd tools/ner_stream; make)
-	cp tools/ner_stream/ner_stream .
-
-mitie: 
-	(cd mitielib; make)
-
-test: ner_stream MITIE-models
+test: all examples MITIE-models
 	./ner_stream MITIE-models/ner_model.dat < sample_text.txt > /tmp/test.out
 	diff /tmp/test.out sample_text.reference-output
+	echo Testing completed successfully
+
+
+
+.PHONY: mitie mitielib $(SUBDIRS)
+all: $(SUBDIRS)
+mitie: mitielib
+$(SUBDIRS): mitie 
+	$(MAKE) -C $@
+mitielib:
+	$(MAKE) -C $@
 clean:
-	(cd tools/ner_stream; make clean)
-	(cd examples/C; make clean)
-	(cd mitielib; make clean)
-	rm -rf ner_stream ner_example 
-clean-models:
-	rm -rf MITIE-models
+	@for dir in $(SUBDIRS); do \
+		$(MAKE) -C $$dir clean; \
+	done
+	@rm -rf ner_stream ner_example

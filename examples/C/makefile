@@ -3,6 +3,7 @@ SRC = ner_example.c
 SRC += ../../mitielib/src/mitie.cpp
 SRC += ../../mitielib/src/named_entity_extractor.cpp
 SRC += ../../mitielib/src/ner_feature_extraction.cpp
+SRC += ../../mitielib/src/binary_relation_detector.cpp
 SRC += ../../mitielib/src/stem.c
 SRC += ../../mitielib/src/stemmer.cpp
 
