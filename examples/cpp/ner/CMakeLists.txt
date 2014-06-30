@@ -16,7 +16,7 @@ set(source
 PROJECT(${project_name})
 
 
-include(../../mitielib/cmake)
+include(../../../mitielib/cmake)
 
 
 ADD_EXECUTABLE(${project_name} ${source})

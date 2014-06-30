@@ -1,3 +1,7 @@
+/*
+    This example shows how to use the MITIE C API to perform named entity
+    recognition. 
+*/
 
 #include <mitie/named_entity_extractor.h>
 #include <mitie/conll_tokenizer.h>
