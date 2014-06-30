@@ -8,14 +8,14 @@ build
 *.dll
 *.dylib
 a.out
-examples/C/mitie_example
-examples/C/mitie_ner
 makefile.bak
-mitie_ner
-ner_stream
 tools/ner_stream/ner_stream
 MITIE-models/
 example-models.zip
+
+#Example binaries
+/ner_example
+/relation_extraction_example
+/ner_stream
 examples/C/ner_example
-ner_example
-relation_extraction_example
+examples/cpp/ner_example
