@@ -19,4 +19,5 @@ example-models.zip
 /relation_extraction_example
 /ner_stream
 examples/C/ner/ner_example
+examples/C/relation_extraction/relation_extraction_example
 examples/cpp/ner_example

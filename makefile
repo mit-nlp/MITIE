@@ -1,9 +1,10 @@
 
 # A list of all the folders that have makefiles in them.  Running make all builds all these things
-SUBDIRS = tools/ner_stream examples/C/ner examples/cpp
+SUBDIRS = tools/ner_stream examples/C/ner examples/C/relation_extraction examples/cpp
 
-examples: tools/ner_stream examples/C/ner 
+examples: tools/ner_stream examples/C/ner examples/C/relation_extraction
 	cp examples/C/ner/ner_example .
+	cp examples/C/relation_extraction/relation_extraction_example .
 	cp tools/ner_stream/ner_stream .
 
 MITIE-models:
@@ -28,4 +29,4 @@ clean:
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
 	done
-	@rm -rf ner_stream ner_example
+	@rm -rf ner_stream ner_example relation_extraction_example
