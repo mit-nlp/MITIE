@@ -5,6 +5,7 @@ build
 *.pyc
 *.o
 *.so
+*.a
 *.dll
 *.dylib
 a.out
