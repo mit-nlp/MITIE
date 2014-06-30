@@ -1,5 +1,5 @@
 /*
-    This example shows how to use the MITIE C API to perform named entity
+    This example shows how to use the MITIE C++ API to perform named entity
     recognition. 
 */
 
