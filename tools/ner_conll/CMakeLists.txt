@@ -10,8 +10,6 @@ cmake_minimum_required(VERSION 2.6)
 set(project_name ner)
 set(source
    src/main.cpp
-   src/conll_parser.h
-   src/conll_parser.cpp
    )
 
 

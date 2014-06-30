@@ -1,7 +1,7 @@
 // Copyright (C) 2013 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis.king@ll.mit.edu)
-#include "conll_parser.h"
+#include <mitie/conll_parser.h>
 
 #include <fstream>
 #include <dlib/string.h>

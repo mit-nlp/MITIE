@@ -7,6 +7,7 @@ SRC += src/ner_feature_extraction.cpp
 SRC += src/binary_relation_detector.cpp
 SRC += src/stem.c
 SRC += src/stemmer.cpp
+SRC += src/conll_parser.cpp
 
 
 CFLAGS =  -fpic  -Wall -W  -O3   -Iinclude -I../dlib 

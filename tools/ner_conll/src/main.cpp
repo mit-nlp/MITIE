@@ -10,7 +10,7 @@
 #include <iostream>
 #include <dlib/cmd_line_parser.h>
 
-#include "conll_parser.h"
+#include <mitie/conll_parser.h>
 
 #include <dlib/svm_threaded.h>
 #include <mitie/total_word_feature_extractor.h>
