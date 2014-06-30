@@ -1,9 +1,9 @@
 
 # A list of all the folders that have makefiles in them.  Running make all builds all these things
-SUBDIRS = tools/ner_stream examples/C examples/cpp
+SUBDIRS = tools/ner_stream examples/C/ner examples/cpp
 
-examples: tools/ner_stream examples/C 
-	cp examples/C/ner_example .
+examples: tools/ner_stream examples/C/ner 
+	cp examples/C/ner/ner_example .
 	cp tools/ner_stream/ner_stream .
 
 MITIE-models:

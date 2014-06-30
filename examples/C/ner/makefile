@@ -2,9 +2,9 @@
 SRC = ner_example.c
 TARGET = ner_example
 
-MITIEDIR = ../../mitielib
+MITIEDIR = ../../../mitielib
 
-CFLAGS = -fPIC -Wall -W -O3 -I$(MITIEDIR)/include -I../../dlib
+CFLAGS = -fPIC -Wall -W -O3 -I$(MITIEDIR)/include -I../../../dlib
 LDFLAGS = $(MITIEDIR)/libmitie.a
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
