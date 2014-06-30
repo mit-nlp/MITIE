@@ -1,7 +1,16 @@
-
+/*
+    This example shows how to use the MITIE C API to perform named entity
+    recognition. 
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <mitie.h>
+
+// ----------------------------------------------------------------------------------------
+
+void print_entity (char** tokens, const mitie_named_entity_detections* dets, unsigned long i);
+
+// ----------------------------------------------------------------------------------------
 
 int main(int argc, char** argv)
 {
@@ -10,14 +19,15 @@ int main(int argc, char** argv)
     unsigned long num_tags = 0;
     unsigned long num_dets = 0;
     unsigned long i = 0;
-    unsigned long pos, len;
-    char* text_data = 0;
     char** tokens = 0;
+    int return_code = EXIT_FAILURE;
+    double score = 0;
 
     if (argc != 3)
     {
         printf("You must give a MITIE ner model file as the first command line argument\n");
-        printf("followed by a text file to process.\n");
+        printf("followed by a text file to process. For example:\n");
+        printf("./ner_example MITIE-models/ner_model.dat sample_text.txt\n");
         return EXIT_FAILURE;
     }
 
@@ -25,7 +35,7 @@ int main(int argc, char** argv)
     if (!ner)
     {
         printf("Unable to load model file\n");
-        return EXIT_FAILURE;
+        goto cleanup;
     }
 
     // Print out what kind of tags this tagger can predict.
@@ -35,40 +45,62 @@ int main(int argc, char** argv)
         printf("   %s\n", mitie_get_named_entity_tagstr(ner, i));
 
     // Now get some text and turn it into an array of tokens.
-    text_data = mitie_load_entire_file(argv[2]);
-    if (!text_data)
+    tokens = mitie_tokenize_file(argv[2]);
+    if (!tokens)
     {
-        printf("Unable to load input text file.\n");
-        mitie_free(ner);
-        return EXIT_FAILURE;
+        printf("Unable to tokenize file.\n");
+        goto cleanup;
     }
-    tokens = mitie_tokenize(text_data);
 
     // Now detect all the entities in the text file we loaded and print them to the screen.
     dets = mitie_extract_entities(ner, tokens);
+    if (!dets) 
+    { 
+        printf("Unable to allocate list of MITIE entities.");
+        goto cleanup; 
+    }
+
     num_dets = mitie_ner_get_num_detections(dets);
     printf("\nNumber of named entities detected: %lu\n", num_dets);
     for (i = 0; i < num_dets; ++i)
     {
-        pos = mitie_ner_get_detection_position(dets, i);
-        len = mitie_ner_get_detection_length(dets, i);
-        // Print the label for each named entity and also the text of the named entity
-        // itself.
-        printf("   Tag %lu:%s: ", mitie_ner_get_detection_tag(dets,i), mitie_ner_get_detection_tagstr(dets,i));
-        while(len > 0)
-        {
-            printf("%s ", tokens[pos++]);
-            --len;
-        }
-        printf("\n");
+        print_entity(tokens, dets, i);
     }
 
 
-    mitie_free(text_data);
+
+
+    return_code = EXIT_SUCCESS;
+cleanup:
     mitie_free(tokens);
     mitie_free(dets);
     mitie_free(ner);
 
-    return EXIT_SUCCESS;
+    return return_code;
 }
+
+// ----------------------------------------------------------------------------------------
+
+void print_entity (
+    char** tokens,
+    const mitie_named_entity_detections* dets,
+    unsigned long i
+)
+{
+    unsigned long pos, len;
+
+    pos = mitie_ner_get_detection_position(dets, i);
+    len = mitie_ner_get_detection_length(dets, i);
+    // Print the label for each named entity and also the text of the named entity
+    // itself.
+    printf("   Tag %lu:%s: ", mitie_ner_get_detection_tag(dets,i), mitie_ner_get_detection_tagstr(dets,i));
+    while(len > 0)
+    {
+        printf("%s ", tokens[pos++]);
+        --len;
+    }
+    printf("\n");
+}
+
+// ----------------------------------------------------------------------------------------
 
