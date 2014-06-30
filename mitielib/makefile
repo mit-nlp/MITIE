@@ -4,6 +4,7 @@ INSTALL_PREFIX=/usr/local
 SRC = src/mitie.cpp
 SRC += src/named_entity_extractor.cpp
 SRC += src/ner_feature_extraction.cpp
+SRC += src/binary_relation_detector.cpp
 SRC += src/stem.c
 SRC += src/stemmer.cpp
 

@@ -127,7 +127,7 @@ namespace mitie
             deserialize(item.df, in);
         }
 
-        const total_word_feature_extractor& get_word_feature_extractor(
+        const total_word_feature_extractor& get_total_word_feature_extractor(
         ) const { return fe; }
 
     private:

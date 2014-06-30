@@ -13,6 +13,7 @@
 #include <dlib/vectorstream.h>
 #include <mitie/named_entity_extractor.h>
 #include <mitie/conll_tokenizer.h>
+#include <mitie/binary_relation_detector.h>
 
 using namespace mitie;
 
@@ -32,11 +33,24 @@ namespace
         MITIE_NOT_A_MITIE_OBJECT = 0,
         MITIE_NAMED_ENTITY_EXTRACTOR = 1234,
         MITIE_NAMED_ENTITY_DETECTIONS,
-        MITIE_RAW_MEMORY
+        MITIE_RAW_MEMORY,
+        MITIE_BINARY_RELATION_DETECTOR,
+        MITIE_BINARY_RELATION
     };
 
+    template <typename T>
+    struct allocatable_types;
+
+    // types that allocate() can create
+    template <> struct allocatable_types<named_entity_extractor>        { const static mitie_object_type type = MITIE_NAMED_ENTITY_EXTRACTOR; };
+    template <> struct allocatable_types<mitie_named_entity_detections> { const static mitie_object_type type = MITIE_NAMED_ENTITY_DETECTIONS; };
+    template <> struct allocatable_types<binary_relation_detector>      { const static mitie_object_type type = MITIE_BINARY_RELATION_DETECTOR; };
+    template <> struct allocatable_types<binary_relation>               { const static mitie_object_type type = MITIE_BINARY_RELATION; };
+
+// ----------------------------------------------------------------------------------------
+
     const int min_alignment = 16;
-    int memory_block_type (void* ptr)
+    int memory_block_type (const void* ptr)
     {
         return *((int*)((char*)ptr-min_alignment));
     }
@@ -54,8 +68,9 @@ namespace
     }
 
     template <typename T>
-    T* allocate(mitie_object_type type)
+    T* allocate()
     {
+        const mitie_object_type type = allocatable_types<T>::type;
         void* temp = malloc(sizeof(T)+min_alignment);
         if (temp == 0)
             throw std::bad_alloc();
@@ -159,12 +174,28 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
+    MITIE_EXPORT char** mitie_tokenize_file (
+        const char* filename
+    )
+    {
+        char* text = mitie_load_entire_file(filename);
+        if (!text)
+            return 0;
+
+        char** tokens = mitie_tokenize(text);
+        mitie_free(text);
+        return tokens;
+    }
+
+// ----------------------------------------------------------------------------------------
+
     struct mitie_named_entity_detections
     {
         std::vector<std::pair<unsigned long, unsigned long> > ranges;
         std::vector<unsigned long> predicted_labels;
         std::vector<std::string> tags;
     };
+
 
     void mitie_free (
         void* object 
@@ -183,6 +214,12 @@ extern "C"
                 break;
             case MITIE_RAW_MEMORY:
                 destroy<char>(object);
+                break;
+            case MITIE_BINARY_RELATION_DETECTOR:
+                destroy<binary_relation_detector>(object);
+                break;
+            case MITIE_BINARY_RELATION:
+                destroy<binary_relation>(object);
                 break;
             default:
                 std::cerr << "ERROR, mitie_free() called on non-MITIE object or called twice." << std::endl;
@@ -204,7 +241,7 @@ extern "C"
         try
         {
             string classname;
-            impl = allocate<named_entity_extractor>(MITIE_NAMED_ENTITY_EXTRACTOR);
+            impl = allocate<named_entity_extractor>();
             dlib::deserialize(filename) >> classname >> *impl;
             return (mitie_named_entity_extractor*)impl;
         }
@@ -259,7 +296,7 @@ extern "C"
 
         try
         {
-            impl = allocate<mitie_named_entity_detections>(MITIE_NAMED_ENTITY_DETECTIONS);
+            impl = allocate<mitie_named_entity_detections>();
 
             std::vector<std::string> words;
             for (unsigned long i = 0; tokens[i]; ++i)
@@ -324,6 +361,162 @@ extern "C"
         assert(idx < mitie_ner_get_num_detections(dets));
         unsigned long tag = dets->predicted_labels[idx];
         return dets->tags[tag].c_str();
+    }
+
+// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+
+    mitie_binary_relation_detector* mitie_load_binary_relation_detector (
+        const char* filename
+    )
+    {
+        assert(filename != NULL);
+
+        binary_relation_detector* impl = 0;
+        try
+        {
+            string classname;
+            impl = allocate<binary_relation_detector>();
+            dlib::deserialize(filename) >> classname >> *impl;
+            return (mitie_binary_relation_detector*)impl;
+        }
+        catch(std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+            mitie_free(impl);
+            return NULL;
+        }
+        catch(...)
+        {
+            mitie_free(impl);
+            return NULL;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    const char* mitie_binary_relation_detector_name_string (
+        const mitie_binary_relation_detector* detector_
+    )
+    {
+        const binary_relation_detector* detector = (const binary_relation_detector*)detector_;
+
+        assert(detector != NULL);
+        return detector->relation_type.c_str();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    int mitie_entities_overlap (
+        unsigned long arg1_start,
+        unsigned long arg1_length,
+        unsigned long arg2_start,
+        unsigned long arg2_length
+    )
+    {
+        // find intersection range
+        const unsigned long left = std::max(arg1_start, arg2_start);
+        const unsigned long right = std::min(arg1_start+arg1_length, arg2_start+arg2_length);
+        // if the range is not empty
+        if (left < right)
+            return 1;
+        else
+            return 0;
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    mitie_binary_relation* mitie_extract_binary_relation (
+        const mitie_named_entity_extractor* ner_,
+        char** tokens,
+        unsigned long arg1_start,
+        unsigned long arg1_length,
+        unsigned long arg2_start,
+        unsigned long arg2_length
+    )
+    {
+        const named_entity_extractor* ner = (const named_entity_extractor*)ner_;
+        assert(ner);
+        assert(arg1_length > 0);
+        assert(arg2_length > 0);
+        assert(mitie_entities_overlap(arg1_start,arg1_length,arg2_start,arg2_length) == 0);
+
+        binary_relation* br = NULL;
+        try
+        {
+            // crop out tokens in a window around the two arguments and store them into a
+            // std::vector.
+            const unsigned long window_size = 5;
+            unsigned long begin = std::min(arg1_start, arg2_start);
+            if (begin > window_size)
+                begin -= window_size;
+            else 
+                begin = 0;
+
+            const unsigned long end = std::max(arg1_start+arg1_length, arg2_start+arg2_length)+window_size;
+
+            std::vector<std::string> words;
+            for (unsigned long i = begin; tokens[i] && i < end; ++i)
+                words.push_back(tokens[i]);
+
+            // adjust the argument indices since we clipped out only part of the tokens
+            arg1_start -= begin;
+            arg2_start -= begin;
+
+            br = allocate<binary_relation>();
+            *br = extract_binary_relation(words, std::make_pair(arg1_start,arg1_start+arg1_length),
+                                                 std::make_pair(arg2_start,arg2_start+arg2_length),
+                                                 ner->get_total_word_feature_extractor());
+            return (mitie_binary_relation*)br;
+        }
+        catch (std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << e.what() << endl;
+#endif
+            mitie_free(br);
+            return NULL;
+        }
+        catch (...)
+        {
+            mitie_free(br);
+            return NULL;
+        }
+    }
+
+    int mitie_classify_binary_relation (
+        const mitie_binary_relation_detector* detector_,
+        const mitie_binary_relation* relation_,
+        double* score
+    )
+    {
+        const binary_relation_detector* detector = (const binary_relation_detector*)detector_;
+        const binary_relation* relation = (const binary_relation*)relation_;
+
+        assert(detector);
+        assert(relation);
+        assert(score);
+
+        try
+        {
+            *score = (*detector)(*relation);
+            return 0;
+        }
+        catch (std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << e.what() << endl;
+#endif
+            return 1;
+        }
+        catch (...)
+        {
+            return 1;
+        }
     }
 
 // ----------------------------------------------------------------------------------------

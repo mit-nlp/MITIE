@@ -26,6 +26,7 @@ if (NOT TARGET mitie)
          src/stemmer.cpp
          src/ner_feature_extraction.cpp
          src/named_entity_extractor.cpp
+         src/binary_relation_detector.cpp
          src/stem.c
          src/mitie.cpp
          )
