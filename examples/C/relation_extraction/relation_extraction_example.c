@@ -74,7 +74,10 @@ int main(int argc, char** argv)
         printf("Unable to load MITIE binary relation detector.");
         goto cleanup; 
     }
+    // Print the type of relations this detector looks for.
     printf("relation type: %s\n", mitie_binary_relation_detector_name_string(relation_detector));
+    // Now let's scan along the entities and ask the relation detector which pairs of
+    // entities are instances of the type of relation we are looking for.  
     for (i = 0; i+1 < num_dets; ++i)
     {
         if (detect_relation(relation_detector, ner, tokens, dets, i, i+1, &score))
