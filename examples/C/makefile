@@ -1,15 +1,11 @@
 
 SRC = ner_example.c
-SRC += ../../mitielib/src/mitie.cpp
-SRC += ../../mitielib/src/named_entity_extractor.cpp
-SRC += ../../mitielib/src/ner_feature_extraction.cpp
-SRC += ../../mitielib/src/binary_relation_detector.cpp
-SRC += ../../mitielib/src/stem.c
-SRC += ../../mitielib/src/stemmer.cpp
+TARGET = ner_example
 
+MITIEDIR = ../../mitielib
 
-CFLAGS = -fPIC -Wall -W -O3 -I../../mitielib/include -I../../dlib
-LDFLAGS = 
+CFLAGS = -fPIC -Wall -W -O3 -I$(MITIEDIR)/include -I../../dlib
+LDFLAGS = $(MITIEDIR)/libmitie.a
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
 	LDFLAGS += -static
@@ -19,17 +15,20 @@ endif
 #endif
 CC = g++
 
-TARGET = ner_example
 
 ####################################################
 
 TMP = $(SRC:.cpp=.o)
 OBJ = $(TMP:.c=.o)
 
-$(TARGET): $(OBJ) 
+$(TARGET): $(OBJ) $(MITIEDIR)
 	@echo Linking $@ with flags: $(LDFLAGS)
 	@$(CC) $(OBJ) -o $@ $(LDFLAGS) 
 	@echo Build Complete
+
+.PHONY: $(MITIEDIR)
+$(MITIEDIR):
+	@$(MAKE) -C $(MITIEDIR)
 
 .cpp.o: $<
 	@echo Compiling $<
@@ -41,6 +40,7 @@ $(TARGET): $(OBJ)
 
 clean:
 	@rm -f $(OBJ) $(TARGET)
+	@$(MAKE) -C $(MITIEDIR) clean
 	@echo All object files and binaries removed
 
 dep: 

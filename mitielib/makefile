@@ -13,7 +13,6 @@ CFLAGS =  -fpic  -Wall -W  -O3   -Iinclude -I../dlib
 LFLAGS = -shared  
 CC = g++
 
-TARGET = libmitie.so
 HEADERS=include/mitie.h
 
 ####################################################
@@ -21,9 +20,16 @@ HEADERS=include/mitie.h
 TMP = $(SRC:.cpp=.o)
 OBJ = $(TMP:.c=.o)
 
-$(TARGET): $(OBJ) 
+
+all: libmitie.so libmitie.a
+
+libmitie.so: $(OBJ) 
 	@echo Linking $@
 	@$(CC) $(OBJ) -o $@ $(LFLAGS) 
+
+libmitie.a: libmitie.so
+	@echo Making $@
+	@ar -rsc $@ $(OBJ)
 	@echo Build Complete
 
 .cpp.o: $<
@@ -34,14 +40,14 @@ $(TARGET): $(OBJ)
 	@echo Compiling $<
 	@gcc -c $(CFLAGS) $< -o $@
 
-install: $(TARGET)
-	@echo copying $(TARGET) to $(INSTALL_PREFIX)/lib
-	@cp $(TARGET) $(INSTALL_PREFIX)/lib/
+install: all 
+	@echo copying libmitie.so and libmitie.a to $(INSTALL_PREFIX)/lib
+	@cp libmitie.so libmitie.a $(INSTALL_PREFIX)/lib/
 	@echo copying $(HEADERS) to $(INSTALL_PREFIX)/include
 	@cp $(HEADERS) $(INSTALL_PREFIX)/include/
 
 clean:
-	@rm -f $(OBJ) $(TARGET)
+	@rm -f $(OBJ) libmitie.so libmitie.a 
 	@echo All object files and binaries removed
 
 dep: 
