@@ -21,7 +21,6 @@ int main(int argc, char** argv)
     unsigned long i = 0;
     char** tokens = 0;
     int return_code = EXIT_FAILURE;
-    double score = 0;
 
     if (argc != 3)
     {
