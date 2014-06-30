@@ -11,7 +11,6 @@
 #include <fstream>
 #include <cstdlib>
 
-#include <dlib/hash.h>
 
 using namespace dlib;
 using namespace std;
