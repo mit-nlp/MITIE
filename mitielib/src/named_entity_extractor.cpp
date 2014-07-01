@@ -21,12 +21,12 @@ namespace mitie
     ) : tag_name_strings(tag_name_strings_), fe(fe_), segmenter(segmenter_), df(df_) 
     { 
         // make sure the requirements are not violated.
-        DLIB_CASSERT(df.number_of_classes() == tag_name_strings.size()+1,"invalid inputs"); 
+        DLIB_CASSERT(df.number_of_classes() >= tag_name_strings.size(),"invalid inputs"); 
         DLIB_CASSERT(segmenter.get_feature_extractor().num_features() == fe.get_num_dimensions(),"invalid inputs"); 
         std::set<unsigned long> df_tags(df.get_labels().begin(), df.get_labels().end());
-        for (unsigned long i = 0; i <= tag_name_strings.size(); ++i)
+        for (unsigned long i = 0; i < tag_name_strings.size(); ++i)
         {
-            DLIB_CASSERT(df_tags.count(i) == 1, "invalid inputs");
+            DLIB_CASSERT(df_tags.count(i) == 1, "The classifier must be capable of predicting each possible tag as output.");
         }
 
         compute_fingerprint();
@@ -44,7 +44,6 @@ namespace mitie
         const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
         segmenter.segment_sequence(sent, chunks);
 
-        const unsigned long NOT_AN_ENTITY = df.number_of_classes()-1;
 
         std::vector<std::pair<unsigned long, unsigned long> > final_chunks;
         final_chunks.reserve(chunks.size());
@@ -54,8 +53,10 @@ namespace mitie
         {
             const unsigned long tag = df(extract_ner_chunk_features(sentence, sent, chunks[j]));
 
-            // if this chunk is predicted to not be an entity then don't output it 
-            if (tag != NOT_AN_ENTITY)
+            // Only output this chunk if it is predicted to be an entity.  Recall that if
+            // the classifier outputs a ID outside the range of our labels then it's
+            // predicting "this isn't an entity at all". 
+            if (tag < tag_name_strings.size())
             {
                 final_chunks.push_back(chunks[j]);
                 chunk_tags.push_back(tag);

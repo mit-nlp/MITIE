@@ -47,9 +47,11 @@ namespace mitie
                 - segmenter.get_feature_extractor().num_features() == fe.get_num_dimensions() 
                 - df must be designed to work with fe (i.e. it must have been trained with
                   features from fe and extract_ner_chunk_features()).
-                - df.number_of_classes() == tag_name_strings.size()+1
-                  (i.e. the classifier needs to predict all the possible tags and also a final "not entity" tag)
-                - for all i where 0 <= i <= tag_name_strings.size():
+                - df.number_of_classes() => tag_name_strings.size()
+                  (i.e. the classifier needs to predict all the possible tags and also
+                  optionally a "not entity" tag which it does by predicting a value >=
+                  tag_name_strings.size())
+                - for all i where 0 <= i < tag_name_strings.size():
                     - df.get_labels() contains an element equal to i.
                       (All we are saying there is that the labels need to be contiguous
                       integers and that the tag_name_strings vector and the decision function
