@@ -14,7 +14,7 @@ MITIE-models:
 test: all examples MITIE-models
 	./ner_stream MITIE-models/ner_model.dat < sample_text.txt > /tmp/test.out
 	diff /tmp/test.out sample_text.reference-output
-	echo Testing completed successfully
+	@echo Testing completed successfully
 
 
 
