@@ -62,8 +62,10 @@ def load_entire_file(filename):
     return res
 
 def tokenize(str):
+    """ Split str into tokens and return them as a list. """
     mitie_tokenize = _f.mitie_tokenize
     mitie_tokenize.restype = ctypes.POINTER(ctypes.c_char_p)
+    mitie_tokenize.argtypes = ctypes.c_char_p,
     tok = mitie_tokenize(str)
     i = 0
     res = []
@@ -71,6 +73,24 @@ def tokenize(str):
         res.append(tok[i])
         i = i + 1
     _f.mitie_free(tok)
+    return res
+
+def tokenize_with_offsets(str):
+    """ Split str into tokens and return them as a list.  Also, each element of the list
+    contains a tuple of the token text and the byte offset which indicates the position of the
+    first character in the token within the input str. """
+    mitie_tokenize = _f.mitie_tokenize_with_offsets
+    mitie_tokenize.restype = ctypes.POINTER(ctypes.c_char_p)
+    mitie_tokenize.argtypes = ctypes.c_char_p, ctypes.POINTER(ctypes.POINTER(ctypes.c_ulong))
+    token_offsets = ctypes.POINTER(ctypes.c_ulong)()
+    tok = mitie_tokenize(str, ctypes.byref(token_offsets))
+    i = 0
+    res = []
+    while(tok[i] != None):
+        res.append((tok[i], token_offsets[i]))
+        i = i + 1
+    _f.mitie_free(tok)
+    _f.mitie_free(token_offsets)
     return res
 
 
@@ -92,7 +112,10 @@ class named_entity_extractor:
         ctokens = (ctypes.c_char_p*(len(tokens)+1))()
         i = 0
         for str in tokens:
-            ctokens[i] = str
+            if (isinstance(str, tuple)):
+                ctokens[i] = str[0]
+            else:
+                ctokens[i] = str
             i = i + 1
         ctokens[i] = None
 
