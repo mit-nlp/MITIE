@@ -27,7 +27,7 @@ namespace mitie
         typedef std::string token_type;
 
         conll_tokenizer (
-        ) : in(0) {}
+        ) : in(0), current_stream_offset(0) {}
         /*!
             ensures
                 - any attempts to get a token will return false.  I.e. this will look like a 
@@ -36,13 +36,24 @@ namespace mitie
 
         conll_tokenizer (
             std::istream& in_
-        ) : in(&in_) { }
+        ) : in(&in_), current_stream_offset(0) { }
         /*!
             ensures
-                - This object will read tokens from the supplied input stream.
+                - This object will read tokens from the supplied input stream.  Note that it holds a
+                  pointer to the input stream so the stream should continue to exist for the lifetime
+                  of this conll_tokenizer.
         !*/
 
         bool operator() (std::string& token)
+        {
+            unsigned long ignored;
+            return (*this)(token, ignored);
+        }
+
+        bool operator() (
+            std::string& token,
+            unsigned long& token_offset
+        )
         /*!
             ensures
                 - reads the next token from the input stream given to this object's constructor
@@ -52,14 +63,16 @@ namespace mitie
                     - returns false
                 - else
                     - #token.size() != 0
+                    - #token_offset == the byte offset for the first character in #token
+                      within the input stream this tokenizer reads from.
                     - returns true
         !*/
         {
-            bool result = get_next_token(token);
+            bool result = get_next_token(token, token_offset);
 
             // Check if token has a UTF-8 ’ character in it and if so then split it into
             // two tokens based on that.
-            for (unsigned long i = 0; i < token.size(); ++i)
+            for (unsigned long i = 1; i < token.size(); ++i)
             {
                 if ((unsigned char)token[i]   == 0xE2 &&
                     i+2 < token.size() && 
@@ -68,6 +81,7 @@ namespace mitie
                 {
                     // Save the second half of the string as the next token and return the
                     // first half.
+                    next_token_offset = token_offset + i;
                     next_token = token.substr(i+2);
                     next_token[0] = '\'';
                     token.resize(i);
@@ -80,14 +94,19 @@ namespace mitie
 
     private:
 
-        bool get_next_token (std::string& token)
+        bool get_next_token (
+            std::string& token,
+            unsigned long& token_offset
+        )
         {
             if (next_token.size() != 0)
             {
                 token.swap(next_token);
                 next_token.clear();
+                token_offset = next_token_offset;
                 return true;
             }
+            token_offset = current_stream_offset;
             token.clear();
             if (!in)
                 return false;
@@ -104,7 +123,7 @@ namespace mitie
                     }
                     else
                     {
-                        token += (char)in->get();
+                        token += get_next_char();
                     }
                 }
                 else if (ch == '[' ||
@@ -121,19 +140,19 @@ namespace mitie
                 {
                     if (token.size() == 0 )
                     {
-                        token += (char)in->get();
+                        token += get_next_char();
                         return true;
                     }
                     else if (ch == '.' && (token.size() == 1 || 
                             (token.size() >= 1 && token[token.size()-1] == '.') ||
                             (token.size() >= 2 && token[token.size()-2] == '.')))
                     {
-                        token += (char)in->get();
+                        token += get_next_char();
                     }
                     // catch stuff like Jr.  or St.
                     else if (ch == '.' && token.size() == 2 && isupper(token[0]) && islower(token[1]))
                     {
-                        in->get(); // but drop the trailing .
+                        get_next_char(); // but drop the trailing .
                         return true;
                     }
                     else
@@ -143,7 +162,7 @@ namespace mitie
                         const char last = token[token.size()-1];
                         if ((ch == ',' || ch == '.') && '0' <= last && last <= '9')
                         {
-                            token += (char)in->get();
+                            token += get_next_char();
                         }
                         else
                         {
@@ -154,13 +173,13 @@ namespace mitie
                 else if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')
                 {
                     // discard whitespace
-                    in->get();
+                    get_next_char();
                     if (token.size() != 0)
                         return true;
                 }
                 else
                 {
-                    token += (char)in->get();
+                    token += get_next_char();
                 }
             }
 
@@ -172,8 +191,24 @@ namespace mitie
             return false;
         }
 
+        inline char get_next_char()
+        {
+            ++current_stream_offset;
+            return (char)in->get();
+        }
+
         std::istream* in;
         std::string next_token;
+        unsigned long current_stream_offset;
+        unsigned long next_token_offset;
+
+        /*!
+            CONVENTION
+                - current_stream_offset == The byte offset for the byte in the stream returned by the next call to in->get()
+                - if (next_token.size() != 0) then
+                    - The next token we should return is stored in next_token
+                    - next_token_offset == the byte offset for next_token
+        !*/
     };
 
 // ----------------------------------------------------------------------------------------
