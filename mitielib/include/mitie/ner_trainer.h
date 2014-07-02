@@ -271,6 +271,73 @@ namespace mitie
     };
 
 // ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+
+    struct ner_eval_metrics
+    {
+        /*!
+            WHAT THIS OBJECT REPRESENTS
+                This is a simple container for the outputs of the
+                evaluate_named_entity_recognizer() routine defined below.
+        !*/
+        struct metrics
+        {
+            std::string label;
+            double precision;
+            double recall;
+        };
+
+        std::vector<metrics> per_label_metrics;
+        double overall_precision;
+        double overall_recall;
+    };
+
+    std::ostream& operator<< (std::ostream& out_, const ner_eval_metrics& item);
+    /*!
+        ensures
+            - print the contents of item to the output stream in a nice format.
+    !*/
+
+    ner_eval_metrics evaluate_named_entity_recognizer (
+        const named_entity_extractor& ner,
+        const std::vector<std::vector<std::string> >& sentences,
+        const std::vector<std::vector<std::pair<unsigned long, unsigned long> > >& chunks,
+        const std::vector<std::vector<std::string> >& text_chunk_labels
+    );
+    /*!
+        requires
+            - sentences.size() == chunks.size() == text_chunk_labels.size()
+            - for all valid i:
+                - chunks[i].size() == text_chunk_labels[i].size()
+        ensures
+            - Computes the precision and recall values for the given ner object relative to
+              the testing data in sentences/chunks/text_chunk_labels.  The precision and
+              recall are computed at the entity level rather than at the token level.
+            - Precision and recall values are always between 0 and 1.
+            - The resulting precision and recall metrics are returned.  Denote the returned
+              object as M, then we will have:
+                - M.per_label_metrics.size() == ner.get_tag_name_strings().size()
+                - for all valid i:
+                    - M.per_label_metrics[i].label == ner.get_tag_name_strings()[i]
+                    - M.per_label_metrics[i].precision == the precision with respect to
+                      entities labeled as M.per_label_metrics[i].label.
+                    - M.per_label_metrics[i].recall == the recall with respect to entities
+                      labeled as M.per_label_metrics[i].label.
+                - M.overall_precision == The overall precision of the ner object in terms
+                  of correctly identifying all labels.
+                - M.overall_recall == The overall recall of the ner object in terms of
+                  correctly identifying all labels.
+            - Interprets chunks[i]/text_chunk_labels[i] as the true named entities 
+              present within sentences[i].  Moreover, text_chunk_labels[i][j] is interpreted
+              as the correct label for the entity at position chunks[i][j] where the entity
+              positions are given by half open ranges that refer to sentences[i].
+        throws
+            - dlib::error is thrown if text_chunk_labels contains a label string that isn't
+              present in ner.get_tag_name_strings().
+    !*/
+
+// ----------------------------------------------------------------------------------------
 
 }
 

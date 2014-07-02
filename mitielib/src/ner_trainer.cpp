@@ -566,6 +566,116 @@ namespace mitie
     }
 
 // ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+
+    ner_eval_metrics evaluate_named_entity_recognizer (
+        const named_entity_extractor& ner,
+        const std::vector<std::vector<std::string> >& sentences,
+        const std::vector<std::vector<std::pair<unsigned long, unsigned long> > >& chunks,
+        const std::vector<std::vector<std::string> >& text_chunk_labels
+    )
+    {
+        // Make sure the requires clause is not broken.
+        DLIB_CASSERT(sentences.size() == chunks.size() && chunks.size() == text_chunk_labels.size(), "Invalid inputs");
+        for (unsigned long i = 0; i < chunks.size(); ++i)
+        {
+            DLIB_CASSERT(chunks[i].size() == text_chunk_labels[i].size(), "Invalid Inputs");
+        }
+
+        const std::vector<std::string> tags = ner.get_tag_name_strings();
+
+        // convert text_chunk_labels into integer labels.
+        std::vector<std::vector<unsigned long> > chunk_labels(text_chunk_labels.size());
+        std::map<std::string,unsigned long> str_to_id;
+        for (unsigned long i = 0; i < tags.size(); ++i)
+            str_to_id[tags[i]]=i;
+        for (unsigned long i = 0; i < chunk_labels.size(); ++i)
+        {
+            chunk_labels[i].resize(text_chunk_labels[i].size());
+            for (unsigned long j = 0; j < chunk_labels[i].size(); ++j)
+            {
+                if (str_to_id.count(text_chunk_labels[i][j]) == 0)
+                    throw dlib::error("NER object does not support the tag "+text_chunk_labels[i][j]+" found in testing dataset.");
+                chunk_labels[i][j] = str_to_id[text_chunk_labels[i][j]];
+            }
+        }
+
+        const unsigned long num_labels = tags.size();
+        std::vector<double> num_targets(num_labels);
+        std::vector<double> num_dets(num_labels);
+        std::vector<double> num_true_dets(num_labels);
+
+        // Now run the ner object over all the sentences and compare it to the truth data.
+        for (unsigned long i = 0; i < sentences.size(); ++i)
+        {
+            std::vector<std::pair<unsigned long, unsigned long> > ranges;
+            std::vector<unsigned long> predicted_labels;
+            ner(sentences[i], ranges, predicted_labels);
+
+            for (unsigned long j = 0; j < ranges.size(); ++j)
+            {
+                const unsigned long predicted_label = predicted_labels[j];
+                const unsigned long true_label = get_label(chunks[i], chunk_labels[i], ranges[j], num_labels);
+
+                num_dets[predicted_label]++;
+                if (predicted_label == true_label)
+                {
+                    num_true_dets[true_label]++;
+                }
+            }
+            for (unsigned long j = 0; j < chunk_labels[i].size(); ++j)
+            {
+                num_targets[chunk_labels[i][j]]++;
+            }
+        }
+
+
+        ner_eval_metrics mets;
+        mets.per_label_metrics.resize(num_targets.size());
+        for (unsigned long i = 0; i < num_targets.size(); ++i)
+        {
+            mets.per_label_metrics[i].precision = num_true_dets[i]/num_dets[i];
+            mets.per_label_metrics[i].recall = num_true_dets[i]/num_targets[i];
+            mets.per_label_metrics[i].label = tags[i];
+        }
+
+        mets.overall_precision = sum(mat(num_true_dets))/sum(mat(num_dets));
+        mets.overall_recall = sum(mat(num_true_dets))/sum(mat(num_targets));
+        return mets;
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    std::ostream& operator<< (std::ostream& out_, const ner_eval_metrics& item)
+    {
+        unsigned long max_tag_length = 5;
+        for (unsigned long i = 0; i < item.per_label_metrics.size(); ++i)
+            max_tag_length = std::max<unsigned long>(max_tag_length, item.per_label_metrics[i].label.size());
+
+        std::ostream out(out_.rdbuf());
+        out.setf(std::ios_base::fixed, std::ios_base::floatfield);
+        for (unsigned long i = 0; i < item.per_label_metrics.size(); ++i)
+        {
+            out << "label: "<< setw(max_tag_length) << item.per_label_metrics[i].label;
+            double prec = item.per_label_metrics[i].precision;
+            double recall = item.per_label_metrics[i].recall;
+            out << " precision: "<<  setprecision(4) << prec << ",";
+            out << " recall: "<<  setprecision(4) <<recall << ",";
+            out << " F1: "<< setprecision(4) << 2*prec*recall/(prec+recall) << endl;
+        }
+
+        out << "all labels: " << string(max_tag_length-5,' ');
+        double prec = item.overall_precision;
+        double recall = item.overall_recall;
+        out << " precision: "<<  setprecision(4) << prec << ",";
+        out << " recall: "<<  setprecision(4) <<recall << ",";
+        out << " F1: "<< setprecision(4) << 2*prec*recall/(prec+recall) << endl;
+
+        return out_;
+    }
+
+// ----------------------------------------------------------------------------------------
 
 }
 
