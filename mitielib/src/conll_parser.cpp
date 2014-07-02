@@ -498,4 +498,37 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
+    void parse_conll_data (
+        const std::string& filename,
+        std::vector<std::vector<std::string> >& sentences,
+        std::vector<std::vector<std::pair<unsigned long, unsigned long> > >& chunks,
+        std::vector<std::vector<std::string> >& chunk_labels
+    )
+    {
+        std::vector<std::vector<unsigned long> > int_chunk_labels;
+        parse_conll_data(filename, sentences, chunks, int_chunk_labels);
+        // now convert the chunk labels
+        chunk_labels.clear();
+        chunk_labels.resize(int_chunk_labels.size());
+        for (unsigned long i = 0; i < int_chunk_labels.size(); ++i)
+        {
+            chunk_labels[i].resize(int_chunk_labels[i].size());
+            for (unsigned long j = 0; j < int_chunk_labels[i].size(); ++j)
+            {
+                if (int_chunk_labels[i][j] == PER)
+                    chunk_labels[i][j] = "PERSON";
+                else if (int_chunk_labels[i][j] == ORG)
+                    chunk_labels[i][j] = "ORGANIZATION";
+                else if (int_chunk_labels[i][j] == LOC)
+                    chunk_labels[i][j] = "LOCATION";
+                else if (int_chunk_labels[i][j] == MISC)
+                    chunk_labels[i][j] = "MISC";
+                else
+                    DLIB_CASSERT(false, "");
+            }
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
 }

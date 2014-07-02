@@ -70,6 +70,19 @@ namespace mitie
                 - #chunk_labels[i][j] is equal to either PER, ORG, LOC, or MISC.
     !*/
 
+    void parse_conll_data (
+        const std::string& filename,
+        std::vector<std::vector<std::string> >& sentences,
+        std::vector<std::vector<std::pair<unsigned long, unsigned long> > >& chunks,
+        std::vector<std::vector<std::string> >& chunk_labels
+    );
+    /*!
+        ensures
+            - This function is identical to the version above except instead of using
+              integer chunk labels (i.e. PER, LOC, ORG, and MISC) it uses strings of
+              "PERSON", "LOCATION", "ORGANIZATION", and "MISC".
+    !*/
+
 // ----------------------------------------------------------------------------------------
 
     std::vector<labeled_sentence> parse_conll_data (
