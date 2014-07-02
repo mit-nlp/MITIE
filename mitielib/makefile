@@ -8,6 +8,15 @@ SRC += src/binary_relation_detector.cpp
 SRC += src/stem.c
 SRC += src/stemmer.cpp
 SRC += src/conll_parser.cpp
+SRC += src/ner_trainer.cpp
+SRC += ../dlib/dlib/threads/multithreaded_object_extension.cpp
+SRC += ../dlib/dlib/threads/threaded_object_extension.cpp
+SRC += ../dlib/dlib/threads/threads_kernel_1.cpp
+SRC += ../dlib/dlib/threads/threads_kernel_2.cpp
+SRC += ../dlib/dlib/threads/threads_kernel_shared.cpp
+SRC += ../dlib/dlib/threads/thread_pool_extension.cpp
+SRC += ../dlib/dlib/misc_api/misc_api_kernel_1.cpp
+SRC += ../dlib/dlib/misc_api/misc_api_kernel_2.cpp
 
 
 CFLAGS =  -fpic  -Wall -W  -O3   -Iinclude -I../dlib 

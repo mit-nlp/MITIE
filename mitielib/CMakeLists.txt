@@ -30,6 +30,7 @@ if (NOT TARGET mitie)
          src/stem.c
          src/mitie.cpp
          src/conll_parser.cpp
+         src/ner_trainer.cpp
          )
 
    add_library(mitie ${source_files})
