@@ -118,7 +118,7 @@ namespace mitie
     ner_trainer::
     ner_trainer (
         const std::string& filename
-    ) : beta(0.5), num_threads(16)
+    ) : beta(0.5), num_threads(4)
     {
         string classname;
         dlib::deserialize(filename) >> classname >> tfe;

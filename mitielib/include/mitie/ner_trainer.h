@@ -122,7 +122,7 @@ namespace mitie
         /*!
             ensures
                 - #get_beta() == 0.5
-                - #num_threads() == 16
+                - #num_threads() == 4
                 - This function attempts to load a mitie::total_word_feature_extractor from the
                   file with the given filename.  This feature extractor is used during the
                   NER training process.  
