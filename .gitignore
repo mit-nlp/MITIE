@@ -23,3 +23,4 @@ examples/C/relation_extraction/relation_extraction_example
 examples/cpp/ner/ner_example
 examples/cpp/relation_extraction/relation_extraction_example
 examples/cpp/train_ner/train_ner_example
+examples/cpp/train_relation_extraction/train_relation_extraction_example
