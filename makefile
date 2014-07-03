@@ -1,6 +1,6 @@
 
 # A list of all the folders that have makefiles in them.  Running make all builds all these things
-SUBDIRS = tools/ner_stream examples/C/ner examples/C/relation_extraction examples/cpp/ner 
+SUBDIRS = tools/ner_stream examples/C/ner examples/C/relation_extraction examples/cpp/ner examples/cpp/train_ner
 
 examples: tools/ner_stream examples/C/ner examples/C/relation_extraction
 	cp examples/C/ner/ner_example .

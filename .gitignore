@@ -22,3 +22,4 @@ examples/C/ner/ner_example
 examples/C/relation_extraction/relation_extraction_example
 examples/cpp/ner/ner_example
 examples/cpp/relation_extraction/relation_extraction_example
+examples/cpp/train_ner/train_ner_example
