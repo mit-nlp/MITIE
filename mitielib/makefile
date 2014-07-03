@@ -5,6 +5,7 @@ SRC = src/mitie.cpp
 SRC += src/named_entity_extractor.cpp
 SRC += src/ner_feature_extraction.cpp
 SRC += src/binary_relation_detector.cpp
+SRC += src/binary_relation_detector_trainer.cpp
 SRC += src/stem.c
 SRC += src/stemmer.cpp
 SRC += src/conll_parser.cpp
