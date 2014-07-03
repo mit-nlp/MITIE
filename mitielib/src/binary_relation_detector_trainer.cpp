@@ -187,10 +187,6 @@ namespace mitie
         {
             samples.push_back(extract_binary_relation(pos_sentences[i], pos_arg1s[i], pos_arg2s[i], tfe).feats);
             labels.push_back(+1);
-
-            // Add the reverse as a negative example since argument ordering matters
-            samples.push_back(extract_binary_relation(pos_sentences[i], pos_arg2s[i], pos_arg1s[i], tfe).feats);
-            labels.push_back(-1);
         }
         for (unsigned long i = 0; i < neg_sentences.size(); ++i)
         {
