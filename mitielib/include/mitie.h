@@ -96,6 +96,29 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
+    MITIE_EXPORT char** mitie_tokenize_with_offsets (
+        const char* text,
+        unsigned long** token_offsets
+    );
+    /*!
+        requires
+            - text == a valid pointer to a NULL terminated C string
+            - token_offsets == a valid pointer to a unsigned long*
+        ensures
+            - This function is identical to calling mitie_tokenize(text) and returning the
+              result but it also outputs the positions of each token within the input text
+              data.  To say this precisely, let TOKENS refer to the returned char**.  Then
+              we will have:
+                - (*token_offsets)[i] == the character offset into text for the first
+                  character in TOKENS[i].  That is, it will be the case that 
+                  text[(*token_offsets)[i]+j]==tokens[i][j] for all valid i and j.
+            - It is the responsibility of the caller to free the returned arrays.  This
+              includes the *token_offsets array and also the returned char**.  You free
+              them by calling mitie_free().
+    !*/
+
+// ----------------------------------------------------------------------------------------
+
     MITIE_EXPORT mitie_named_entity_extractor* mitie_load_named_entity_extractor (
         const char* filename
     );

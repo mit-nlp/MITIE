@@ -131,10 +131,40 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
+    static char** std_vector_to_double_ptr (
+        const std::vector<std::string>& words
+    )
+    {
+        size_t data_size = 0;
+        for (unsigned long i = 0; i < words.size(); ++i)
+            data_size += words[i].size() + 1; // +1 for the NULL terminator
+
+        // account for the size of the char** array.  +1 for the NULL terminator
+        const size_t array_size = sizeof(char*)*(words.size() + 1);
+
+        // now allocate enough space for the result
+        char* buf = (char*)allocate_bytes(array_size + data_size);
+
+        char** array = (char**)buf;
+        char* next = buf+array_size;
+        for (unsigned long i = 0; i < words.size(); ++i)
+        {
+            array[i] = next;
+            strcpy(next, words[i].c_str());
+            next += words[i].size()+1;
+        }
+        array[words.size()] = 0;
+
+        return array;
+    }
+
+// ----------------------------------------------------------------------------------------
+
     char** mitie_tokenize (
         const char* text
     )
     {
+        assert(text);
         try
         {
             // first tokenize the text
@@ -142,33 +172,54 @@ extern "C"
             conll_tokenizer tok(sin);
             std::vector<std::string> words;
             string word;
-            size_t data_size = 0;
             while(tok(word))
-            {
                 words.push_back(word);
-                data_size += word.size() + 1; // +1 for the NULL terminator
-            }
 
-            // account for the size of the char** array.  +1 for the NULL terminator
-            const size_t array_size = sizeof(char*)*(words.size() + 1);
-
-            // now allocate enough space for the result
-            char* buf = (char*)allocate_bytes(array_size + data_size);
-
-            char** array = (char**)buf;
-            char* next = buf+array_size;
-            for (unsigned long i = 0; i < words.size(); ++i)
-            {
-                array[i] = next;
-                strcpy(next, words[i].c_str());
-                next += words[i].size()+1;
-            }
-            array[words.size()] = 0;
-            return array;
+            return std_vector_to_double_ptr(words);
         }
         catch (...)
         {
-            return 0;
+            return NULL;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    char** mitie_tokenize_with_offsets (
+        const char* text,
+        unsigned long** token_offsets
+    )
+    {
+        assert(text);
+        assert(token_offsets);
+        char** tokens = NULL;
+        try
+        {
+            // first tokenize the text
+            istringstream sin(text);
+            conll_tokenizer tok(sin);
+            std::vector<std::string> words;
+            std::vector<unsigned long> offsets;
+            string word;
+            unsigned long offset;
+            while(tok(word,offset))
+            {
+                words.push_back(word);
+                offsets.push_back(offset);
+            }
+
+            tokens = std_vector_to_double_ptr(words);
+
+            (*token_offsets) = (unsigned long*)allocate_bytes(offsets.size()*sizeof(unsigned long));
+            for (unsigned long i = 0; i < offsets.size(); ++i)
+                (*token_offsets)[i] = offsets[i];
+
+            return tokens;
+        }
+        catch (...)
+        {
+            mitie_free(tokens);
+            return NULL;
         }
     }
 
