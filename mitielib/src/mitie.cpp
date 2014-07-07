@@ -114,11 +114,15 @@ extern "C"
         try
         {
             ifstream fin(filename);
+            if (!fin)
+                return 0;
             std::vector<char> buf;
             dlib::vectorstream out(buf);
             out << fin.rdbuf();
 
             char* final_buf = (char*)allocate_bytes(buf.size()+1);
+            if (!final_buf)
+                return 0;
             memcpy(final_buf, &buf[0], buf.size());
             final_buf[buf.size()] = '\0';
             return final_buf;
@@ -293,6 +297,9 @@ extern "C"
         {
             string classname;
             impl = allocate<named_entity_extractor>();
+            dlib::deserialize(filename) >> classname;
+            if (classname != "mitie::named_entity_extractor")
+                throw dlib::error("This file does not contain a mitie::named_entity_extractor. Contained: " + classname);
             dlib::deserialize(filename) >> classname >> *impl;
             return (mitie_named_entity_extractor*)impl;
         }
@@ -430,6 +437,9 @@ extern "C"
         {
             string classname;
             impl = allocate<binary_relation_detector>();
+            dlib::deserialize(filename) >> classname;
+            if (classname != "mitie::binary_relation_detector")
+                throw dlib::error("This file does not contain a mitie::binary_relation_detector. Contained: " + classname);
             dlib::deserialize(filename) >> classname >> *impl;
             return (mitie_binary_relation_detector*)impl;
         }
@@ -566,6 +576,76 @@ extern "C"
         }
         catch (...)
         {
+            return 1;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+//                                      TRAINING ROUTINES
+// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+
+    int mitie_save_named_entity_extractor (
+        const char* filename,
+        const mitie_named_entity_extractor* ner_
+    )
+    {
+        const named_entity_extractor* ner = (named_entity_extractor*)ner_;
+        assert(filename);
+        assert(ner);
+        assert(memory_block_type(ner) == MITIE_NAMED_ENTITY_EXTRACTOR);
+
+        try
+        {
+            dlib::serialize(filename) << "mitie::named_entity_extractor" << *ner;
+            return 0;
+        }
+        catch (std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error saving MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+            return 1;
+        }
+        catch (...)
+        {
+#ifndef NDEBUG
+            cerr << "Error saving MITIE model file: " << filename << endl;
+#endif
+            return 1;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    int mitie_save_binary_relation_detector (
+        const char* filename,
+        const mitie_binary_relation_detector* detector_ 
+    )
+    {
+        const binary_relation_detector* ner = (const binary_relation_detector*)detector_;
+        assert(filename);
+        assert(ner);
+        assert(memory_block_type(ner) == MITIE_BINARY_RELATION_DETECTOR);
+
+        try
+        {
+            dlib::serialize(filename) << "mitie::binary_relation_detector" << *ner;
+            return 0;
+        }
+        catch (std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error saving MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+            return 1;
+        }
+        catch (...)
+        {
+#ifndef NDEBUG
+            cerr << "Error saving MITIE model file: " << filename << endl;
+#endif
             return 1;
         }
     }

@@ -58,6 +58,8 @@ _f.mitie_ner_get_num_detections.argtypes = ctypes.c_void_p,
 _f.mitie_entities_overlap.restype = ctypes.c_int
 _f.mitie_entities_overlap.argtypes = ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong
 
+_f.mitie_save_named_entity_extractor.restype = ctypes.c_int
+_f.mitie_save_named_entity_extractor.argtypes = ctypes.c_char_p, ctypes.c_void_p
 
 def python_to_mitie_str_array(tokens, r = None):
     """Convert from a Python list of strings into MITIE's NULL terminated char** array type.  
@@ -141,6 +143,12 @@ class named_entity_extractor:
         num = _f.mitie_get_num_possible_ner_tags(self.__obj)
         return [_f.mitie_get_named_entity_tagstr(self.__obj, i) for i in xrange(num)]
 
+    def save_to_disk(self, filename):
+        """Save this object to disk.  You recall it from disk with the following Python
+        code: 
+            ner = named_entity_extractor(filename)"""
+        if (_f.mitie_save_named_entity_extractor(filename, self.__obj) != 0):
+            raise Exception("Unable to save named_entity_extractor to the file " + filename);
 
     def extract_entities(self, tokens):
         tags = self.get_possible_ner_tags()
@@ -156,7 +164,7 @@ class named_entity_extractor:
         _f.mitie_free(dets)
         return temp
 
-    def _get_windowed_range(self, tokens, arg1, arg2):
+    def __get_windowed_range(self, tokens, arg1, arg2):
         winsize = 5
         begin = min(min(arg1), min(arg2))
         end   = max(max(arg1), max(arg2))+1
@@ -168,9 +176,17 @@ class named_entity_extractor:
         r = xrange(begin, end)
         return r
 
-
-
     def extract_binary_relation(self, tokens, arg1, arg2):
+        """
+        requires
+            - arg1 and arg2 are range objects and they don't go outside the
+              range xrange(len(tokens)).
+            - arg1 and arg2 do not overlap
+        ensures
+            - returns a processed binary relation that describes the relation
+              given by the two relation argument positions arg1 and arg2.  You
+              can pass the returned object to a binary_relation_detector to see
+              if it is an instance of a known relation type."""
         arg1_start  = min(arg1)
         arg1_length = len(arg1)
         arg2_start  = min(arg2)
@@ -179,7 +195,7 @@ class named_entity_extractor:
             raise Exception("Error, extract_binary_relation() called with overlapping entities: " + arg1 + ", " + arg2)
 
         # we are going to crop out a window of tokens around the entities
-        r = self._get_windowed_range(tokens, arg1, arg2)
+        r = self.__get_windowed_range(tokens, arg1, arg2)
         arg1_start -= min(r)
         arg2_start -= min(r)
         ctokens = python_to_mitie_str_array(tokens, r)
@@ -200,6 +216,9 @@ _f.mitie_binary_relation_detector_name_string.argtypes = ctypes.c_void_p,
 
 _f.mitie_classify_binary_relation.restype = ctypes.c_int
 _f.mitie_classify_binary_relation.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(ctypes.c_double)
+
+_f.mitie_save_binary_relation_detector.restype = ctypes.c_int
+_f.mitie_save_binary_relation_detector.argtypes = ctypes.c_char_p, ctypes.c_void_p
 
 
 class binary_relation:
@@ -224,6 +243,13 @@ class binary_relation_detector:
     def __del__(self):
         self.__mitie_free(self.__obj)
 
+    def save_to_disk(self, filename):
+        """Save this object to disk.  You recall it from disk with the following Python
+        code: 
+            ner = binary_relation_detector(filename)"""
+        if (_f.mitie_save_binary_relation_detector(filename, self.__obj) != 0):
+            raise Exception("Unable to save binary_relation_detector to the file " + filename);
+
     def __str__(self):
         return "binary_relation_detector: " + _f.mitie_binary_relation_detector_name_string(self.__obj)
 
@@ -234,6 +260,10 @@ class binary_relation_detector:
         return _f.mitie_binary_relation_detector_name_string(self.__obj)
     
     def __call__(self, relation):
+        """Classify a relation object.  The input should have been produced by 
+        named_entity_extractor.extract_binary_relation().  This function returns a classification score
+        and if this number is > 0 then the relation detector is indicating that the input relation
+        is a true instance of the type of relation this object detects."""
         score = ctypes.c_double()
         if (_f.mitie_classify_binary_relation(self.__obj, relation.get_obj(), ctypes.byref(score)) != 0):
             raise Exception("Unable to classify binary relation.  The detector is incompatible with the NER object used for extraction.")

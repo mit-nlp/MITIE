@@ -362,6 +362,45 @@ extern "C"
     !*/
 
 // ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+//                                      TRAINING ROUTINES
+// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+
+    MITIE_EXPORT int mitie_save_named_entity_extractor (
+        const char* filename,
+        const mitie_named_entity_extractor* ner
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+            - ner != NULL
+        ensures
+            - Saves the given ner object to disk in a file with the given filename.  Once this function
+              finishes you will be able to read the ner object from disk by calling
+              mitie_load_named_entity_extractor(filename).
+            - returns 0 upon success and a non-zero value on failure.  Failure happens if
+              there is some error that prevents us from writing to the given file.
+    !*/
+
+
+    MITIE_EXPORT int mitie_save_binary_relation_detector (
+        const char* filename,
+        const mitie_binary_relation_detector* detector 
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+            - detector != NULL
+        ensures
+            - Saves the given detector object to disk in a file with the given filename.
+              Once this function finishes you will be able to read the detector object from
+              disk by calling mitie_load_binary_relation_detector(filename).
+            - returns 0 upon success and a non-zero value on failure.  Failure happens if
+              there is some error that prevents us from writing to the given file.
+    !*/
+
+// ----------------------------------------------------------------------------------------
 
 #ifdef __cplusplus
 }
