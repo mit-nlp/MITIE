@@ -123,9 +123,10 @@ class named_entity_extractor:
         # Now extract the entities and return the results
         dets = _f.mitie_extract_entities(self.__obj, ctokens)
         num = _f.mitie_ner_get_num_detections(dets)
-        return ([(xrange(_f.mitie_ner_get_detection_position(dets,i),
+        temp = ([(xrange(_f.mitie_ner_get_detection_position(dets,i),
             _f.mitie_ner_get_detection_position(dets,i)+_f.mitie_ner_get_detection_length(dets,i)),
             tags[_f.mitie_ner_get_detection_tag(dets,i)]
             ) for i in xrange(num)])
         _f.mitie_free(dets)
+        return temp
 
