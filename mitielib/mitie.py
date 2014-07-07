@@ -55,8 +55,37 @@ _f.mitie_ner_get_detection_tag.argtypes = ctypes.c_void_p, ctypes.c_ulong
 _f.mitie_ner_get_num_detections.restype = ctypes.c_ulong
 _f.mitie_ner_get_num_detections.argtypes = ctypes.c_void_p,
 
+_f.mitie_entities_overlap.restype = ctypes.c_int
+_f.mitie_entities_overlap.argtypes = ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong
+
+
+def python_to_mitie_str_array(tokens, r = None):
+    """Convert from a Python list of strings into MITIE's NULL terminated char** array type.  
+    Note that the memory returned by this object is managed by Python and doesn't need to be 
+    freed by the user.
+
+    r should be a range that indicates which part of tokens to convert.  If r is not given
+    then it defaults to xrange(len(tokens)) which selects the entirety of tokens to convert.
+    """
+    if (r == None):
+        r = xrange(len(tokens))
+
+    ctokens = (ctypes.c_char_p*(len(r)+1))()
+    i = 0
+    for j in r:
+        if (isinstance(tokens[j], tuple)):
+            ctokens[i] = tokens[j][0]
+        else:
+            ctokens[i] = tokens[j]
+        i = i + 1
+    ctokens[i] = None
+    return ctokens
+
+
 def load_entire_file(filename):
     x = _f.mitie_load_entire_file(filename)
+    if (x == None):
+        raise Exception("Unable to load file " + filename)
     res = ctypes.string_at(x) 
     _f.mitie_free(x)
     return res
@@ -67,6 +96,8 @@ def tokenize(str):
     mitie_tokenize.restype = ctypes.POINTER(ctypes.c_char_p)
     mitie_tokenize.argtypes = ctypes.c_char_p,
     tok = mitie_tokenize(str)
+    if (tok == None):
+        raise Exception("Unable to tokenize string.")
     i = 0
     res = []
     while(tok[i] != None):
@@ -84,6 +115,8 @@ def tokenize_with_offsets(str):
     mitie_tokenize.argtypes = ctypes.c_char_p, ctypes.POINTER(ctypes.POINTER(ctypes.c_ulong))
     token_offsets = ctypes.POINTER(ctypes.c_ulong)()
     tok = mitie_tokenize(str, ctypes.byref(token_offsets))
+    if (tok == None):
+        raise Exception("Unable to tokenize string.")
     i = 0
     res = []
     while(tok[i] != None):
@@ -98,6 +131,8 @@ class named_entity_extractor:
     def __init__(self, filename):
         self.__obj = _f.mitie_load_named_entity_extractor(filename)
         self.__mitie_free = _f.mitie_free
+        if (self.__obj == None):
+            raise Exception("Unable to load named entity extractor from " + filename)
 
     def __del__(self):
         self.__mitie_free(self.__obj)
@@ -108,20 +143,11 @@ class named_entity_extractor:
 
 
     def extract_entities(self, tokens):
-        # convert the python style token array into one we can pass to the C API
-        ctokens = (ctypes.c_char_p*(len(tokens)+1))()
-        i = 0
-        for str in tokens:
-            if (isinstance(str, tuple)):
-                ctokens[i] = str[0]
-            else:
-                ctokens[i] = str
-            i = i + 1
-        ctokens[i] = None
-
         tags = self.get_possible_ner_tags()
         # Now extract the entities and return the results
-        dets = _f.mitie_extract_entities(self.__obj, ctokens)
+        dets = _f.mitie_extract_entities(self.__obj, python_to_mitie_str_array(tokens))
+        if (dets == None):
+            raise Exception("Unable to create entity detections.")
         num = _f.mitie_ner_get_num_detections(dets)
         temp = ([(xrange(_f.mitie_ner_get_detection_position(dets,i),
             _f.mitie_ner_get_detection_position(dets,i)+_f.mitie_ner_get_detection_length(dets,i)),
@@ -129,4 +155,87 @@ class named_entity_extractor:
             ) for i in xrange(num)])
         _f.mitie_free(dets)
         return temp
+
+    def _get_windowed_range(self, tokens, arg1, arg2):
+        winsize = 5
+        begin = min(min(arg1), min(arg2))
+        end   = max(max(arg1), max(arg2))+1
+        if (begin > winsize):
+            begin -= winsize 
+        else:
+            begin = 0
+        end = min(end+winsize, len(tokens))
+        r = xrange(begin, end)
+        return r
+
+
+
+    def extract_binary_relation(self, tokens, arg1, arg2):
+        arg1_start  = min(arg1)
+        arg1_length = len(arg1)
+        arg2_start  = min(arg2)
+        arg2_length = len(arg2)
+        if (_f.mitie_entities_overlap(arg1_start, arg1_length, arg2_start, arg2_length) == 1):
+            raise Exception("Error, extract_binary_relation() called with overlapping entities: " + arg1 + ", " + arg2)
+
+        # we are going to crop out a window of tokens around the entities
+        r = self._get_windowed_range(tokens, arg1, arg2)
+        arg1_start -= min(r)
+        arg2_start -= min(r)
+        ctokens = python_to_mitie_str_array(tokens, r)
+        rel = _f.mitie_extract_binary_relation(self.__obj, ctokens, arg1_start, arg1_length, arg2_start, arg2_length)
+        if (rel == None):
+            raise Exception("Unable to create binary relation.")
+        return binary_relation(rel)
+
+
+
+####################################################################################################
+
+_f.mitie_load_binary_relation_detector.restype = ctypes.c_void_p
+_f.mitie_load_binary_relation_detector.argtypes = ctypes.c_char_p, 
+
+_f.mitie_binary_relation_detector_name_string.restype = ctypes.c_char_p
+_f.mitie_binary_relation_detector_name_string.argtypes = ctypes.c_void_p, 
+
+_f.mitie_classify_binary_relation.restype = ctypes.c_int
+_f.mitie_classify_binary_relation.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(ctypes.c_double)
+
+
+class binary_relation:
+    def __init__(self, obj):
+        self.__obj =  obj 
+        self.__mitie_free = _f.mitie_free
+
+    def get_obj(self):
+        return self.__obj
+
+    def __del__(self):
+        self.__mitie_free(self.__obj)
+
+
+class binary_relation_detector:
+    def __init__(self, filename):
+        self.__obj = _f.mitie_load_binary_relation_detector(filename)
+        self.__mitie_free = _f.mitie_free
+        if (self.__obj == None):
+            raise Exception("Unable to load binary relation detector from " + filename)
+
+    def __del__(self):
+        self.__mitie_free(self.__obj)
+
+    def __str__(self):
+        return "binary_relation_detector: " + _f.mitie_binary_relation_detector_name_string(self.__obj)
+
+    def __repr__(self):
+        return "<binary_relation_detector: " + _f.mitie_binary_relation_detector_name_string(self.__obj) + ">"
+
+    def get_name_string(self):
+        return _f.mitie_binary_relation_detector_name_string(self.__obj)
+    
+    def __call__(self, relation):
+        score = ctypes.c_double()
+        if (_f.mitie_classify_binary_relation(self.__obj, relation.get_obj(), ctypes.byref(score)) != 0):
+            raise Exception("Unable to classify binary relation.  The detector is incompatible with the NER object used for extraction.")
+        return score.value
 
