@@ -32,6 +32,8 @@ namespace mitie
                   object for Spanish if you are trying to make an English language relation
                   detector).
                 - #get_relation_name() == relation_name
+                - #num_positive_examples() == 0
+                - #num_negative_examples() == 0
         !*/
 
         std::string get_relation_name(
