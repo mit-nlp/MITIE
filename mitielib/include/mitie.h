@@ -401,6 +401,395 @@ extern "C"
     !*/
 
 // ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+
+    typedef struct mitie_ner_trainer mitie_ner_trainer;
+    typedef struct mitie_ner_training_instance mitie_ner_training_instance;
+
+    MITIE_EXPORT mitie_ner_training_instance* mitie_create_ner_training_instance (
+        char** tokens
+    );
+    /*!
+        requires
+            - tokens == An array of NULL terminated C strings.  The end of the array must
+              be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
+              array of tokens).  
+        ensures
+            - Creates and returns a NER training instance object.  You use it by calling
+              mitie_add_ner_training_entity() to annotate which tokens participate in
+              entities and then you pass the training instance to a mitie_ner_trainer
+              object.
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - returns NULL if the object could not be created.
+    !*/
+
+    MITIE_EXPORT unsigned long mitie_ner_training_instance_num_tokens (
+        const mitie_ner_training_instance* instance
+    );
+    /*!
+        requires
+            - instance != NULL
+        ensures
+            - returns the number of tokens in the given training instance.  This is equal
+              to the number of tokens in the tokens array given to
+              mitie_create_ner_training_instance().
+    !*/
+
+    MITIE_EXPORT unsigned long mitie_ner_training_instance_num_entities (
+        const mitie_ner_training_instance* instance
+    );
+    /*!
+        requires
+            - instance != NULL
+        ensures
+            - returns the number of annotated entities in this training instance.
+              Initially the number of entities is 0 but each call to
+              mitie_add_ner_training_entity() increases this count by 1.
+    !*/
+
+    MITIE_EXPORT int mitie_overlaps_any_entity (
+        mitie_ner_training_instance* instance,
+        unsigned long start,
+        unsigned long length
+    );
+    /*!
+        requires
+            - instance != NULL
+            - length > 0
+            - start+length <= mitie_ner_training_instance_num_tokens(instance)
+        ensures
+            - This function checks if any of the entity annotations in the given instance
+              overlap with the entity starting at token start and consisting of length
+              number of tokens.
+            - returns 1 if any entities overlap and 0 otherwise.
+    !*/
+
+    MITIE_EXPORT int mitie_add_ner_training_entity (
+        mitie_ner_training_instance* instance,
+        unsigned long start,
+        unsigned long length,
+        const char* label
+    );
+    /*!
+        requires
+            - instance != NULL
+            - length > 0
+            - start+length <= mitie_ner_training_instance_num_tokens(instance)
+            - label == a valid pointer to a NULL terminated C string
+            - mitie_overlaps_any_entity(instance, start, length) == 0
+        ensures
+            - Annotates the entity of length tokens at the given starting token with the 
+              given NER label.  
+            - mitie_ner_training_instance_num_entities(instance) is increased by 1.
+            - returns 0 on success and a non-zero value on failure.  Failure might be 
+              caused by running out of memory.
+    !*/
+
+    MITIE_EXPORT mitie_ner_trainer* mitie_create_ner_trainer (
+        const char* filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Creates a NER trainer object and returns a pointer to it.  
+            - filename should contain the name of a saved total_word_feature_extractor, as
+              created by the wordrep tool's -e option (see the MITIE/tools/wordrep folder).
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - returns NULL if the object could not be created. 
+            - calling mitie_ner_trainer_get_beta() on the returned pointer returns 0.5.
+              That is, the default beta value is 0.5.
+            - calling mitie_ner_trainer_get_num_threads() on the returned pointer returns
+              4.  That is, the default number of threads to use is 4.
+            - calling mitie_ner_trainer_size() on the returned pointer returns 0.
+              That is, initially there are no training instances in the trainer.
+    !*/
+
+    MITIE_EXPORT unsigned long mitie_ner_trainer_size (
+        const mitie_ner_trainer* trainer
+    );
+    /*!
+        requires
+            - trainer != NULL
+        ensures
+            - returns the number of training instances in the given trainer object.
+    !*/
+
+    MITIE_EXPORT int mitie_add_ner_training_instance(
+        mitie_ner_trainer* trainer,
+        const mitie_ner_training_instance* instance
+    );
+    /*!
+        requires
+            - trainer != NULL
+            - instance != NULL
+        ensures
+            - Adds the given training instance to the trainer object.
+            - mitie_ner_trainer_size(trainer) is incremented by 1.
+            - returns 0 on success and a non-zero value on failure.  Failure might be 
+              caused by running out of memory.
+    !*/
+
+    MITIE_EXPORT void mitie_ner_trainer_set_beta (
+        mitie_ner_trainer* trainer,
+        double beta
+    );
+    /*!
+        requires
+            - trainer != NULL
+            - beta >= 0
+        ensures
+            - mitie_ner_trainer_get_beta(trainer) == beta 
+    !*/
+
+    MITIE_EXPORT double mitie_ner_trainer_get_beta (
+        const mitie_ner_trainer* trainer
+    );
+    /*!
+        requires
+            - trainer != NULL
+        ensures
+            - returns the trainer's beta parameter.  This parameter controls the trade-off
+              between trying to avoid false alarms but also detecting everything.
+              Different values of beta have the following interpretations:
+                - beta < 1 indicates that you care more about avoiding false alarms than
+                  missing detections.  The smaller you make beta the more the trainer will
+                  try to avoid false alarms.
+                - beta == 1 indicates that you don't have a preference between avoiding
+                  false alarms or not missing detections.  That is, you care about these
+                  two things equally.
+                - beta > 1 indicates that care more about not missing detections than
+                  avoiding false alarms.
+    !*/
+
+    MITIE_EXPORT void mitie_ner_trainer_set_num_threads (
+        mitie_ner_trainer* trainer,
+        unsigned long num_threads 
+    );
+    /*!
+        requires
+            - trainer != NULL
+        ensures
+            - mitie_ner_trainer_get_num_threads(trainer) == num_threads
+    !*/
+
+    MITIE_EXPORT unsigned long mitie_ner_trainer_get_num_threads (
+        const mitie_ner_trainer* trainer
+    );
+    /*!
+        requires
+            - trainer != NULL
+        ensures
+            - returns the number of threads the trainer will use when
+              mitie_train_named_entity_extractor() is called.  You should set this equal to
+              the number of available CPU cores for maximum training speed.
+    !*/
+
+    MITIE_EXPORT mitie_named_entity_extractor* mitie_train_named_entity_extractor (
+        const mitie_ner_trainer* trainer
+    );
+    /*!
+        requires
+            - trainer != NULL
+            - mitie_ner_trainer_size(trainer) > 0
+        ensures
+            - Runs the NER training process based on the training data in the given
+              trainer.  Once finished, it returns the resulting named entity extractor
+              object.
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - returns NULL if the object could not be created.
+    !*/
+    
+// ----------------------------------------------------------------------------------------
+
+    typedef struct mitie_binary_relation_trainer mitie_binary_relation_trainer;
+
+    MITIE_EXPORT mitie_binary_relation_trainer* mitie_create_binary_relation_trainer (
+        const char* relation_name,
+        const mitie_named_entity_extractor* ner
+    );
+    /*!
+        requires
+            - relation_name == a valid NULL terminated C string
+            - ner != NULL
+        ensures
+            - Creates a binary relation trainer object and returns a pointer to it.  
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - returns NULL if the object could not be created.
+            - calling mitie_binary_relation_trainer_get_beta() on the returned pointer
+              returns 0.1.  That is, the default beta value is 0.1.
+            - calling mitie_binary_relation_trainer_get_num_threads() on the returned
+              pointer returns 4.  That is, the default number of threads to use is 4.
+            - calling mitie_binary_relation_trainer_num_positive_examples() on the returned
+              pointer returns 0.  That is, initially the trainer has no positive training
+              instances in it. 
+            - calling mitie_binary_relation_trainer_num_negative_examples() on the returned
+              pointer returns 0.  That is, initially the trainer has no negative training
+              instances in it. 
+    !*/
+
+    MITIE_EXPORT unsigned long mitie_binary_relation_trainer_num_positive_examples (
+        const mitie_binary_relation_trainer* trainer
+    );
+    /*!
+        requires
+            - trainer != NULL
+        ensures
+            - returns the number of positive training instances in the given trainer object.
+    !*/
+
+    MITIE_EXPORT unsigned long mitie_binary_relation_trainer_num_negative_examples (
+        const mitie_binary_relation_trainer* trainer
+    );
+    /*!
+        requires
+            - trainer != NULL
+        ensures
+            - returns the number of negative training instances in the given trainer object.
+    !*/
+
+    MITIE_EXPORT int mitie_add_positive_binary_relation (
+        mitie_binary_relation_trainer* trainer,
+        char** tokens,
+        unsigned long arg1_start,
+        unsigned long arg1_length,
+        unsigned long arg2_start,
+        unsigned long arg2_length
+    );
+    /*!
+        requires
+            - trainer != NULL
+            - tokens == An array of NULL terminated C strings.  The end of the array must
+              be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
+              array of tokens).  
+            - arg1_length > 0
+            - arg2_length > 0
+            - The arg indices reference valid elements of the tokens array.  That is,
+              the following expressions evaluate to valid C-strings:
+                - tokens[arg1_start]
+                - tokens[arg1_start+arg1_length-1]
+                - tokens[arg2_start]
+                - tokens[arg2_start+arg1_length-1]
+            - mitie_entities_overlap(arg1_start,arg1_length,arg2_start,arg2_length) == 0
+        ensures
+            - This function adds a positive training instance into the trainer.  That is,
+              this function tells the trainer that the given tokens contain an example of
+              the binary relation we are trying to learn.  Moreover, the first argument of
+              the relation is located at tokens[arg1_start] and is arg1_length tokens long.
+              Similarly, the second argument of the relation is located at
+              tokens[arg2_start] and is arg2_length tokens long.
+            - mitie_binary_relation_trainer_num_positive_examples(trainer) is incremented by 1.
+            - returns 0 on success and a non-zero value on failure.  Failure might
+              happen if we run out of memory.
+    !*/
+
+    MITIE_EXPORT int mitie_add_negative_binary_relation (
+        mitie_binary_relation_trainer* trainer,
+        char** tokens,
+        unsigned long arg1_start,
+        unsigned long arg1_length,
+        unsigned long arg2_start,
+        unsigned long arg2_length
+    );
+    /*!
+        requires
+            - trainer != NULL
+            - tokens == An array of NULL terminated C strings.  The end of the array must
+              be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
+              array of tokens).  
+            - arg1_length > 0
+            - arg2_length > 0
+            - The arg indices reference valid elements of the tokens array.  That is,
+              the following expressions evaluate to valid C-strings:
+                - tokens[arg1_start]
+                - tokens[arg1_start+arg1_length-1]
+                - tokens[arg2_start]
+                - tokens[arg2_start+arg1_length-1]
+            - mitie_entities_overlap(arg1_start,arg1_length,arg2_start,arg2_length) == 0
+        ensures
+            - This function adds a negative training instance into the trainer.  That is,
+              this function tells the trainer that the given tokens and argument
+              combination is not a binary relation we are trying to learn.  The argument
+              indices have the same interpretation as they do for
+              mitie_add_positive_binary_relation(). 
+            - mitie_binary_relation_trainer_num_negative_examples(trainer) is incremented by 1.
+            - returns 0 on success and a non-zero value on failure.  Failure might
+              happen if we run out of memory.
+    !*/
+
+    MITIE_EXPORT void mitie_binary_relation_trainer_set_beta (
+        mitie_binary_relation_trainer* trainer,
+        double beta
+    );
+    /*!
+        requires
+            - trainer != NULL
+            - beta >= 0
+        ensures
+            - mitie_binary_relation_trainer_get_beta(trainer) == beta 
+    !*/
+
+    MITIE_EXPORT double mitie_binary_relation_trainer_get_beta (
+        const mitie_binary_relation_trainer* trainer
+    );
+    /*!
+        requires
+            - trainer != NULL
+        ensures
+            - returns the trainer's beta parameter.  This parameter controls the trade-off
+              between trying to avoid false alarms but also detecting everything.
+              Different values of beta have the following interpretations:
+                - beta < 1 indicates that you care more about avoiding false alarms than
+                  missing detections.  The smaller you make beta the more the trainer will
+                  try to avoid false alarms.
+                - beta == 1 indicates that you don't have a preference between avoiding
+                  false alarms or not missing detections.  That is, you care about these
+                  two things equally.
+                - beta > 1 indicates that care more about not missing detections than
+                  avoiding false alarms.
+    !*/
+
+    MITIE_EXPORT void mitie_binary_relation_trainer_set_num_threads (
+        mitie_binary_relation_trainer* trainer,
+        unsigned long num_threads 
+    );
+    /*!
+        requires
+            - trainer != NULL
+        ensures
+            - mitie_binary_relation_trainer_get_num_threads(trainer) == num_threads
+    !*/
+
+    MITIE_EXPORT unsigned long mitie_binary_relation_trainer_get_num_threads (
+        const mitie_binary_relation_trainer* trainer
+    );
+    /*!
+        requires
+            - trainer != NULL
+        ensures
+            - returns the number of threads the trainer will use when
+              mitie_train_binary_relation_detector() is called.  You should set this equal
+              to the number of available CPU cores for maximum training speed.
+    !*/
+
+    MITIE_EXPORT mitie_binary_relation_detector* mitie_train_binary_relation_detector (
+        const mitie_binary_relation_trainer* trainer
+    );
+    /*!
+        requires
+            - trainer != NULL
+            - mitie_binary_relation_trainer_num_positive_examples(trainer) > 0
+            - mitie_binary_relation_trainer_num_negative_examples(trainer) > 0
+        ensures
+            - Runs the binary relation training process based on the training data in the
+              given trainer.  Once finished, it returns the resulting binary relation
+              detector object.
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - returns NULL if the object could not be created.
+    !*/
+
+// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
 
 #ifdef __cplusplus
 }

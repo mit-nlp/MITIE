@@ -14,6 +14,8 @@
 #include <mitie/named_entity_extractor.h>
 #include <mitie/conll_tokenizer.h>
 #include <mitie/binary_relation_detector.h>
+#include <mitie/ner_trainer.h>
+#include <mitie/binary_relation_detector_trainer.h>
 
 using namespace mitie;
 
@@ -35,7 +37,10 @@ namespace
         MITIE_NAMED_ENTITY_DETECTIONS,
         MITIE_RAW_MEMORY,
         MITIE_BINARY_RELATION_DETECTOR,
-        MITIE_BINARY_RELATION
+        MITIE_BINARY_RELATION,
+        MITIE_BINARY_RELATION_TRAINER,
+        MITIE_NER_TRAINING_INSTANCE,
+        MITIE_NER_TRAINER
     };
 
     template <typename T>
@@ -45,7 +50,10 @@ namespace
     template <> struct allocatable_types<named_entity_extractor>        { const static mitie_object_type type = MITIE_NAMED_ENTITY_EXTRACTOR; };
     template <> struct allocatable_types<mitie_named_entity_detections> { const static mitie_object_type type = MITIE_NAMED_ENTITY_DETECTIONS; };
     template <> struct allocatable_types<binary_relation_detector>      { const static mitie_object_type type = MITIE_BINARY_RELATION_DETECTOR; };
+    template <> struct allocatable_types<binary_relation_detector_trainer>{ const static mitie_object_type type = MITIE_BINARY_RELATION_TRAINER; };
     template <> struct allocatable_types<binary_relation>               { const static mitie_object_type type = MITIE_BINARY_RELATION; };
+    template <> struct allocatable_types<ner_training_instance>         { const static mitie_object_type type = MITIE_NER_TRAINING_INSTANCE; };
+    template <> struct allocatable_types<ner_trainer>                   { const static mitie_object_type type = MITIE_NER_TRAINER; };
 
 // ----------------------------------------------------------------------------------------
 
@@ -54,6 +62,24 @@ namespace
     {
         return *((int*)((char*)ptr-min_alignment));
     }
+
+    template <typename T>
+    T& checked_cast(void* ptr) 
+    {
+        assert(ptr);
+        assert(memory_block_type(ptr) == allocatable_types<T>::type);
+        return *static_cast<T*>(ptr);
+    }
+
+    template <typename T>
+    const T& checked_cast(const void* ptr) 
+    {
+        assert(ptr);
+        assert(memory_block_type(ptr) == allocatable_types<T>::type);
+        return *static_cast<const T*>(ptr);
+    }
+
+// ----------------------------------------------------------------------------------------
 
     template <typename T>
     void destroy(void* object)
@@ -80,6 +106,54 @@ namespace
         try
         {
             return new((char*)temp+min_alignment) T();
+        }
+        catch (...)
+        {
+            free(temp);
+            throw std::bad_alloc();
+        }
+    }
+
+    template <typename T, typename A1>
+    T* allocate(const A1& arg1)
+    /*!
+        This function is just like allocate() except it passes arg1 to T's constructor.
+    !*/
+    {
+        const mitie_object_type type = allocatable_types<T>::type;
+        void* temp = malloc(sizeof(T)+min_alignment);
+        if (temp == 0)
+            throw std::bad_alloc();
+
+        *((int*)temp) = type;
+
+        try
+        {
+            return new((char*)temp+min_alignment) T(arg1);
+        }
+        catch (...)
+        {
+            free(temp);
+            throw std::bad_alloc();
+        }
+    }
+
+    template <typename T, typename A1, typename A2>
+    T* allocate(const A1& arg1, const A2& arg2)
+    /*!
+        This function is just like allocate() except it passes arg1 and arg2 to T's constructor.
+    !*/
+    {
+        const mitie_object_type type = allocatable_types<T>::type;
+        void* temp = malloc(sizeof(T)+min_alignment);
+        if (temp == 0)
+            throw std::bad_alloc();
+
+        *((int*)temp) = type;
+
+        try
+        {
+            return new((char*)temp+min_alignment) T(arg1,arg2);
         }
         catch (...)
         {
@@ -229,7 +303,7 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
-    MITIE_EXPORT char** mitie_tokenize_file (
+    char** mitie_tokenize_file (
         const char* filename
     )
     {
@@ -276,10 +350,20 @@ extern "C"
             case MITIE_BINARY_RELATION:
                 destroy<binary_relation>(object);
                 break;
+            case MITIE_BINARY_RELATION_TRAINER:
+                destroy<binary_relation_detector_trainer>(object);
+                break;
+            case MITIE_NER_TRAINING_INSTANCE:
+                destroy<ner_training_instance>(object);
+                break;
+            case MITIE_NER_TRAINER:
+                destroy<ner_trainer>(object);
+                break;
             default:
                 std::cerr << "ERROR, mitie_free() called on non-MITIE object or called twice." << std::endl;
                 assert(false);
                 abort();
+
         }
 
     }
@@ -322,9 +406,7 @@ extern "C"
         const mitie_named_entity_extractor* ner_
     )
     {
-        const named_entity_extractor* ner = (named_entity_extractor*)ner_;
-        assert(ner != NULL);
-        return ner->get_tag_name_strings().size();
+        return checked_cast<named_entity_extractor>(ner_).get_tag_name_strings().size();
     }
 
     const char* mitie_get_named_entity_tagstr (
@@ -332,10 +414,8 @@ extern "C"
         unsigned long idx
     )
     {
-        const named_entity_extractor* ner = (named_entity_extractor*)ner_;
-        assert(ner != NULL);
         assert(idx < mitie_get_num_possible_ner_tags(ner_));
-        return ner->get_tag_name_strings()[idx].c_str();
+        return checked_cast<named_entity_extractor>(ner_).get_tag_name_strings()[idx].c_str();
     }
 
 // ----------------------------------------------------------------------------------------
@@ -345,9 +425,8 @@ extern "C"
         char** tokens 
     )
     {
-        const named_entity_extractor* ner = (named_entity_extractor*)ner_;
+        const named_entity_extractor& ner = checked_cast<named_entity_extractor>(ner_);
 
-        assert(ner != NULL);
         assert(tokens != NULL);
 
         mitie_named_entity_detections* impl = 0;
@@ -360,8 +439,8 @@ extern "C"
             for (unsigned long i = 0; tokens[i]; ++i)
                 words.push_back(tokens[i]);
 
-            (*ner)(words, impl->ranges, impl->predicted_labels);
-            impl->tags = ner->get_tag_name_strings();
+            ner(words, impl->ranges, impl->predicted_labels);
+            impl->tags = ner.get_tag_name_strings();
             return impl;
         }
         catch(...)
@@ -464,10 +543,7 @@ extern "C"
         const mitie_binary_relation_detector* detector_
     )
     {
-        const binary_relation_detector* detector = (const binary_relation_detector*)detector_;
-
-        assert(detector != NULL);
-        return detector->relation_type.c_str();
+        return checked_cast<binary_relation_detector>(detector_).relation_type.c_str();
     }
 
 // ----------------------------------------------------------------------------------------
@@ -500,8 +576,7 @@ extern "C"
         unsigned long arg2_length
     )
     {
-        const named_entity_extractor* ner = (const named_entity_extractor*)ner_;
-        assert(ner);
+        const named_entity_extractor& ner = checked_cast<named_entity_extractor>(ner_);
         assert(arg1_length > 0);
         assert(arg2_length > 0);
         assert(mitie_entities_overlap(arg1_start,arg1_length,arg2_start,arg2_length) == 0);
@@ -531,7 +606,7 @@ extern "C"
             br = allocate<binary_relation>();
             *br = extract_binary_relation(words, std::make_pair(arg1_start,arg1_start+arg1_length),
                                                  std::make_pair(arg2_start,arg2_start+arg2_length),
-                                                 ner->get_total_word_feature_extractor());
+                                                 ner.get_total_word_feature_extractor());
             return (mitie_binary_relation*)br;
         }
         catch (std::exception& e)
@@ -555,16 +630,14 @@ extern "C"
         double* score
     )
     {
-        const binary_relation_detector* detector = (const binary_relation_detector*)detector_;
-        const binary_relation* relation = (const binary_relation*)relation_;
+        const binary_relation_detector& detector = checked_cast<binary_relation_detector>(detector_);
+        const binary_relation& relation = checked_cast<binary_relation>(relation_);
 
-        assert(detector);
-        assert(relation);
         assert(score);
 
         try
         {
-            *score = (*detector)(*relation);
+            *score = detector(relation);
             return 0;
         }
         catch (std::exception& e)
@@ -591,14 +664,12 @@ extern "C"
         const mitie_named_entity_extractor* ner_
     )
     {
-        const named_entity_extractor* ner = (named_entity_extractor*)ner_;
+        const named_entity_extractor& ner = checked_cast<named_entity_extractor>(ner_);
         assert(filename);
-        assert(ner);
-        assert(memory_block_type(ner) == MITIE_NAMED_ENTITY_EXTRACTOR);
 
         try
         {
-            dlib::serialize(filename) << "mitie::named_entity_extractor" << *ner;
+            dlib::serialize(filename) << "mitie::named_entity_extractor" << ner;
             return 0;
         }
         catch (std::exception& e)
@@ -624,14 +695,12 @@ extern "C"
         const mitie_binary_relation_detector* detector_ 
     )
     {
-        const binary_relation_detector* ner = (const binary_relation_detector*)detector_;
+        const binary_relation_detector& detector = checked_cast<binary_relation_detector>(detector_);
         assert(filename);
-        assert(ner);
-        assert(memory_block_type(ner) == MITIE_BINARY_RELATION_DETECTOR);
 
         try
         {
-            dlib::serialize(filename) << "mitie::binary_relation_detector" << *ner;
+            dlib::serialize(filename) << "mitie::binary_relation_detector" << detector;
             return 0;
         }
         catch (std::exception& e)
@@ -647,6 +716,350 @@ extern "C"
             cerr << "Error saving MITIE model file: " << filename << endl;
 #endif
             return 1;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------
+
+    mitie_ner_training_instance* mitie_create_ner_training_instance (
+        char** tokens
+    )
+    {
+        assert(tokens != NULL);
+
+        try
+        {
+            std::vector<std::string> words;
+            for (unsigned long i = 0; tokens[i]; ++i)
+                words.push_back(tokens[i]);
+
+            return (mitie_ner_training_instance*)allocate<ner_training_instance>(words);
+        }
+        catch(...)
+        {
+            return NULL;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_ner_training_instance_num_tokens (
+        const mitie_ner_training_instance* instance_
+    )
+    {
+        return checked_cast<ner_training_instance>(instance_).num_tokens();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_ner_training_instance_num_entities (
+        const mitie_ner_training_instance* instance_
+    )
+    {
+        return checked_cast<ner_training_instance>(instance_).num_entities();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    int mitie_overlaps_any_entity (
+        mitie_ner_training_instance* instance_,
+        unsigned long start,
+        unsigned long length
+    )
+    {
+        const ner_training_instance& instance = checked_cast<ner_training_instance>(instance_);
+        assert(length > 0);
+        assert(start+length <= mitie_ner_training_instance_num_tokens(instance_));
+        if (instance.overlaps_any_entity(start, length))
+            return 1;
+        else
+            return 0;
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    int mitie_add_ner_training_entity (
+        mitie_ner_training_instance* instance_,
+        unsigned long start,
+        unsigned long length,
+        const char* label
+    )
+    {
+        ner_training_instance& instance = checked_cast<ner_training_instance>(instance_);
+        assert(label);
+        assert(length > 0);
+        assert(start+length <= mitie_ner_training_instance_num_tokens(instance_));
+        assert(mitie_overlaps_any_entity(instance_, start, length) == 0);
+
+        try
+        {
+            instance.add_entity(start, length, label);
+            return 0;
+        }
+        catch(...)
+        {
+            return 1;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    mitie_ner_trainer* mitie_create_ner_trainer (
+        const char* filename
+    )
+    {
+        assert(filename != NULL);
+
+        try
+        {
+            return (mitie_ner_trainer*)allocate<ner_trainer>(filename);
+        }
+        catch(...)
+        {
+            return NULL;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_ner_trainer_size (
+        const mitie_ner_trainer* trainer_
+    )
+    {
+        return checked_cast<ner_trainer>(trainer_).size();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    int mitie_add_ner_training_instance(
+        mitie_ner_trainer* trainer_,
+        const mitie_ner_training_instance* instance_
+    )
+    {
+        ner_trainer& trainer = checked_cast<ner_trainer>(trainer_);
+        const ner_training_instance& instance = checked_cast<ner_training_instance>(instance_);
+        try
+        {
+            trainer.add(instance);
+            return 0;
+        }
+        catch (...)
+        {
+            return 1;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    void mitie_ner_trainer_set_beta (
+        mitie_ner_trainer* trainer_,
+        double beta
+    )
+    {
+        assert(beta >= 0);
+        checked_cast<ner_trainer>(trainer_).set_beta(beta);
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    double mitie_ner_trainer_get_beta (
+        const mitie_ner_trainer* trainer_
+    )
+    {
+        return checked_cast<ner_trainer>(trainer_).get_beta();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    void mitie_ner_trainer_set_num_threads (
+        mitie_ner_trainer* trainer_,
+        unsigned long num_threads 
+    )
+    {
+        checked_cast<ner_trainer>(trainer_).set_num_threads(num_threads);
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_ner_trainer_get_num_threads (
+        const mitie_ner_trainer* trainer_
+    )
+    {
+        return checked_cast<ner_trainer>(trainer_).get_num_threads();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    mitie_named_entity_extractor* mitie_train_named_entity_extractor (
+        const mitie_ner_trainer* trainer_
+    )
+    {
+        const ner_trainer& trainer = checked_cast<ner_trainer>(trainer_);
+        assert(mitie_ner_trainer_size(trainer_) > 0);
+        try
+        {
+            return (mitie_named_entity_extractor*)allocate<named_entity_extractor>(trainer.train());
+        }
+        catch(...)
+        {
+            return 0;
+        }
+    }
+    
+// ----------------------------------------------------------------------------------------
+
+    mitie_binary_relation_trainer* mitie_create_binary_relation_trainer (
+        const char* relation_name,
+        const mitie_named_entity_extractor* ner_
+    )
+    {
+        const named_entity_extractor& ner = checked_cast<named_entity_extractor>(ner_);
+        assert(relation_name);
+
+        try
+        {
+            return (mitie_binary_relation_trainer*)allocate<binary_relation_detector_trainer>(relation_name,ner);
+        }
+        catch(...)
+        {
+            return NULL;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_binary_relation_trainer_num_positive_examples (
+        const mitie_binary_relation_trainer* trainer_
+    )
+    {
+        return checked_cast<binary_relation_detector_trainer>(trainer_).num_positive_examples();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_binary_relation_trainer_num_negative_examples (
+        const mitie_binary_relation_trainer* trainer_
+    )
+    {
+        return checked_cast<binary_relation_detector_trainer>(trainer_).num_negative_examples();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    int mitie_add_positive_binary_relation (
+        mitie_binary_relation_trainer* trainer_,
+        char** tokens,
+        unsigned long arg1_start,
+        unsigned long arg1_length,
+        unsigned long arg2_start,
+        unsigned long arg2_length
+    )
+    {
+        binary_relation_detector_trainer& trainer =  checked_cast<binary_relation_detector_trainer>(trainer_);
+        assert(tokens);
+        assert(arg1_length > 0);
+        assert(arg2_length > 0);
+        assert(mitie_entities_overlap(arg1_start,arg1_length,arg2_start,arg2_length) == 0);
+        try
+        {
+            std::vector<std::string> words;
+            while(*tokens)
+                words.push_back(*tokens++);
+            trainer.add_positive_binary_relation(words, arg1_start, arg1_length, arg2_start, arg2_length);
+            return 0;
+        }
+        catch(...)
+        {
+            return 1;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    int mitie_add_negative_binary_relation (
+        mitie_binary_relation_trainer* trainer_,
+        char** tokens,
+        unsigned long arg1_start,
+        unsigned long arg1_length,
+        unsigned long arg2_start,
+        unsigned long arg2_length
+    )
+    {
+        binary_relation_detector_trainer& trainer =  checked_cast<binary_relation_detector_trainer>(trainer_);
+        assert(tokens);
+        assert(arg1_length > 0);
+        assert(arg2_length > 0);
+        assert(mitie_entities_overlap(arg1_start,arg1_length,arg2_start,arg2_length) == 0);
+        try
+        {
+            std::vector<std::string> words;
+            while(*tokens)
+                words.push_back(*tokens++);
+            trainer.add_negative_binary_relation(words, arg1_start, arg1_length, arg2_start, arg2_length);
+            return 0;
+        }
+        catch(...)
+        {
+            return 1;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    void mitie_binary_relation_trainer_set_beta (
+        mitie_binary_relation_trainer* trainer_,
+        double beta
+    )
+    {
+        assert(beta >= 0);
+        checked_cast<binary_relation_detector_trainer>(trainer_).set_beta(beta);
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    double mitie_binary_relation_trainer_get_beta (
+        const mitie_binary_relation_trainer* trainer_
+    )
+    {
+        return checked_cast<binary_relation_detector_trainer>(trainer_).get_beta();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    void mitie_binary_relation_trainer_set_num_threads (
+        mitie_binary_relation_trainer* trainer_,
+        unsigned long num_threads 
+    )
+    {
+        checked_cast<binary_relation_detector_trainer>(trainer_).set_num_threads(num_threads);
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_binary_relation_trainer_get_num_threads (
+        const mitie_binary_relation_trainer* trainer_
+    )
+    {
+        return checked_cast<binary_relation_detector_trainer>(trainer_).get_num_threads();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    mitie_binary_relation_detector* mitie_train_binary_relation_detector (
+        const mitie_binary_relation_trainer* trainer_
+    )
+    {
+        assert(mitie_binary_relation_trainer_num_positive_examples(trainer_) > 0);
+        assert(mitie_binary_relation_trainer_num_negative_examples(trainer_) > 0);
+        const binary_relation_detector_trainer& trainer =  checked_cast<binary_relation_detector_trainer>(trainer_);
+        try
+        {
+            return (mitie_binary_relation_detector*)allocate<binary_relation_detector>(trainer.train());
+        }
+        catch(...)
+        {
+            return NULL;
         }
     }
 
