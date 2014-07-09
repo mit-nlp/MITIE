@@ -3,21 +3,20 @@ MITIE: MIT Information Extraction
 
 This project provides free (even for commercial use)
 [state-of-the-art](../../wiki/Evaluation) information extraction
-tools. This first release includes a named entity recognizer.
-Subsequent versions will add tools for part of speech tagging,
-relationship extraction, interfaces for training your own custom
-extractors, and various other tools.
+tools. The current release includes tools for performing named entity
+extraction and binary relation detection as well as tools for training
+custom extractors and relation detectors.  
 
-The first release of MITIE includes only a C API.  However the next
-releases will add easy to use bindings to other langauges beginning
-with python and java.
+Additionally, the core library provides APIs in C, C++, and Python.  Outside
+projects have created bindings for [OCaml](https://github.com/travisbrady/omitie) and 
+[.NET](https://github.com/BayardRock/MITIE-Dot-Net).  Future releases will 
+add bindings in Java, R, and possibly other languages.
 
 # Using MITIE
 
-The MITIE C API is documented in the
-[mitie.h](mitielib/include/mitie.h) header file.  There is also an
-[example NER program](examples/C/ner_example.c) that shows how to use
-it in the examples folder.
+MITIE's primary API is a C API which is documented in the
+[mitie.h](mitielib/include/mitie.h) header file.  Beyond this, there are many
+[example programs](examples/) showing how to use mitie from C, C++, or Python.
 
 # Building MITIE (Unix-like systems)
 
@@ -29,14 +28,18 @@ Then, to compile the examples type the following command:
 make examples
 ```
 
-You can download example models trained on English texts here:
+To run the examples you will need to download the trained model files
+which you can do by running:
 ```
 make MITIE-models
 ```
-These models are required for the examples below:
+or by simply downloading the [MITIE-models-v0.2.tar.bz2](http://sourceforge.net/projects/mitie/files/binaries/MITIE-models-v0.2.tar.bz2)
+file and extracting it in your MITIE folder.
+
+Now you can run a few of the primary examples, for example:
 
 ```
-./ner_example MITIE-models/ner_model.dat sample_text.txt 
+./ner_example MITIE-models/english/ner_model.dat sample_text.txt 
 ```
 
 This command runs `ner_example` using the `ner_model.dat` sample
@@ -47,7 +50,7 @@ Alternatively, you can tell MITIE to process each line of a text file
 independently and output marked up text with the command:
 
 ```
-cat sample_text.txt | ./ner_stream MITIE-models/ner_model.dat  
+cat sample_text.txt | ./ner_stream MITIE-models/english/ner_model.dat  
 ```
 
 You can also run a simple regression test to validate your build, run
