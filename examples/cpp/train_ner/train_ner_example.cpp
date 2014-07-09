@@ -74,7 +74,12 @@ int main(int argc, char** argv)
     // a large document corpus, learns important word statistics, and then outputs a
     // total_word_feature_extractor that is knowledgeable about a particular language (e.g.
     // English).  MITIE comes with a total_word_feature_extractor for English so that is
-    // what we use here.
+    // what we use here.  But if you need to make your own you do so using a command line 
+    // statement like:
+    //    wordrep -e a_folder_containing_only_text_files
+    // and wordrep will create a total_word_feature_extractor.dat based on the supplied
+    // text files.  Note that wordrep can take a long time to run or require a lot of RAM
+    // if a large text dataset is given.  So use a powerful machine and be patient.
     if (argc != 2)
     {
         cout << "You must give the path to the MITIE English total_word_feature_extractor.dat file." << endl;

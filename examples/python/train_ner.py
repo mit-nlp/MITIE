@@ -49,7 +49,12 @@ sample2.add_entity(xrange(10,11), "org")
 # a large document corpus, learns important word statistics, and then outputs a
 # total_word_feature_extractor that is knowledgeable about a particular language (e.g.
 # English).  MITIE comes with a total_word_feature_extractor for English so that is
-# what we use here.
+# what we use here.  But if you need to make your own you do so using a command line 
+# statement like:
+#    wordrep -e a_folder_containing_only_text_files
+# and wordrep will create a total_word_feature_extractor.dat based on the supplied
+# text files.  Note that wordrep can take a long time to run or require a lot of RAM
+# if a large text dataset is given.  So use a powerful machine and be patient.
 trainer = ner_trainer("../../MITIE-models/english/total_word_feature_extractor.dat")
 # Don't forget to add the training data.  Here we have only two examples, but for real
 # uses you need to have thousands.  
