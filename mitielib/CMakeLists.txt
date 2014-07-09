@@ -38,11 +38,19 @@ if (NOT TARGET mitie)
    add_library(mitie ${source_files})
    target_link_libraries(mitie dlib)
 
-   install(TARGETS mitie
-      RUNTIME DESTINATION bin
-      LIBRARY DESTINATION lib
-      ARCHIVE DESTINATION lib
-      )
-   install(FILES include/mitie.h DESTINATION include/)
+   if (WIN32 AND NOT CYGWIN)
+      # Determine the path to our CMakeLists.txt file.
+      string(REPLACE "CMakeLists.txt" "" base_path ${CMAKE_CURRENT_LIST_FILE})
+      install(TARGETS mitie
+         DESTINATION ${base_path}
+         )
+   else()
+      install(TARGETS mitie
+         RUNTIME DESTINATION bin
+         LIBRARY DESTINATION lib
+         ARCHIVE DESTINATION lib
+         )
+      install(FILES include/mitie.h DESTINATION include/)
+   endif()
 
 endif()
