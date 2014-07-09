@@ -41,6 +41,9 @@ if (NOT TARGET mitie)
    if (WIN32 AND NOT CYGWIN)
       # Determine the path to our CMakeLists.txt file.
       string(REPLACE "CMakeLists.txt" "" base_path ${CMAKE_CURRENT_LIST_FILE})
+      # Tell cmake to copy the needed visual studio runtime dll files into the output folder
+      set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${base_path})
+      INCLUDE(InstallRequiredSystemLibraries)
       install(TARGETS mitie
          DESTINATION ${base_path}
          )
