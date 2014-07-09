@@ -374,11 +374,9 @@ namespace mitie
     {
         for (unsigned long i = 0; i < labels.size(); ++i)
         {
-            BIO_label last = O, cur = O, next = O;
+            BIO_label last = O, cur = O;
             if (i != 0)
                 last = labels[i-1];
-            if (i+1 < labels.size())
-                next = labels[i+1];
             cur = labels[i];
 
 
