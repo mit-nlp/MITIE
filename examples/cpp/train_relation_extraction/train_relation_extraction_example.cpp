@@ -39,8 +39,8 @@ int main(int argc, char** argv)
     // examples.  This dataset should include examples of the binary relations you would
     // like to detect as well as examples of things that are not what you want to detect.
     // To keep this little tutorial simple, we will use just the sentence "Ben Franklin was born in Boston" 
-    // as training data to keep things simple, but note that for real applications you will
-    // likely require many thousands of examples to create a high quality relation detector.
+    // as training data, but note that for real applications you will likely require many
+    // thousands of examples to create a high quality relation detector.
     //
     // So here we create a tokenized version of that sentence.  
     std::vector<std::string> sentence;
