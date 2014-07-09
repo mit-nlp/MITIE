@@ -13,6 +13,7 @@ makefile.bak
 tools/ner_stream/ner_stream
 MITIE-models/
 example-models.zip
+MITIE-models-v*.tar.bz2
 
 #Example binaries
 /ner_example
