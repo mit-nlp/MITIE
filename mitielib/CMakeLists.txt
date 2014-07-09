@@ -13,6 +13,7 @@ if(COMMAND cmake_policy)
    cmake_policy(SET CMP0003 NEW) 
 endif()
 
+set(CMAKE_POSITION_INDEPENDENT_CODE True)
 
 if (NOT TARGET mitie)
    if (NOT DEFINED BUILD_SHARED_LIBS)
