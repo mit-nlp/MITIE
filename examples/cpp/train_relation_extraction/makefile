@@ -8,7 +8,7 @@ CFLAGS = -fPIC -Wall -W -O3 -I$(MITIEDIR)/include -I../../../dlib
 LDFLAGS = $(MITIEDIR)/libmitie.a -lpthread
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
-	#LDFLAGS += -static
+	LDFLAGS += -static
 endif
 #ifeq ($(UNAME_S),Darwin)
 #	LDFLAGS += 

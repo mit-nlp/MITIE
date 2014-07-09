@@ -5,7 +5,7 @@ TARGET = ner_example
 MITIEDIR = ../../../mitielib
 
 CFLAGS = -fPIC -Wall -W -O3 -I$(MITIEDIR)/include -I../../../dlib
-LDFLAGS = $(MITIEDIR)/libmitie.a
+LDFLAGS = $(MITIEDIR)/libmitie.a -lpthread
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
 	LDFLAGS += -static
