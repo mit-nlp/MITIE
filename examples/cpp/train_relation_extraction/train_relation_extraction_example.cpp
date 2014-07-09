@@ -79,14 +79,14 @@ int main(int argc, char** argv)
 
 
 
-    // Now lets test it out a little bit.  
+    // Now let's test it out a little bit.  
 
     // Was Ben Franklin born in Boson?  If the score is > 0 then the
     // binary_relation_detector is predicting that he was.  In this case, the number is
     // positive so the detector made the right decision.
     cout << "detection score: " << brd(extract_binary_relation(sentence, make_pair(0,2), make_pair(5,6), ner.get_total_word_feature_extractor())) << endl;
 
-    // Now lets try a different sentence
+    // Now let's try a different sentence
     sentence.clear();
     sentence.push_back("Jimmy");
     sentence.push_back("Smith");
@@ -99,7 +99,7 @@ int main(int argc, char** argv)
     // Was Jimmy Smith born in France?  Again, the detector correctly gives a number > 0.
     cout << "detection score: " << brd(extract_binary_relation(sentence, make_pair(0,2), make_pair(7,8), ner.get_total_word_feature_extractor())) << endl;
 
-    // Now lets ask if France was born in Jimmy Smith.  This should be false and happily
+    // Now let's ask if France was born in Jimmy Smith.  This should be false and happily
     // the detector also correctly predicts a number < 0.
     cout << "detection score: " << brd(extract_binary_relation(sentence, make_pair(7,8), make_pair(0,2), ner.get_total_word_feature_extractor())) << endl;
 }
