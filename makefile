@@ -13,8 +13,10 @@ MITIE-models:
 	tar -xjf MITIE-models-v0.2.tar.bz2
 
 test: all examples MITIE-models
-	./ner_stream MITIE-models/english/ner_model.dat < sample_text.txt > /tmp/test.out
-	diff /tmp/test.out sample_text.reference-output
+	./ner_stream MITIE-models/english/ner_model.dat < sample_text.txt > /tmp/MITIE_test.out
+	diff /tmp/MITIE_test.out sample_text.reference-output
+	./relation_extraction_example MITIE-models/english/ner_model.dat MITIE-models/english/binary_relations/rel_classifier_location.location.contains.svm sample_text.txt > /tmp/MITIE_test_rel.out
+	diff /tmp/MITIE_test_rel.out sample_text.reference-output-relations
 	@echo Testing completed successfully
 
 
