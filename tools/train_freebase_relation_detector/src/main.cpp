@@ -71,7 +71,7 @@ int main(int argc, char** argv)
         cout << "You must give three arguments on the command line.  The first is a MITIE NER model file." << endl;
         cout << "The second is the freebase_wikipedia_binary_relation_training_data folder, and the third" << endl;
         cout << "is the name of the freebase relation you want to train.  For example: " << endl;
-        cout << "./train_relation_detector MITIE-models/ner_model.dat ~/freebase_wikipedia_binary_relation_training_data people.person.parents" << endl;
+        cout << "./train_relation_detector MITIE-models/english/ner_model.dat ~/freebase_wikipedia_binary_relation_training_data people.person.parents" << endl;
         return 1;
     }
 

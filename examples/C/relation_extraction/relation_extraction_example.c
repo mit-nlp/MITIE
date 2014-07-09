@@ -35,7 +35,7 @@ int main(int argc, char** argv)
         printf("To run this program you must give NER model and binary\n");
         printf("relation detector files as input, as well as a text file\n");
         printf("to evaluate.  For example:\n");
-        printf("./relation_extraction_example MITIE-models/ner_model.dat MITIE-models/binary_relations/rel_classifier_location.location.contains.svm sample_text.txt\n");
+        printf("./relation_extraction_example MITIE-models/english/ner_model.dat MITIE-models/english/binary_relations/rel_classifier_location.location.contains.svm sample_text.txt\n");
         goto cleanup;
     }
 

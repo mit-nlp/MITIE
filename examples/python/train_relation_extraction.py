@@ -14,7 +14,7 @@ from mitie import *
 
 # The training process for a binary relation detector requires a MITIE NER object as
 # input.  So we load the saved NER model first.
-ner = named_entity_extractor("../../MITIE-models/ner_model.dat")
+ner = named_entity_extractor("../../MITIE-models/english/ner_model.dat")
 
 # This object is responsible for doing the training work.  The first argument to the
 # constructor is a string that is used to identify the relation detector.  So you

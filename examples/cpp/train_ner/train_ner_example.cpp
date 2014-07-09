@@ -79,7 +79,7 @@ int main(int argc, char** argv)
     {
         cout << "You must give the path to the MITIE English total_word_feature_extractor.dat file." << endl;
         cout << "So run this program with a command like: " << endl;
-        cout << "./train_ner_example ../../../MITIE-models/total_word_feature_extractor.dat" << endl;
+        cout << "./train_ner_example ../../../MITIE-models/english/total_word_feature_extractor.dat" << endl;
         return 1;
     }
     ner_trainer trainer(argv[1]);

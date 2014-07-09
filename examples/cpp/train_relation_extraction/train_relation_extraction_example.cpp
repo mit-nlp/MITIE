@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     {
         cout << "You must give the path to the MITIE English ner_model.dat file." << endl;
         cout << "So run this program with a command like: " << endl;
-        cout << "./train_relation_extraction_example ../../../MITIE-models/ner_model.dat" << endl;
+        cout << "./train_relation_extraction_example ../../../MITIE-models/english/ner_model.dat" << endl;
         return 1;
     }
     // The training process for a binary relation detector requires a MITIE NER object as

@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     {
         printf("You must give a MITIE ner model file as the first command line argument\n");
         printf("followed by a text file to process. For example:\n");
-        printf("./ner_example MITIE-models/ner_model.dat sample_text.txt\n");
+        printf("./ner_example MITIE-models/english/ner_model.dat sample_text.txt\n");
         return EXIT_FAILURE;
     }
 

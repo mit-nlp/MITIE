@@ -19,7 +19,7 @@ from collections import defaultdict
 
 
 print "loading NER model..."
-ner = named_entity_extractor('../../MITIE-models/ner_model.dat')
+ner = named_entity_extractor('../../MITIE-models/english/ner_model.dat')
 print "\nTags output by this NER model:", ner.get_possible_ner_tags()
 
 # Load a text file and convert it into a list of words.  
@@ -49,7 +49,7 @@ for e in entities:
 # bunch of different types of relation detector and includes tools allowing you
 # to train new detectors.  However, here we simply use one, the "person born in
 # place" relation detector.
-rel_detector = binary_relation_detector("../../MITIE-models/binary_relations/rel_classifier_people.person.place_of_birth.svm")
+rel_detector = binary_relation_detector("../../MITIE-models/english/binary_relations/rel_classifier_people.person.place_of_birth.svm")
 
 # First, let's make a list of neighboring entities.  Once we have this list we
 # will ask the relation detector if any of these entity pairs is an example of

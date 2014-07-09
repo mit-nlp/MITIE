@@ -70,7 +70,7 @@ int main(int argc, char** argv)
             cout << "To run this program you must give NER model and binary" << endl;
             cout << "relation detector files as input, as well as a text file" << endl;
             cout << "to evaluate.  For example:" << endl;
-            cout << "./relation_extraction_example MITIE-models/ner_model.dat MITIE-models/binary_relations/rel_classifier_location.location.contains.svm sample_text.txt" << endl;
+            cout << "./relation_extraction_example MITIE-models/english/ner_model.dat MITIE-models/english/binary_relations/rel_classifier_location.location.contains.svm sample_text.txt" << endl;
             return EXIT_FAILURE;
         }
 

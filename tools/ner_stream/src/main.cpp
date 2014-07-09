@@ -46,7 +46,7 @@ int main(int argc, char** argv)
         parser.check_one_time_options(one_time_ops);
         if (parser.option("h"))
         {
-            cout << "Usage: cat input_file.txt | ner_stream <options> MITIE-models/ner_model.dat" << endl;
+            cout << "Usage: cat input_file.txt | ner_stream <options> MITIE-models/english/ner_model.dat" << endl;
             parser.print_options();
             return 0;
         }

@@ -50,7 +50,7 @@ sample2.add_entity(xrange(10,11), "org")
 # total_word_feature_extractor that is knowledgeable about a particular language (e.g.
 # English).  MITIE comes with a total_word_feature_extractor for English so that is
 # what we use here.
-trainer = ner_trainer("../../MITIE-models/total_word_feature_extractor.dat")
+trainer = ner_trainer("../../MITIE-models/english/total_word_feature_extractor.dat")
 # Don't forget to add the training data.  Here we have only two examples, but for real
 # uses you need to have thousands.  
 trainer.add(sample)
