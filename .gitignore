@@ -26,3 +26,4 @@ examples/cpp/train_ner/train_ner_example
 examples/cpp/train_relation_extraction/train_relation_extraction_example
 examples/cpp/train_relation_extraction/rel_classifier.svm
 examples/python/rel_classifier.svm
+examples/python/new_ner_model.dat
