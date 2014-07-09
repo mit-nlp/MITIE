@@ -1,7 +1,7 @@
 
 # A list of all the folders that have makefiles in them.  Running make all builds all these things
 SUBDIRS = tools/ner_stream examples/C/ner examples/C/relation_extraction examples/cpp/ner examples/cpp/train_ner \
-	  examples/cpp/train_relation_extraction
+	  examples/cpp/train_relation_extraction examples/cpp/relation_extraction
 
 examples: tools/ner_stream examples/C/ner examples/C/relation_extraction
 	cp examples/C/ner/ner_example .
@@ -9,11 +9,11 @@ examples: tools/ner_stream examples/C/ner examples/C/relation_extraction
 	cp tools/ner_stream/ner_stream .
 
 MITIE-models:
-	wget -O - http://sourceforge.net/projects/mitie/files/binaries/example-models.zip > example-models.zip
-	unzip example-models.zip
+	wget -O - http://sourceforge.net/projects/mitie/files/binaries/MITIE-models-v0.2.tar.bz2 > MITIE-models-v0.2.tar.bz2
+	tar -xjf MITIE-models-v0.2.tar.bz2
 
 test: all examples MITIE-models
-	./ner_stream MITIE-models/ner_model.dat < sample_text.txt > /tmp/test.out
+	./ner_stream MITIE-models/english/ner_model.dat < sample_text.txt > /tmp/test.out
 	diff /tmp/test.out sample_text.reference-output
 	@echo Testing completed successfully
 
