@@ -7,6 +7,12 @@ tools. The current release includes tools for performing named entity
 extraction and binary relation detection as well as tools for training
 custom extractors and relation detectors.  
 
+MITIE comes with trained models for English.  The named entity recognition model is 
+trained based on data from the English Gigaword news corpus, the CoNLL 2003 named entity recognition task,
+and ACE data.  There are also 21 binary relation extraction models provided which
+were trained on a 
+[combination of Wikipedia and Freebase data](https://sourceforge.net/projects/mitie/files/freebase_wikipedia_binary_relation_training_data_v1.0.tar.bz2/download).
+
 Additionally, the core library provides APIs in C, C++, and Python.  Outside
 projects have created bindings for [OCaml](https://github.com/travisbrady/omitie) and 
 [.NET](https://github.com/BayardRock/MITIE-Dot-Net).  Future releases will 
@@ -16,19 +22,13 @@ add bindings in Java, R, and possibly other languages.
 
 MITIE's primary API is a C API which is documented in the
 [mitie.h](mitielib/include/mitie.h) header file.  Beyond this, there are many
-[example programs](examples/) showing how to use mitie from C, C++, or Python.
+[example programs](examples/) showing how to use MITIE from C, C++, or Python.
 
-# Building MITIE (Unix-like systems)
+### Initial Setup
 
 If you obtained MITIE by cloning the main repository then you must first fetch the
-submodules (dlib).  Do this by running `fetch_submodules.sh`. 
-Then, to compile the examples type the following command:
-
-```
-make examples
-```
-
-To run the examples you will need to download the trained model files
+submodules (dlib).  Do this by running `fetch_submodules.sh`. Second, before you
+can run the provided examples you will need to download the trained model files
 which you can do by running:
 ```
 make MITIE-models
@@ -36,25 +36,82 @@ make MITIE-models
 or by simply downloading the [MITIE-models-v0.2.tar.bz2](http://sourceforge.net/projects/mitie/files/binaries/MITIE-models-v0.2.tar.bz2)
 file and extracting it in your MITIE folder.
 
-Now you can run a few of the primary examples, for example:
+### Using MITIE from the command line
 
-```
-./ner_example MITIE-models/english/ner_model.dat sample_text.txt 
-```
-
-This command runs `ner_example` using the `ner_model.dat` sample
-model. A summary of the entities found in `sample_text.txt` will be
-printed out to the `STDOUT`.
-
-Alternatively, you can tell MITIE to process each line of a text file
-independently and output marked up text with the command:
+MITIE comes with a basic streaming NER tool.  So you can tell MITIE to
+process each line of a text file independently and output marked up text with the command:
 
 ```
 cat sample_text.txt | ./ner_stream MITIE-models/english/ner_model.dat  
 ```
 
-You can also run a simple regression test to validate your build, run
-the following command:
+The ner_stream executable can be compiled by running `make` in the top level MITIE folder or
+by naviating to the [tools/ner_stream](tools/ner_stream) folder and running `make` or using 
+CMake to build it which can be done with the following commands:
+```
+cd tools/ner_stream
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+```
+
+### Compiling MITIE as a shared library
+
+On a UNIX like system, this can be accomplished by running `make` in the top level MITIE folder or
+by running:
+```
+cd mitielib
+make
+```
+This produces shared and static library files in the mitielib folder.  On a non-UNIX system you can use
+CMake to compile a shared library by typing:
+```
+cd mitielib
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release --target install
+```
+
+Either of these methods will create a MITIE shared libray in the mitielib folder.
+
+### Using MITIE from a Python program
+
+Once you have built the MITIE shared library, you can go to the [examples/python](examples/python) folder
+and simply run any of the Python scripts.  Each script is a tutorial explaining some aspect of
+MITIE: [named entity recognition and relation extraction](examples/python/ner.py), 
+[training a custom NER tool](examples/python/train_ner.py), or 
+[training a custom relation extractor](examples/python/train_ner.py).
+
+### Using MITIE from a C program
+
+There are example C programs in the [examples/C](examples/C) folder.  To compile of them you simply
+go into those folders and run `make`.  Or use CMake like so:
+```
+cd examples/C/ner
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+```
+
+### Using MITIE from a C++ program
+
+There are example C++ programs in the [examples/cpp](examples/cpp) folder.  To compile any of them you simply
+go into those folders and run `make`.  Or use CMake like so:
+```
+cd examples/cpp/ner
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+```
+
+### Running MITIE's unit tests
+
+You can run a simple regression test to validate your build.  Do this by running
+the following command from the top level MITIE folder:
 
 ```
 make test
@@ -64,38 +121,8 @@ make test
 example models.  If you require a non-standard C++ compiler, change
 `CC` in `examples/C/makefile` and in `tools/ner_stream/makefile`.
 
-# Building MITIE (non-Unix systems)
 
-The above works on most Unix-like systems.  For Windows and other platforms we have provided [CMake](http://www.cmake.org)
-build scripts.  To compile using CMake you would use this alternative set of commands:
-
-```
-cd examples/C
-mkdir build
-cd build
-cmake ..
-cmake --build . --config Release
-```
-
-Finally, you can create a MITIE shared library by executing:
-
-```
-cd mitielib
-make
-```
-
-And again, ths will work on most Unix systems but if you are on a platform where it doesn't you can use
-the provided CMake files in the mitielib folder.  So type the following to compile MITIE as a shared library using CMake:
-
-```
-cd mitielib
-mkdir build
-cd build
-cmake ..
-cmake --build . --config Release
-```
-
-# Precompiled binaries
+# Precompiled binaries (old)
 
 We have built binaries packaged with sample models for Macos and Linux (64 and 32-bit).  These packages are downloadable here:
 * [Linux32](http://sourceforge.net/projects/mitie/files/binaries/MITIE-0.1-linux32.zip)
