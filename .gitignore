@@ -19,11 +19,12 @@ example-models.zip
 /relation_extraction_example
 /ner_stream
 examples/C/ner/ner_example
-examples/C/relation_extraction/relation_extraction_example
 examples/cpp/ner/ner_example
 examples/cpp/relation_extraction/relation_extraction_example
+examples/cpp/train_ner/new_ner_model.dat
 examples/cpp/train_ner/train_ner_example
-examples/cpp/train_relation_extraction/train_relation_extraction_example
 examples/cpp/train_relation_extraction/rel_classifier.svm
-examples/python/rel_classifier.svm
+examples/cpp/train_relation_extraction/train_relation_extraction_example
+examples/C/relation_extraction/relation_extraction_example
 examples/python/new_ner_model.dat
+examples/python/rel_classifier.svm
