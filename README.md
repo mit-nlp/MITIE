@@ -122,12 +122,11 @@ example models.  If you require a non-standard C++ compiler, change
 `CC` in `examples/C/makefile` and in `tools/ner_stream/makefile`.
 
 
-# Precompiled binaries (old)
+# Precompiled Python binaries
 
-We have built binaries packaged with sample models for Macos and Linux (64 and 32-bit).  These packages are downloadable here:
-* [Linux32](http://sourceforge.net/projects/mitie/files/binaries/MITIE-0.1-linux32.zip)
-* [Linux64](http://sourceforge.net/projects/mitie/files/binaries/MITIE-0.1-linux64.zip)
-* [Macos](http://sourceforge.net/projects/mitie/files/binaries/MITIE-0.1-osx.zip)
+We have built Python binaries packaged with sample models for 64bit Linux and Windows.  These packages are downloadable here:
+* [Linux64](http://sourceforge.net/projects/mitie/files/binaries/mitie-v0.2-linux64-python.tar.bz2)
+* [Windows](http://sourceforge.net/projects/mitie/files/binaries/mitie-v0.2-windows-python-32bit.zip)
 
 # License
 
