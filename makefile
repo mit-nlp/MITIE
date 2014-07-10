@@ -26,8 +26,10 @@ all: $(SUBDIRS)
 mitie: mitielib
 $(SUBDIRS): mitie 
 	$(MAKE) -C $@
-mitielib:
+mitielib: dlib/dlib
 	$(MAKE) -C $@
+dlib/dlib:
+	git submodule update --init
 clean:
 	@for dir in $(SUBDIRS); do \
 		$(MAKE) -C $$dir clean; \
