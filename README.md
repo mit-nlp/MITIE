@@ -13,7 +13,7 @@ and ACE data.  There are also 21 binary relation extraction models provided whic
 were trained on a 
 [combination of Wikipedia and Freebase data](https://sourceforge.net/projects/mitie/files/freebase_wikipedia_binary_relation_training_data_v1.0.tar.bz2/download).
 
-Additionally, the core library provides APIs in C, C++, and Python.  Outside
+Additionally, the core library provides APIs in C, C++, and Python 2.7.  Outside
 projects have created bindings for [OCaml](https://github.com/travisbrady/omitie) and 
 [.NET](https://github.com/BayardRock/MITIE-Dot-Net).  Future releases will 
 add bindings in Java, R, and possibly other languages.
@@ -22,7 +22,7 @@ add bindings in Java, R, and possibly other languages.
 
 MITIE's primary API is a C API which is documented in the
 [mitie.h](mitielib/include/mitie.h) header file.  Beyond this, there are many
-[example programs](examples/) showing how to use MITIE from C, C++, or Python.
+[example programs](examples/) showing how to use MITIE from C, C++, or Python 2.7.
 
 ### Initial Setup
 
@@ -76,7 +76,7 @@ cmake --build . --config Release --target install
 
 Either of these methods will create a MITIE shared libray in the mitielib folder.
 
-### Using MITIE from a Python program
+### Using MITIE from a Python 2.7 program
 
 Once you have built the MITIE shared library, you can go to the [examples/python](examples/python) folder
 and simply run any of the Python scripts.  Each script is a tutorial explaining some aspect of
@@ -122,11 +122,9 @@ example models.  If you require a non-standard C++ compiler, change
 `CC` in `examples/C/makefile` and in `tools/ner_stream/makefile`.
 
 
-# Precompiled Python binaries
+# Precompiled Python 2.7 binaries
 
-We have built Python binaries packaged with sample models for 64bit Linux and Windows.  These packages are downloadable here:
-* [Linux64](http://sourceforge.net/projects/mitie/files/binaries/mitie-v0.2-linux64-python.tar.bz2)
-* [Windows](http://sourceforge.net/projects/mitie/files/binaries/mitie-v0.2-windows-python-32bit.zip)
+We have built Python 2.7 binaries packaged with sample models for 64bit Linux and Windows (both 32 and 64 bit version of Python).  You can download the precompiled package here: [Precompiled MITIE 0.2](http://sourceforge.net/projects/mitie/files/binaries/mitie-v0.2-python-2.7-windows-or-linux64.zip)
 
 # License
 
