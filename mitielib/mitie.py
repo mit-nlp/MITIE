@@ -1,4 +1,4 @@
-import ctypes, os, time
+import ctypes, os, time, platform
 
 def _last_modified_time(filename):
     if os.path.isfile(filename):
@@ -10,8 +10,21 @@ def _last_modified_time(filename):
 # Load the mitie shared library.  We will look in a few places to see if we can find it.
 # What we do depends on our platform
 parent = os.path.dirname(os.path.realpath(__file__))
-if os.name == 'nt': #if on windows just look in the same folder as the mitie.py file
-    _f = ctypes.CDLL(parent+'/mitie')
+if os.name == 'nt': 
+    #if on windows just look in the same folder as the mitie.py file and also in any 
+    #subfolders that might have the appropriate 32 or 64 bit dlls, whichever is right for
+    #the version of python we are using.
+    arch = platform.architecture()
+    files = []
+    files.append(parent+'/mitie')
+    if (arch[0] == "32bit"):
+        files.append(parent+'/win32/mitie')
+    else:
+        files.append(parent+'/win64/mitie')
+
+    times = [(_last_modified_time(f+".dll"),f) for f in files]
+    most_recent = max(times, key=lambda x:x[0])[1]
+    _f = ctypes.CDLL(most_recent)
 else:
     # On UNIX like platforms MITIE might be in any number of places.  Check them all and
     # pick the one with the most recent timestamp.
