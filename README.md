@@ -35,7 +35,9 @@ which you can do by running:
 make MITIE-models
 ```
 or by simply downloading the [MITIE-models-v0.2.tar.bz2](http://sourceforge.net/projects/mitie/files/binaries/MITIE-models-v0.2.tar.bz2)
-file and extracting it in your MITIE folder.
+file and extracting it in your MITIE folder.  Note that the Spanish models are supplied in 
+a separate download.  So if you want to use the Spanish NER model then download [MITIE-models-v0.2-Spanish.zip](http://sourceforge.net/projects/mitie/files/binaries/MITIE-models-v0.2-Spanish.zip) and
+extract it into your MITIE folder.
 
 ### Using MITIE from the command line
 
