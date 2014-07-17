@@ -7,9 +7,10 @@ tools. The current release includes tools for performing named entity
 extraction and binary relation detection as well as tools for training
 custom extractors and relation detectors.  
 
-MITIE comes with trained models for English.  The named entity recognition model is 
+MITIE comes with trained models for English and Spanish.  The English named entity recognition model is 
 trained based on data from the English Gigaword news corpus, the CoNLL 2003 named entity recognition task,
-and ACE data.  There are also 21 binary relation extraction models provided which
+and ACE data.  The Spanish model is based on the Spanish Gigaword corpus and CoNLL 2002 named entity 
+recognition task.  There are also 21 English binary relation extraction models provided which
 were trained on a 
 [combination of Wikipedia and Freebase data](https://sourceforge.net/projects/mitie/files/freebase_wikipedia_binary_relation_training_data_v1.0.tar.bz2/download).
 
