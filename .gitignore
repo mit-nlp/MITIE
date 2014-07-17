@@ -7,6 +7,7 @@ build
 *.so
 *.a
 *.dll
+*.lib
 *.dylib
 a.out
 makefile.bak
