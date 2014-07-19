@@ -1,8 +1,8 @@
 // Copyright (C) 2013 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis.king@ll.mit.edu)
-#ifndef MIT_LL_APPROXIMATE_SUBSTRiNG_SET_H__
-#define MIT_LL_APPROXIMATE_SUBSTRiNG_SET_H__
+#ifndef MIT_LL_APPROXIMATE_SUBSTRiNG_SET_H_
+#define MIT_LL_APPROXIMATE_SUBSTRiNG_SET_H_
 
 #include <iostream>
 #include <dlib/uintn.h>
@@ -257,5 +257,5 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-#endif // MIT_LL_APPROXIMATE_SUBSTRiNG_SET_H__
+#endif // MIT_LL_APPROXIMATE_SUBSTRiNG_SET_H_
 

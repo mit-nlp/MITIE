@@ -1,8 +1,8 @@
 // Copyright (C) 2012 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis.king@ll.mit.edu)
-#ifndef MIT_LL_GIGAWoRD_READER__H__
-#define MIT_LL_GIGAWoRD_READER__H__
+#ifndef MIT_LL_GIGAWoRD_READER_H_
+#define MIT_LL_GIGAWoRD_READER_H_
 
 #include "dlib/xml_parser.h"
 #include "dlib/string.h"
@@ -485,5 +485,5 @@ namespace mitie
 
 }
 
-#endif // MIT_LL_GIGAWoRD_READER__H__
+#endif // MIT_LL_GIGAWoRD_READER_H_
 

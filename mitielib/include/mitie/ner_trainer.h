@@ -1,8 +1,8 @@
 // Copyright (C) 2014 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis.king@ll.mit.edu)
-#ifndef MIT_LL_MITIE_NER_TRAINER_H__
-#define MIT_LL_MITIE_NER_TRAINER_H__
+#ifndef MIT_LL_MITIE_NER_TRAINER_H_
+#define MIT_LL_MITIE_NER_TRAINER_H_
 
 #include <vector>
 #include <string>
@@ -341,5 +341,5 @@ namespace mitie
 
 }
 
-#endif // MIT_LL_MITIE_NER_TRAINER_H__
+#endif // MIT_LL_MITIE_NER_TRAINER_H_
 

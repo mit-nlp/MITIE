@@ -1,8 +1,8 @@
 // Copyright (C) 2014 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis.king@ll.mit.edu)
-#ifndef MITLL_MITIe_H__
-#define MITLL_MITIe_H__
+#ifndef MITLL_MITIe_H_
+#define MITLL_MITIe_H_
 
 #if defined(_WIN32)
 #define MITIE_EXPORT __declspec(dllexport)
@@ -795,5 +795,5 @@ extern "C"
 }
 #endif
 
-#endif // MITLL_MITIe_H__
+#endif // MITLL_MITIe_H_
 

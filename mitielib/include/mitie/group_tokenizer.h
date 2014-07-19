@@ -1,8 +1,8 @@
 // Copyright (C) 2012 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis.king@ll.mit.edu)
-#ifndef MIT_LL_GROUP_ToKENIZER_H__
-#define MIT_LL_GROUP_ToKENIZER_H__
+#ifndef MIT_LL_GROUP_ToKENIZER_H_
+#define MIT_LL_GROUP_ToKENIZER_H_
 
 #include <string>
 #include <vector>
@@ -130,5 +130,5 @@ namespace mitie
     };
 }
 
-#endif // MIT_LL_GROUP_ToKENIZER_H__
+#endif // MIT_LL_GROUP_ToKENIZER_H_
 

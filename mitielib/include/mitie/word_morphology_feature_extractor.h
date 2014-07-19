@@ -1,8 +1,8 @@
 // Copyright (C) 2013 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis.king@ll.mit.edu)
-#ifndef MIT_LL_WORD_MORPHOLOGY_FEATURE_ExTRACTOR_H__
-#define MIT_LL_WORD_MORPHOLOGY_FEATURE_ExTRACTOR_H__
+#ifndef MIT_LL_WORD_MORPHOLOGY_FEATURE_ExTRACTOR_H_
+#define MIT_LL_WORD_MORPHOLOGY_FEATURE_ExTRACTOR_H_
 
 #include "approximate_substring_set.h"
 #include <dlib/matrix.h>
@@ -157,5 +157,5 @@ namespace mitie
     };
 }
 
-#endif // MIT_LL_WORD_MORPHOLOGY_FEATURE_ExTRACTOR_H__
+#endif // MIT_LL_WORD_MORPHOLOGY_FEATURE_ExTRACTOR_H_
 

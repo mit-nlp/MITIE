@@ -1,8 +1,8 @@
 // Copyright (C) 2014 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis.king@ll.mit.edu)
-#ifndef MIT_LL_BINARY_rELATION_DETECTION_TRAINER_H__
-#define MIT_LL_BINARY_rELATION_DETECTION_TRAINER_H__
+#ifndef MIT_LL_BINARY_rELATION_DETECTION_TRAINER_H_
+#define MIT_LL_BINARY_rELATION_DETECTION_TRAINER_H_
 
 #include <mitie/binary_relation_detector.h>
 #include <mitie/named_entity_extractor.h>
@@ -204,5 +204,5 @@ namespace mitie
     };
 }
 
-#endif // MIT_LL_BINARY_rELATION_DETECTION_TRAINER_H__
+#endif // MIT_LL_BINARY_rELATION_DETECTION_TRAINER_H_
 
