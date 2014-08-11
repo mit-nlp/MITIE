@@ -176,6 +176,8 @@ namespace mitie
                     get_next_char();
                     if (token.size() != 0)
                         return true;
+                    else
+                        ++token_offset;
                 }
                 else
                 {
