@@ -27,10 +27,8 @@ MITIE's primary API is a C API which is documented in the
 
 ### Initial Setup
 
-If you obtained MITIE by cloning the main repository then you must first fetch the
-submodules (dlib).  Do this by running `fetch_submodules.sh`. Second, before you
-can run the provided examples you will need to download the trained model files
-which you can do by running:
+Before you can run the provided examples you will need to download the trained
+model files which you can do by running:
 ```
 make MITIE-models
 ```
