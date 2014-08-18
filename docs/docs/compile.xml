@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="stylesheet.xsl"?>
+
+<doc>
+    <title>How to compile</title>
+
+
+
+
+
+    <!-- ************************************************************************* -->
+
+    <body>
+        <br/><br/>
+        
+
+
+        <p>
+           To use this library all you have to do is extract it somewhere, make sure the folder <i>containing</i> 
+           the dlib folder is in your include path, and finally add <a href="dlib/all/source.cpp.html">dlib/all/source.cpp</a> 
+           to your project.  It is worth noting that most of dlib is "header-only" which means that, in many cases, you
+           don't actually have to build dlib/all/source.cpp into your application.  So if you don't get linker 
+           errors when you exclude dlib/all/source.cpp from your project then you don't need it.
+        </p>
+        <p>
+            An example makefile that uses this library can be found here: 
+            <a href="dlib/test/makefile">dlib/test/makefile</a>.  It is the makefile used to build the regression 
+            test suite for this library.  There is also a 
+            <a href="http://www.cmake.org">CMake</a> makefile that builds the 
+            regression test suite at <a href="dlib/test/CMakeLists.txt.html">dlib/test/CMakeLists.txt</a> and another
+            CMake makefile that builds all the example programs at 
+            <a href="examples/CMakeLists.txt.html">examples/CMakeLists.txt</a>
+        </p>
+        <p>
+        I try to make sure everything compiles fine under Visual Studio .NET 2005 (and above) and gcc (4.1 and above).  
+        </p>
+        <p>
+           Again, note that you should <b><i>not</i></b> add the dlib folder itself to your compiler's include path.  
+           Doing so will cause the
+           build to fail because of name collisions (such as dlib/string.h and string.h from the standard library).  
+           Instead you should add the folder that contains the dlib folder to your include search path and then use 
+           include statements of the form <tt>#include &lt;dlib/queue.h&gt;</tt>.  This will ensure that everything 
+           builds correctly.
+        </p>
+
+         <p>
+            Finally, note that <a href="dlib/revision.h.html">dlib/revision.h</a> defines DLIB_MAJOR_VERSION
+            and DLIB_MINOR_VERSION which are #defines you can use to see what version of dlib you have.  
+         </p>
+
+        <center><h1>Examples</h1></center>
+
+
+        <h2>Compiling on Any Operating System Using CMake</h2>
+        The simplest way to compile the example programs is to use <a href="http://www.cmake.org">CMake</a>.  
+        You can do this by typing the following on the command line.
+<code_box>
+cd examples
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+</code_box>
+Note that you also need to have a C++ compiler installed on your system.  There are free C++ compilers
+for most operating systems.  For example, Visual Studio Express is free on Windows and GCC is free and
+works well on Mac OS X and Linux systems.
+
+        <h2>Compiling on Linux From Command Line</h2>
+        From within the examples folder, you can compile any of the examples with a single command like so:
+<code_box>
+g++ -O3 -I.. ../dlib/all/source.cpp -lpthread -lX11 example_program_name.cpp
+</code_box>
+        Note that not all examples require this much work.  For example, the svm_ex.cpp example
+        can be compiled with just:
+<code_box>
+g++ -O3 -I.. svm_ex.cpp
+</code_box>
+
+On non-Linux systems like Solaris, you might have to link to other libraries.  For example, I have seen systems
+where it was also necessary to supply -lnsl or -lsocket options to g++.  Additionally, the X11 development
+library isn't installed on Ubuntu by default.  So if you require it and are using Ubuntu you can install
+it by typing:
+<code_box>
+sudo apt-get install libx11-dev
+</code_box>
+
+        <h2>Compiling on Windows Using GCC</h2>
+        <p>
+            The commands for gcc on windows are the same as above but you may also have to link 
+            (via the -l option) to the following libraries: gdi32, comctl32, user32, ws2_32, or imm32.
+            However, it's worth pointing out that Visual Studio Express is free and a much better choice for
+            windows development than gcc.
+        </p>
+
+        <h2>Compiling on Windows Using Visual Studio</h2>
+        <p>
+           All you need to do is create an empty console project. Then add dlib/all/source.cpp to it and add the
+           folder containing the dlib folder to the #include search path.  Then you can compile any example program 
+           by adding it to your project.  
+        </p>
+
+
+        <center><h1>Preprocessor Directives</h1></center>
+
+         <p>
+            There are a few preprocessor directives you can supply during the build process
+            to cause the library to build in various optional ways.  By default, the
+            library will always do something reasonable, but they are listed here in the
+            event that you need to use them.
+         </p>
+
+
+         <anchor>ENABLE_ASSERTS</anchor>
+        <h3>#define ENABLE_ASSERTS</h3>
+        <p>
+           Defining this directive causes all the <a href="metaprogramming.html#DLIB_ASSERT">DLIB_ASSERT</a> macros to
+           be active.  If you are using visual studio or CMake then ENABLE_ASSERTS will be automatically enabled
+           for you when you compile in debug mode.  However, if you are using a different build system then you
+           might have to manually enable it if you want to turn the asserts on.
+        </p>
+
+         <anchor>DLIB_ISO_CPP_ONLY</anchor>
+        <h3>#define DLIB_ISO_CPP_ONLY</h3>
+        <p>
+           This is a #define directive that you can set to cause the library to exclude all non ISO C++ code (The things in the <a href="api.html">API wrappers</a> section and any objects that depend on those wrappers).
+           This is useful if you are trying to build on a system that isn't fully supported by the library or if you 
+           just decide you don't want any of that stuff compiled into your program for your own reasons.
+        </p>
+         <anchor>DLIB_NO_GUI_SUPPORT</anchor>
+        <h3>#define DLIB_NO_GUI_SUPPORT</h3>
+        <p>
+           This is just like the DLIB_ISO_CPP_ONLY option except that it excludes only the GUI part of the library.
+           An example of when you might want to use this would be if you don't need GUI support and you are building
+           on a UNIX platform that doesn't have the X11 headers installed.
+        </p>
+         <anchor>NO_MAKEFILE</anchor>
+        <h3>#define NO_MAKEFILE</h3>
+        <p>
+           This preprocessor directive causes the dlib headers to pull in all the 
+           code that would normally be built in dlib/all/source.cpp.  Thus if you #define NO_MAKEFILE you won't 
+           have to add dlib/all/source.cpp to your project.  The <i>only</i> time this is useful is when your 
+           project consists of a single translation unit (i.e. a single cpp file).  In this instance NO_MAKEFILE
+           allows you to easily build your project on the command line by saying something like <tt>g++ -DNO_MAKEFILE
+           project.cpp</tt>.  But again, this is only for single cpp file projects.  If you use NO_MAKEFILE with projects 
+           that contain more than one cpp file you will get linker errors about multiply defined symbols.
+        </p>
+        <p>
+           Also note that if you use this macro then the <a href="metaprogramming.html#DLIB_STACK_TRACE">stack trace</a>
+           functionality in the library will be disabled.   
+        </p>
+         <anchor>DLIB_THREAD_POOL_TIMEOUT</anchor>
+        <h3>#define DLIB_THREAD_POOL_TIMEOUT &lt;time-in-milliseconds&gt;</h3>
+        <p>
+           If you use dlib to create your threads then you receive the benefit of the dlib dynamic thread pool (Note that the 
+           dlib::<a href="api.html#thread_pool">thread_pool</a> object is something else unrelated to this so don't confuse
+           the two).  This pool 
+           enables dlib to spawn new threads very rapidly since it draws threads back out of its thread pool when 
+           the pool isn't empty. 
+        </p>
+        <p>
+           Thus, when a thread that was created by dlib ends it actually goes back into the dlib thread pool
+           and waits DLIB_THREAD_POOL_TIMEOUT milliseconds before totally terminating and releasing its resources back
+           to the operating system.  The default timeout used by this library is 30,000 milliseconds (30 seconds).  You
+           may however change this to whatever you like by defining DLIB_THREAD_POOL_TIMEOUT to some new value.  
+        </p>
+
+
+
+    
+    </body>
+
+
+
+    <!-- ************************************************************************* -->
+
+</doc>

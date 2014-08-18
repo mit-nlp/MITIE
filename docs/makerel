@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# if the first argument to this script is the word major then the 
+# major version number is updated and the minor is set back to 0
+
+report_failure ()
+{
+    echo "  **** failed to complete **** "
+    exit 1
+}
+
+
+./testenv_rel || report_failure
+
+
+
+REVNUM_FILE=.logger_revnum
+COUNTER_FILE=.current_release_number
+MINOR_COUTNER_FILE=.current_minor_release_number
+
+
+RELEASE=`cat $COUNTER_FILE | awk '{ print $1 + 1}'` 
+
+if [ "$1" = "major" ] 
+    then
+    MAJOR_NUM=`cat $COUNTER_FILE | awk '{print $1 + 1}'` 
+    MINOR_NUM=0 
+    echo $MAJOR_NUM > $COUNTER_FILE
+    echo $MINOR_NUM > $MINOR_COUTNER_FILE
+else 
+    MAJOR_NUM=`cat $COUNTER_FILE` 
+    MINOR_NUM=`cat $MINOR_COUTNER_FILE | awk '{print $1 + 1}'` 
+    echo $MINOR_NUM > $MINOR_COUTNER_FILE
+fi;
+
+./makedocs makerel || exit 1
+
+rm -rf release || report_failure
+mkdir release || report_failure
+
+RELEASE=${MAJOR_NUM}.${MINOR_NUM} 
+
+
+
+CHANGESET_ID=`hg id -i | sed -e 's/\+//'`
+echo $CHANGESET_ID > $REVNUM_FILE
+
+cd release || report_failure
+RELDIR=`echo dlib-$RELEASE`
+mkdir $RELDIR
+cd $RELDIR || report_failure
+cp -r ../../docs/cache/dlib . || report_failure
+cp -r ../../docs/cache/examples . || report_failure
+cp -r ../../docs/cache/python_examples . || report_failure
+cp -r ../../docs/cache/tools . || report_failure
+
+echo Version: $RELEASE >> dlib/README.txt
+echo "Date:    `date`" >> dlib/README.txt
+echo Mercurial Revision ID: $CHANGESET_ID >> dlib/README.txt
+
+
+
+WEBPAGE=`echo dlib_webpage-$RELEASE.tar`
+SOURCE_ZIP=`echo $RELDIR.zip`
+SOURCE_TAR=`echo $RELDIR.tar`
+tar -C ../../docs/chm -cf - docs/ documentation.html | tar -xf - || report_failure
+cd .. || report_failure
+
+tar -cf $SOURCE_TAR $RELDIR  || report_failure
+# flip everything to MS-DOS line endings 
+#find $RELDIR -name "*.cpp" -or -name "*.h" -or -name "*.txt" -or -name "*.html" -or -name "*.py" | xargs flip -m
+find $RELDIR -name "*.cpp" -or -name "*.h" -or -name "*.txt" -or -name "*.html" -or -name "*.py" | xargs unix2dos &> /dev/null 
+
+scp davis@home.dlib.net:dlib_win_python/* $RELDIR/python_examples || report_failure
+zip -r9 $SOURCE_ZIP $RELDIR > /dev/null || report_failure
+tar -C ../docs -cf $WEBPAGE web || report_failure
+bzip2 $SOURCE_TAR || report_failure
+bzip2 $WEBPAGE || report_failure
+
+rm -rf $RELDIR
+
+wine ../docs/chm/htmlhelp/hhc.exe ../docs/chm/lib.hhp 
+mv ../docs/chm/help.chm dlib_documentation-$RELEASE.chm || report_failure
+
+
+mkdir v$RELEASE
+mv dlib_documentation-$RELEASE.chm v$RELEASE
+mv $SOURCE_TAR.bz2 v$RELEASE
+mv $SOURCE_ZIP v$RELEASE
+
+
+echo Create Mercurial tags and commit release
+cd ..
+hg tag v$RELEASE || report_failure
+hg commit -m "Created release v$RELEASE"
+
+
