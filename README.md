@@ -47,7 +47,7 @@ cat sample_text.txt | ./ner_stream MITIE-models/english/ner_model.dat
 ```
 
 The ner_stream executable can be compiled by running `make` in the top level MITIE folder or
-by naviating to the [tools/ner_stream](tools/ner_stream) folder and running `make` or using 
+by navigating to the [tools/ner_stream](tools/ner_stream) folder and running `make` or using 
 CMake to build it which can be done with the following commands:
 ```
 cd tools/ner_stream
@@ -75,7 +75,7 @@ cmake ..
 cmake --build . --config Release --target install
 ```
 
-Either of these methods will create a MITIE shared libray in the mitielib folder.
+Either of these methods will create a MITIE shared library in the mitielib folder.
 
 ### Using MITIE from a Python 2.7 program
 
