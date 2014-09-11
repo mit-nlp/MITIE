@@ -43,7 +43,8 @@ int main(int argc, char** argv)
     sentence.push_back(".");
     // Now that we have the tokens stored, we add the entity annotations.  The first
     // annotation indicates that the token at index 3 and consisting of 2 tokens is a
-    // person.  I.e. "Davis King" is a person name.
+    // person.  I.e. "Davis King" is a person name.  Note that you can use any strings as
+    // the labels.  Here we use "person" and "org" but you could use any labels you like. 
     ner_training_instance sample(sentence);
     sample.add_entity(3,2,"person");
     sample.add_entity(9,1,"org");

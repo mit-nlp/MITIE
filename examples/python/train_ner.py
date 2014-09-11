@@ -31,7 +31,9 @@ from mitie import *
 sample = ner_training_instance(["My", "name", "is", "Davis", "King", "and", "I", "work", "for", "MIT", "."])
 # Now that we have the tokens stored, we add the entity annotations.  The first
 # annotation indicates that the tokens in the range(3,5) is a person.  I.e.
-# "Davis King" is a person name.
+# "Davis King" is a person name.  Note that you can use any strings as the
+# labels.  Here we use "person" and "org" but you could use any labels you
+# like. 
 sample.add_entity(xrange(3,5), "person")
 sample.add_entity(xrange(9,10), "org")
 
