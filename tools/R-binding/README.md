@@ -13,7 +13,7 @@ The [MITIE source package]() is available for download. However, it can be packa
 
 Starting in the top level MITIE folder, run the commands:
 ```
-cd examples/R
+cd tools/R-binding
 ./copy_source.sh
 ./build_source_package.sh
 ```
