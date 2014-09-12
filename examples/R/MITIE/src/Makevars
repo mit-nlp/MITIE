@@ -1,7 +1,7 @@
 # Modeled after RSiena's Makevars
 
 PKG_CPPFLAGS = -I./mitielib/include -I./dlib
-PKG_LIBS = -lpthread -lX11
+PKG_LIBS = -lpthread
 
 SOURCES = mitie_r.cpp $(wildcard mitielib/src/*.cpp mitielib/src/*.c)
 SOURCES += dlib/dlib/misc_api/misc_api_kernel_1.cpp
