@@ -32,6 +32,6 @@ examples/python/new_ner_model.dat
 examples/python/rel_classifier.svm
 
 # R package
-examples/R/MITIE_*.tar.gz
-examples/R/MITIE/src/dlib/
-examples/R/MITIE/src/mitielib/
+tools/R-binding/MITIE_*.tar.gz
+tools/R-binding/MITIE/src/dlib/
+tools/R-binding/MITIE/src/mitielib/
