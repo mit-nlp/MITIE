@@ -1,0 +1,3 @@
+useDynLib(MITIE)
+exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)

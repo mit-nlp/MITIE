@@ -30,3 +30,8 @@ examples/cpp/train_relation_extraction/train_relation_extraction_example
 examples/C/relation_extraction/relation_extraction_example
 examples/python/new_ner_model.dat
 examples/python/rel_classifier.svm
+
+# R package
+examples/R/MITIE_*.tar.gz
+examples/R/MITIE/src/dlib/
+examples/R/MITIE/src/mitielib/

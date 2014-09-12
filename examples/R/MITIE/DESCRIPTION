@@ -1,0 +1,14 @@
+Package: MITIE
+Type: Package
+Title: MIT Information Extraction (MITIE) Interface
+Version: 0.2
+Date: 2014-07-10
+Author: Davis King, Michael Yee, Wade Shen
+Maintainer: Michael Yee <myee@ll.mit.edu>
+Description: The MITIE project provides free (even for commercial use) state-of-the-art information extraction tools. 
+  The current release includes tools for performing named entity extraction and binary relation detection,
+  as well as tools for training custom extractors and relation detectors. 
+License: Boost Software License - Version 1.0 - August 17th, 2003
+URL: https://github.com/mit-nlp/MITIE
+Imports: Rcpp (>= 0.11.0)
+LinkingTo: Rcpp

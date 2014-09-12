@@ -1,0 +1,21 @@
+# Modeled after RSiena's Makevars
+
+PKG_CPPFLAGS = -I./mitielib/include -I./dlib
+
+SOURCES = mitie_r.cpp $(wildcard mitielib/src/*.cpp mitielib/src/*.c)
+SOURCES += dlib/dlib/misc_api/misc_api_kernel_1.cpp
+SOURCES += dlib/dlib/misc_api/misc_api_kernel_2.cpp
+SOURCES += dlib/dlib/threads/multithreaded_object_extension.cpp
+SOURCES += dlib/dlib/threads/threaded_object_extension.cpp
+SOURCES += dlib/dlib/threads/threads_kernel_1.cpp
+SOURCES += dlib/dlib/threads/threads_kernel_2.cpp
+SOURCES += dlib/dlib/threads/threads_kernel_shared.cpp
+SOURCES += dlib/dlib/threads/thread_pool_extension.cpp
+
+TMP = $(SOURCES:.cpp=.o)
+OBJECTS = $(TMP:.c=.o)
+
+all: $(SHLIB)
+
+clean:
+	@rm -f $(OBJECTS)
