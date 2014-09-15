@@ -26,7 +26,8 @@ NamedEntityExtractor$help(get_possible_ner_tags)
 NamedEntityExtractor$help(save_to_disk)
 
 # Load named entity extractor from disk
-# Note: models can be downloaded from http://sourceforge.net/projects/mitie/files/
+# Note: models can be downloaded from http://sourceforge.net/projects/mitie/files/binaries
+# - e.g., http://sourceforge.net/projects/mitie/files/binaries/MITIE-models-v0.2.tar.bz2
 
 ner_model_path <- "/path/MITIE-models/english/ner_model.dat"
 ner <- NamedEntityExtractor$new(ner_model_path)
