@@ -85,6 +85,10 @@ MITIE: [named entity recognition and relation extraction](examples/python/ner.py
 [training a custom NER tool](examples/python/train_ner.py), or 
 [training a custom relation extractor](examples/python/train_ner.py).
 
+### Using MITIE from R
+
+MITIE can be installed as an R package. See the [README](tools/R-binding/README.md) for details.
+
 ### Using MITIE from a C program
 
 There are example C programs in the [examples/C](examples/C) folder.  To compile of them you simply

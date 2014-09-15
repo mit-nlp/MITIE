@@ -3,13 +3,13 @@ MITIE R Package
 
 MITIE's functionality can be used in the [R](http://www.r-project.org/) statistical computing environment.
 
-Linux users can download (or build) the [MITIE source package](), and then install the package into R from source.
+Linux users can download (or build) the [MITIE source package](http://sourceforge.net/projects/mitie/files/R-package/MITIE_0.2.tar.gz), and then install the package into R from source.
 
-Windows users should download the [pre-built binary package]() and install it through an R graphical user interface.
+Windows users should download the [pre-built binary package](http://sourceforge.net/projects/mitie/files/R-package/MITIE_0.2.zip) and install it through an R graphical user interface.
 
 ### Building the Source Package
 
-The [MITIE source package]() is available for download. However, it can be packaged with the following steps.
+The [MITIE source package](http://sourceforge.net/projects/mitie/files/R-package/MITIE_0.2.tar.gz) is available for download. However, it can be packaged with the following steps.
 
 Starting in the top level MITIE folder, run the commands:
 ```
@@ -19,11 +19,20 @@ cd tools/R-binding
 ```
 This will create a `MITIE_{version}.tar.gz` source package.
 
-### Installing the MITIE Source Package from Source (Linux/Mac?)
+### Installing the MITIE Source Package from Source (Linux/Mac)
 
 Note: The following requires the R development tools to be installed, e.g., the `r-base-dev` package on ubuntu.
 
-First build or download the latest [MITIE source package](). Then from the command line, run:
+Step 1: Install MITIE dependencies.
+
+MITIE depends on the [Rcpp](http://www.rcpp.org/) package for integrating C++ with R. Rcpp can be installed using a GUI package manager or using the R command:
+```
+install.packages("Rcpp")
+```
+
+Step 2: Build or download latest [MITIE source package](http://sourceforge.net/projects/mitie/files/R-package/MITIE_0.2.tar.gz).
+
+Step 3: From the linux command line, run:
 ```
 R CMD INSTALL MITIE_{version}.tar.gz
 ```
@@ -33,9 +42,16 @@ R CMD INSTALL MITIE_{version}.tar.gz
 The MITIE package can be installed from source on Windows if [Rtools](http://cran.r-project.org/bin/windows/Rtools/) is installed.
 However, pre-compiled Windows binaries are also available (and more convenient).
 
-First download the latest [Windows binary package](), which was built with R version 3.1. 
-Then in RGui, select "Packages" / "Install package(s) from local zip files..." and
-navigate to MITIE_{version}.zip to install the package.
+Step 1: Install MITIE dependencies.
+
+MITIE depends on the [Rcpp](http://www.rcpp.org/) package for integrating C++ with R. Rcpp can be installed using a GUI package manager or using the R command:
+```
+install.packages("Rcpp")
+```
+
+Step 2: Download the latest [Windows binary package](http://sourceforge.net/projects/mitie/files/R-package/MITIE_0.2.zip), which was built with R version 3.1. 
+
+Step 3: Use GUI's package manager to install package from local zip file. For example, in RGui, select "Packages" / "Install package(s) from local zip files..." and navigate to MITIE_{version}.zip to install the package.
 
 ### Using MITIE from R
 
