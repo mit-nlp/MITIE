@@ -19,7 +19,7 @@ cd tools/R-binding
 ```
 This will create a `MITIE_{version}.tar.gz` source package.
 
-### Installing the MITIE Source Package from Source (Linux/Mac)
+### Installing the MITIE Source Package (Linux/Mac)
 
 Note: The following requires the R development tools to be installed, e.g., the `r-base-dev` package on ubuntu.
 
@@ -65,7 +65,7 @@ library(MITIE)
 help(MITIE)
 
 # Load named entity extractor from disk
-# NOTE: models can be downloaded from http://sourceforge.net/projects/mitie/files/
+# NOTE: models can be downloaded from http://sourceforge.net/projects/mitie/files/binaries/
 # NOTE: change this path to point to where your model files are
 
 ner_model_path <- "C:/MITIE-models/english/ner_model.dat"
