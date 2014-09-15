@@ -87,7 +87,7 @@ MITIE: [named entity recognition and relation extraction](examples/python/ner.py
 
 ### Using MITIE from R
 
-MITIE can be installed as an R package. See the [README](tools/R-binding/README.md) for details.
+MITIE can be installed as an R package. See the [README](tools/R-binding) for more details.
 
 ### Using MITIE from a C program
 
