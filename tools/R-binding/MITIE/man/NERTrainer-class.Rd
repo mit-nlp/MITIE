@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{NERTrainer-class}
+\alias{NERTrainer}
 
 \title{Class \code{"NERTrainer"}}
 \description{
@@ -12,22 +13,7 @@ Tool for training a new \code{\linkS4class{NamedEntityExtractor}} given examples
 All reference classes extend and inherit methods from \code{"\linkS4class{envRefClass}"}.
 
 }
-\references{
-%%  ~~put references to the literature/web site here~~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%%  ~~objects to See Also as \code{\link{~~fun~~}}, ~~~
-%%  ~~or \code{\linkS4class{CLASSNAME}} for links to other classes ~~~
-}
 \examples{
 \dontrun{
 

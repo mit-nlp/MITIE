@@ -13,22 +13,7 @@ Tool for extracting named entities such as people, locations, and organizations 
 All reference classes extend and inherit methods from \code{"\linkS4class{envRefClass}"}.
 
 }
-\references{
-%%  ~~put references to the literature/web site here~~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%%  ~~objects to See Also as \code{\link{~~fun~~}}, ~~~
-%%  ~~or \code{\linkS4class{CLASSNAME}} for links to other classes ~~~
-}
 \examples{
 \dontrun{
 

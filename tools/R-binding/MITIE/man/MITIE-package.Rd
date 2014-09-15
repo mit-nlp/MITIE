@@ -26,6 +26,8 @@ LinkingTo: \tab Rcpp\cr
 
 \code{\link{mitie_load_entire_file}} loads text from file into a string.
 
+\code{\link{mitie_range_overlaps}} detects whether two entity ranges overlap.
+
 \code{\linkS4class{NamedEntityExtractor}} is a reference class for extracting named entities such as people, locations, and organizations from text.
 
 \code{\linkS4class{BinaryRelationDetector}} is a reference class for detecting relationships between entities such as person / place_of_birth.
@@ -42,11 +44,7 @@ Davis King, Michael Yee, Wade Shen
 
 Maintainer: Michael Yee <myee@ll.mit.edu>
 }
-\references{
-}
 \keyword{ package }
-\seealso{
-}
 \examples{
 \dontrun{
 # Get package overview
