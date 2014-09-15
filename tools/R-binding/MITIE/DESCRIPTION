@@ -8,7 +8,7 @@ Maintainer: Michael Yee <myee@ll.mit.edu>
 Description: The MITIE project provides free (even for commercial use) state-of-the-art information extraction tools. 
   The current release includes tools for performing named entity extraction and binary relation detection,
   as well as tools for training custom extractors and relation detectors. 
-License: Boost Software License - Version 1.0 - August 17th, 2003
+License: BSL-1.0
 URL: https://github.com/mit-nlp/MITIE
 Imports: Rcpp (>= 0.11.0)
 Depends: methods
