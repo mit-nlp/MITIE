@@ -2,6 +2,8 @@ tags
 build
 *.swp
 *.swo
+*.class
+*.jar
 *.pyc
 *.o
 *.so
