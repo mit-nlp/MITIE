@@ -18,6 +18,9 @@
 #   include(../projects/tools/dclib/dlib/cmake)
 #   set(additional_link_libraries dlib)
 #
+#   ### tell swig to put the output files into the parent folder of your CMakeLists.txt 
+#   ### file when you run make install.
+#   set(install_target_output_folder ..)
 #   include(cmake_swig_jni)
 
 
@@ -107,6 +110,24 @@ add_custom_command(TARGET ${PROJECT_NAME}
    COMMAND ${Java_JAR_EXECUTABLE} cvf "${CMAKE_CURRENT_BINARY_DIR}/lib/${PROJECT_NAME}.jar" -C "${CMAKE_CURRENT_BINARY_DIR}/intermediate_files_compiled" ${package_root_name}
    )
 
+
+#if the including cmake script set the install_target_output_folder variable
+#then make it so we install the compiled library and jar into that folder
+if (install_target_output_folder)
+    # Determine the path to our CMakeLists.txt file.
+    string(REGEX REPLACE "CMakeLists.txt$" "" base_path ${CMAKE_PARENT_LIST_FILE})
+    # The directory we will write the output files to.
+    set(install_dir "${base_path}${install_target_output_folder}")
+    set(CMAKE_INSTALL_PREFIX "${install_dir}")
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "${install_dir}")
+    install(TARGETS ${PROJECT_NAME} 
+        DESTINATION "${install_dir}"
+        )
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/${PROJECT_NAME}.jar 
+        DESTINATION "${install_dir}"
+        )
+endif()
+
 # Copy any system libraries to the output folder.  This really only matters on
 # windows where it's good to have the visual studio runtime show up in the lib
 # folder so that you don't forget to include it in your binary distribution.
@@ -118,15 +139,3 @@ foreach (file_i ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
       )
 endforeach()
 
-
-#if the including cmake script set the install_target_output_folder variable
-#then make it so we install the compiled library and jar into that folder
-if (install_target_output_folder)
-    # Determine the path to our CMakeLists.txt file.
-    string(REGEX REPLACE "CMakeLists.txt$" "" base_path ${CMAKE_PARENT_LIST_FILE})
-    # Tell cmake to copy the needed visual studio runtime dll files into the output folder if we are using visual studio.
-    set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION ${base_path}/${install_target_output_folder})
-    INCLUDE(InstallRequiredSystemLibraries)
-    install(TARGETS ${PROJECT_NAME} DESTINATION ${base_path}/${install_target_output_folder})
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lib/${PROJECT_NAME}.jar DESTINATION ${base_path}/${install_target_output_folder})
-endif()
