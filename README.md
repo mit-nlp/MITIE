@@ -113,6 +113,21 @@ cmake ..
 cmake --build . --config Release
 ```
 
+### Using MITIE from a Java program
+
+There is an example Java program in the [examples/java](examples/java) folder.  Before you can run it you
+must compile MITIE's java interface which you can do like so:
+```
+cd mitielib/java
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release --target install
+```
+That will place a javamitie shared library and jar file into the mitielib folder.  Now that you have those
+two files you can run the example program in examples/java by running run_ner.bat if you are on Windows and
+run_ner.sh if you are on a POSIX system like Linux or OS X.
+
 ### Running MITIE's unit tests
 
 You can run a simple regression test to validate your build.  Do this by running
