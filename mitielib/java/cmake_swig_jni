@@ -74,10 +74,30 @@ find_package(Java REQUIRED)
 find_package(JNI REQUIRED)
 include(UseSWIG)
 
+macro (add_global_switch def_name )
+   if (NOT CMAKE_CXX_FLAGS MATCHES "${def_name}")
+      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${def_name}" 
+         CACHE STRING "Flags used by the compiler during all C++ builds." 
+         FORCE)
+   endif ()
+   if (NOT CMAKE_C_FLAGS MATCHES "${def_name}")
+      set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${def_name}" 
+         CACHE STRING "Flags used by the compiler during all C builds." 
+         FORCE)
+   endif ()
+endmacro()
+
 # SWIG doesn't work if optimizations are enabled and strict aliasing is not
 # turned off.  This is a little wonky but it's how SWIG is.
 if (CMAKE_COMPILER_IS_GNUCXX)
     add_definitions(-fno-strict-aliasing)
+endif()
+if (UNIX)
+    # we need to make sure all the code is compiled with -fPIC. In particular,
+    # it's important that all the code for the whole project is, not just the
+    # stuff immediately compiled by us in this cmake file.  So we add -fPIC to
+    # the top level cmake flags variables.
+    add_global_switch(-fPIC)
 endif()
 
 

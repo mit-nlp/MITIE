@@ -21,7 +21,6 @@ include_directories(
    )
 
 # Additional dependencies
-set(CMAKE_POSITION_INDEPENDENT_CODE True)
 include(../../dlib/dlib/cmake)
 set(additional_link_libraries dlib)
 
