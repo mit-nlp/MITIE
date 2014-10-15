@@ -128,7 +128,11 @@ That will place a javamitie shared library and jar file into the mitielib folder
 two files you can run the example program in examples/java by running run_ner.bat if you are on Windows or
 run_ner.sh if you are on a POSIX system like Linux or OS X.
 
-Also note that you must have Swig and the Java JDK installed to compile the MITIE interface.
+Also note that you must have Swig 1.3.40 or newer, CMake 2.8.11 or newer, and the Java JDK installed to compile the MITIE interface.  Finally, note that if you are using 64bit Java on Windows then you will need to use a command like:
+```
+cmake -G "Visual Studio 10 Win64" ..
+```
+instead of  `cmake ..` so that Visual Studio knows to make a 64bit library.
 
 ### Running MITIE's unit tests
 
