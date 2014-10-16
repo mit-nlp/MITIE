@@ -56,6 +56,7 @@ if (NOT DEFINED ENV{JAVA_HOME})
       ${JAVA_PATH1}
       ${JAVA_PATH2}
       "C:/Program Files/Java/jdk*"
+      "C:/Program Files (x86)/Java/jdk*"
       )
 
    if (AUTO_JAVA_HOME)
