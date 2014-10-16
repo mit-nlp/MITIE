@@ -2,9 +2,11 @@
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis.king@ll.mit.edu)
 
+#include <dlib/algs.h>
 #include <mitie/binary_relation_detector.h>
 #include <dlib/hash.h>
 #include <vector>
+
 
 using namespace dlib;
 using namespace mitie;
@@ -49,21 +51,21 @@ namespace
 
             // add a 1-gram feature
             sign = (h[0].second&1) ? +1 : -1;
-            vect.push_back(make_pair(h[0].first%num_hash_dims + offset, sign));
+            vect.push_back(make_pair<unsigned long>(h[0].first%num_hash_dims + offset, sign));
 
             if (i > range.first)
             {
                 // add a 2-gram feature
                 temp = murmur_hash3_128bit_3(h[0].first, h[1].first, 0);
                 sign = (temp.second&1) ? +1 : -1;
-                vect.push_back(make_pair(temp.first%num_hash_dims + offset, sign));
+                vect.push_back(make_pair<unsigned long>(temp.first%num_hash_dims + offset, sign));
             }
             if (i > range.first+1)
             {
                 // add a 3-gram feature
                 temp = murmur_hash3_128bit_3(h[0].first, h[1].first, h[2].first);
                 sign = (temp.second&1) ? +1 : -1;
-                vect.push_back(make_pair(temp.first%num_hash_dims + offset, sign));
+                vect.push_back(make_pair<unsigned long>(temp.first%num_hash_dims + offset, sign));
             }
         }
     }
@@ -80,7 +82,7 @@ namespace
     {
         std::pair<uint64,uint64> temp = murmur_hash3_128bit_3(v1,v2,v3);
         double sign = (temp.second&1) ? +1 : -1;
-        return make_pair(temp.first%num_hash_dims + offset, sign);
+        return make_pair<unsigned long>(temp.first%num_hash_dims + offset, sign);
     }
 
 // ----------------------------------------------------------------------------------------
