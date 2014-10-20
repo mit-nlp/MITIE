@@ -152,6 +152,16 @@ example models.  If you require a non-standard C++ compiler, change
 
 We have built Python 2.7 binaries packaged with sample models for 64bit Linux and Windows (both 32 and 64 bit version of Python).  You can download the precompiled package here: [Precompiled MITIE 0.2](http://sourceforge.net/projects/mitie/files/binaries/mitie-v0.2-python-2.7-windows-or-linux64.zip)
 
+
+# Precompiled Python 2.7 binaries
+
+We have built Python 2.7 binaries packaged with sample models for 64bit Linux and Windows (both 32 and 64 bit version of Python).  You can download the precompiled package here: [Precompiled Python MITIE 0.2](http://sourceforge.net/projects/mitie/files/binaries/mitie-v0.2-python-2.7-windows-or-linux64.zip)
+
+
+# Precompiled Java 64bit binaries
+
+We have built Java binaries for the 64bit JVM which work on Linux and Windows.  You can download the precompiled package here: [Precompiled Java MITIE 0.3](http://sourceforge.net/projects/mitie/files/binaries/mitie-java-v0.3-windows64-or-linux64.zip).  In the file is an examples/java folder.  You can run the example by executing the provided .bat or .sh file.
+
 # License
 
 MITIE is licensed under the Boost Software License - Version 1.0 - August 17th, 2003.  
