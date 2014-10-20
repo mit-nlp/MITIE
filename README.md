@@ -14,7 +14,7 @@ recognition task.  There are also 21 English binary relation extraction models p
 were trained on a 
 [combination of Wikipedia and Freebase data](https://sourceforge.net/projects/mitie/files/freebase_wikipedia_binary_relation_training_data_v1.0.tar.bz2/download).
 
-Additionally, the core library provides APIs in C, C++, and Python 2.7.  Outside
+Additionally, the core library provides APIs in C, C++, Java, R, and Python 2.7.  Outside
 projects have created bindings for [OCaml](https://github.com/travisbrady/omitie) and 
 [.NET](https://github.com/BayardRock/MITIE-Dot-Net).  Future releases will 
 add bindings in Java, R, and possibly other languages.
@@ -23,7 +23,7 @@ add bindings in Java, R, and possibly other languages.
 
 MITIE's primary API is a C API which is documented in the
 [mitie.h](mitielib/include/mitie.h) header file.  Beyond this, there are many
-[example programs](examples/) showing how to use MITIE from C, C++, or Python 2.7.
+[example programs](examples/) showing how to use MITIE from C, C++, Java, R, or Python 2.7.
 
 ### Initial Setup
 
