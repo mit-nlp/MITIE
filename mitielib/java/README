@@ -1,0 +1,19 @@
+You can compile the Java API on any system by executing the following
+commands from within the mitielib/java folder:
+
+	mkdir build
+	cd build
+	cmake ..
+	cmake --build . --config Release --target install
+
+This will build a shared library and .jar file and put them into the mitielib
+folder.  Note that you must have Swig 1.3.40 or newer, CMake 2.8.4 or newer,
+and the Java JDK installed to compile the MITIE interface. Finally, note that
+if you are using 64bit Java on Windows then you will need to use a command
+like:
+	 cmake -G "Visual Studio 10 Win64" ..
+instead of:
+ 	cmake .. 
+so that Visual Studio knows to make a 64bit library.
+
+
