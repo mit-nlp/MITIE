@@ -5,7 +5,6 @@
 #   cmake_minimum_required (VERSION 2.8.4)
 #   project (example)
 #   set(java_package_name "org.mycompany")
-#   set(swig_interface_file example.i)
 #   set(source_files
 #       your_cpp_source.cpp
 #       more_cpp_source.cpp
@@ -14,8 +13,7 @@
 #   ### We might need to link our code to some other C++ library like dlib.  You
 #   ### can do that by setting additional_link_libraries.  Here is an example of
 #   ### linking to dlib:
-#   set(CMAKE_POSITION_INDEPENDENT_CODE True)
-#   include(../projects/tools/dclib/dlib/cmake)
+#   include(../../dlib/dlib/cmake)
 #   set(additional_link_libraries dlib)
 #
 #   ### tell swig to put the output files into the parent folder of your CMakeLists.txt 
@@ -108,8 +106,8 @@ string(REGEX REPLACE "\\..*" "" package_root_name ${java_package_name})
 set(CMAKE_SWIG_FLAGS -package ${java_package_name})
 set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/lib/java_src/${package_path})
 
-set_source_files_properties(${swig_interface_file} PROPERTIES CPLUSPLUS ON)
-swig_add_module(${PROJECT_NAME} java ${swig_interface_file} ${source_files})
+set_source_files_properties(swig.i PROPERTIES CPLUSPLUS ON)
+swig_add_module(${PROJECT_NAME} java swig.i ${source_files})
 
 include_directories(${JNI_INCLUDE_DIRS})
 swig_link_libraries(${PROJECT_NAME}  ${additional_link_libraries})

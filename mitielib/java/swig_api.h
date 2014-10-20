@@ -4,6 +4,17 @@
 #ifndef MITLL_MITIE_JAVA_ApI_H_
 #define MITLL_MITIE_JAVA_ApI_H_
 
+// Define some swig type maps that tell swig what to call various instantiations of
+// std::vector.
+#ifdef SWIG
+%include "std_string.i"
+%include "std_vector.i"
+%template(StringVector)         std::vector<std::string>;
+%template(TokenIndexVector)     std::vector<TokenIndexPair>;
+%template(EntityMentionVector)  std::vector<EntityMention>;
+#endif
+
+
 #include <string>
 #include <sstream>
 #include <fstream>

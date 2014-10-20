@@ -30,7 +30,7 @@ public class nerExample
 
 
         // Load a text file and convert it into a list of words.
-        StringVector words = mitie.tokenize(mitie.loadEntireFile("../../sample_text.txt"));
+        StringVector words = global.tokenize(global.loadEntireFile("../../sample_text.txt"));
 
 
         // Now ask MITIE to find all the named entities in the file we just loaded.

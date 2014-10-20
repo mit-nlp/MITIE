@@ -2,7 +2,6 @@
 cmake_minimum_required (VERSION 2.8.4)
 project (javamitie)
 set(java_package_name edu.mit.ll.mitie)
-set(swig_interface_file mitie.i)
 set(source_files
    ../src/binary_relation_detector.cpp
    ../src/binary_relation_detector_trainer.cpp
