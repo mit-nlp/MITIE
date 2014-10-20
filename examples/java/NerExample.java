@@ -5,7 +5,7 @@
 */
 import edu.mit.ll.mitie.*;
 
-public class nerExample 
+public class NerExample 
 {
     public static void main(String args[])
     {
