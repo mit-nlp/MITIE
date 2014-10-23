@@ -9,14 +9,12 @@ public class NerExample
 {
     public static void main(String args[])
     {
-        // To use MITIE, the first thing you need to do is load the compiled C++ library
-        // part of MITIE.  For this to work you must have already compiled the MITIE Java
-        // API located in mitielib/java.  Moreover, you must also make sure that the
-        // javamitie shared library or dll file is in your system PATH if on Windows or the
-        // LD_LIBRARY_PATH environment variable if on a UNIX system.  Note that this
-        // example program comes with both .bat and .sh scripts that show how to do this on
-        // any system.
-        System.loadLibrary("javamitie");
+        // Note that, to use MITIE you must have already compiled the MITIE Java API
+        // located in mitielib/java.  It will have produced a javamitie.jar file and a
+        // shared library or dll.  Moreover, you must make sure that the shared library or
+        // dll file is in your system PATH if on Windows or the LD_LIBRARY_PATH environment
+        // variable if on a UNIX system.  This example program comes with both .bat and .sh
+        // scripts that show how to do this on any system.
         
 
 
