@@ -28,6 +28,11 @@ else()
 endif()
 set(MATLAB_LIBRARIES ${MATLAB_MEX_LIBRARY} ${MATLAB_MX_LIBRARY} ${MATLAB_ENG_LIBRARY})
 INCLUDE_DIRECTORIES("${MATLAB_HOME}/extern/include")
+# Determine the path to cmake_mex_wrapper file so we can add it to the include search path..
+string(REGEX REPLACE "cmake_mex_wrapper$" "" dlib_matlab_binding_path ${CMAKE_CURRENT_LIST_FILE})
+INCLUDE_DIRECTORIES("${dlib_matlab_binding_path}")
+
+
 ADD_DEFINITIONS(-DMATLAB_MEX_FILE)
 
 

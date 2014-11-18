@@ -94,12 +94,12 @@
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-#include "../../dclib/dlib/matrix.h"
-#include "../../dclib/dlib/array2d.h"
-#include "../../dclib/dlib/array.h"
-#include "../../dclib/dlib/image_transforms.h"
-#include "../../dclib/dlib/is_kind.h"
-#include "../../dclib/dlib/any.h" // for sig_traits
+#include "../matrix.h"
+#include "../array2d.h"
+#include "../array.h"
+#include "../image_transforms.h"
+#include "../is_kind.h"
+#include "../any.h" // for sig_traits
 
 #if defined(_MSC_VER)
 #define DLL_EXPORT_SYM __declspec(dllexport)
