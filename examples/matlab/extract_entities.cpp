@@ -1,3 +1,6 @@
+// Copyright (C) 2014 Massachusetts Institute of Technology, Lincoln Laboratory
+// License: Boost Software License   See LICENSE.txt for the full license.
+// Authors: Davis E. King (davis@dlib.net)
 
 #include <dlib/matrix.h>
 #include <mitie/named_entity_extractor.h>
