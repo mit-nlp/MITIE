@@ -35,6 +35,15 @@ INCLUDE_DIRECTORIES("${dlib_matlab_binding_path}")
 
 ADD_DEFINITIONS(-DMATLAB_MEX_FILE)
 
+# Determine the path to our CMakeLists.txt file.  This is the file that
+# includeded the one you are reading right now.  So here we make it so that
+# when you run the install target it will copy the compiled mex files into the
+# same folder as the parent CMakeLists.txt file.
+string(REGEX REPLACE "CMakeLists.txt$" "" install_dir ${CMAKE_PARENT_LIST_FILE})
+set(CMAKE_INSTALL_PREFIX "${install_dir}")
+set(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION "${install_dir}")
+INCLUDE(InstallRequiredSystemLibraries)
+
 
 MACRO(add_mex_function name )
    ADD_LIBRARY(${name} MODULE ${name}.cpp )
@@ -48,6 +57,7 @@ MACRO(add_mex_function name )
    endif()
    set_target_properties(${name} PROPERTIES PREFIX "")
    TARGET_LINK_LIBRARIES(${name} ${MATLAB_LIBRARIES} ${ARGN})
+   install(TARGETS ${name} DESTINATION "${install_dir}")
 ENDMACRO()
 
 
