@@ -8,7 +8,7 @@ these commands:
    mkdir build
    cd build
    cmake ..
-   cmake --build . --config Release
+   cmake --build . --config release --target install
 
 That should build the mex files on any platform.
 
