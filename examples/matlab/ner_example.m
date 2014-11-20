@@ -3,6 +3,7 @@
 % use it.  To do this, execute the following commands:
 %   cd examples/matlab
 %   mkdir build
+%   cd build
 %   cmake -G "Visual Studio 10 Win64" ..
 %   cmake --build . --config release --target install
 % That will compile everything and copy the build outputs into the 
