@@ -1,6 +1,6 @@
 // Copyright (C) 2013 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
-// Authors: Davis E. King (davis.king@ll.mit.edu)
+// Authors: Davis E. King (davis@dlib.net)
 #ifndef MIT_LL_TOTAL_WoRD_FEATURE_EXTRACTOR_H_
 #define MIT_LL_TOTAL_WoRD_FEATURE_EXTRACTOR_H_
 

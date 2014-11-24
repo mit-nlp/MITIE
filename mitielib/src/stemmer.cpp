@@ -1,6 +1,6 @@
 // Copyright (C) 2012 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
-// Authors: Davis E. King (davis.king@ll.mit.edu)
+// Authors: Davis E. King (davis@dlib.net)
 #include <mitie/stemmer.h>
 #include <dlib/string.h>
 

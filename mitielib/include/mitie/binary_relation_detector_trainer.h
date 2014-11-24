@@ -1,6 +1,6 @@
 // Copyright (C) 2014 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
-// Authors: Davis E. King (davis.king@ll.mit.edu)
+// Authors: Davis E. King (davis@dlib.net)
 #ifndef MIT_LL_BINARY_rELATION_DETECTION_TRAINER_H_
 #define MIT_LL_BINARY_rELATION_DETECTION_TRAINER_H_
 
