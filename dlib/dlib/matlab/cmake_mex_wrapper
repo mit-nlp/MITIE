@@ -6,7 +6,10 @@
 cmake_minimum_required(VERSION 2.8.4)
 
 # Find MATLAB's include directory and needed libraries 
-find_program(MATLAB_EXECUTABLE matlab)
+find_program(MATLAB_EXECUTABLE matlab PATHS
+        "C:/Program Files/MATLAB/*/bin"
+        "C:/Program Files (x86)/MATLAB/*/bin"
+        )
 # Resolve symbolic links to try and get the real path to the MATLAB executable
 get_filename_component(MATLAB_EXECUTABLE ${MATLAB_EXECUTABLE} REALPATH)
 # Now get MATLAB root directory
