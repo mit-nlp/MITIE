@@ -5,6 +5,7 @@
 
 cmake_minimum_required(VERSION 2.8.4)
 
+
 # Find MATLAB's include directory and needed libraries 
 find_program(MATLAB_EXECUTABLE matlab PATHS
         "C:/Program Files/MATLAB/*/bin"
@@ -35,6 +36,9 @@ INCLUDE_DIRECTORIES("${MATLAB_HOME}/extern/include")
 string(REGEX REPLACE "cmake_mex_wrapper$" "" dlib_matlab_binding_path ${CMAKE_CURRENT_LIST_FILE})
 INCLUDE_DIRECTORIES("${dlib_matlab_binding_path}")
 
+# Determine the path to dlib so we can add it to the include search path.
+string(REGEX REPLACE "cmake_mex_wrapper$" "" dlib_path ${CMAKE_CURRENT_LIST_FILE})
+INCLUDE_DIRECTORIES(${dlib_path}/../..)
 
 ADD_DEFINITIONS(-DMATLAB_MEX_FILE)
 
