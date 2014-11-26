@@ -163,6 +163,10 @@
             <name>Examples: C++</name>
             <sub>
                <item>
+                  <name>Webcam_Face_Pose_Estimation</name>
+                  <link>webcam_face_pose_ex.cpp.html</link>
+               </item>
+               <item>
                   <name>Learning_to_Track</name>
                   <link>learning_to_track_ex.cpp.html</link>
                </item>
@@ -498,11 +502,11 @@
             </item>
             <item>
                <name>Forums</name>
-               <link>https://sourceforge.net/projects/dclib/forums</link>
+               <link>https://sourceforge.net/p/dclib/discussion</link>
             </item>
             <item>
                <name>Download dlib</name>
-               <link>http://sourceforge.net/project/platformdownload.php?group_id=130373</link>
+               <link>http://sourceforge.net/projects/dclib/files/latest/download</link>
             </item>
             <item>
                <name>Who uses dlib?</name>
