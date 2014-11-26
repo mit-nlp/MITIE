@@ -44,6 +44,7 @@ set (tests
    entropy_coder.cpp
    entropy_encoder_model.cpp
    example_args.cpp
+   face.cpp
    fft.cpp
    fhog.cpp
    filtering.cpp
@@ -162,7 +163,7 @@ TARGET_LINK_LIBRARIES(${target_name} dlib )
 
 if (NOT DLIB_NO_GUI_SUPPORT)
    add_subdirectory(gui)
-   add_subdirectory(../../examples examples_build)
+   add_subdirectory(examples)
 endif()
 
 

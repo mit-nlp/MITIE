@@ -4,6 +4,7 @@
 #ifdef DLIB_SAVE_PnG_ABSTRACT_
 
 #include "../pixel.h"
+#include "../image_processing/generic_image.h"
 
 namespace dlib
 {
@@ -19,9 +20,8 @@ namespace dlib
     );
     /*!
         requires
-            - image_type == is an implementation of array2d/array2d_kernel_abstract.h or
-              a dlib::matrix
-            - pixel_traits<typename image_type::type> is defined  
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h or a matrix expression
             - image.size() != 0
         ensures
             - writes the image to the file indicated by file_name in the PNG (Portable Network Graphics) 

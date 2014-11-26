@@ -1,10 +1,11 @@
 // Copyright (C) 2011  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#undef DLIB_SEGMENT_ImAGE_ABSTRACT_H__
-#ifdef DLIB_SEGMENT_ImAGE_ABSTRACT_H__
+#undef DLIB_SEGMENT_ImAGE_ABSTRACT_Hh_
+#ifdef DLIB_SEGMENT_ImAGE_ABSTRACT_Hh_
 
 #include <vector>
 #include "../matrix.h"
+#include "../image_processing/generic_image.h"
 
 namespace dlib
 {
@@ -23,11 +24,13 @@ namespace dlib
     );
     /*!
         requires
-            - in_image_type  == an implementation of array2d/array2d_kernel_abstract.h
-            - out_image_type == an implementation of array2d/array2d_kernel_abstract.h
-            - in_image_type::type  == Any pixel type with a pixel_traits specialization or a
-              dlib matrix object representing a row or column vector.
-            - out_image_type::type == unsigned integer type 
+            - in_image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
+            - out_image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
+            - in_image_type can contain any pixel type with a pixel_traits specialization
+              or a dlib matrix object representing a row or column vector.
+            - out_image_type must contain an unsigned integer pixel type.
             - is_same_object(in_img, out_img) == false
         ensures
             - Attempts to segment in_img into regions which have some visual consistency to
@@ -65,6 +68,8 @@ namespace dlib
     );
     /*!
         requires
+            - in_image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
             - is_vector(kvals) == true
             - kvals.size() > 0
         ensures
@@ -116,6 +121,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_SEGMENT_ImAGE_ABSTRACT_H__
+#endif // DLIB_SEGMENT_ImAGE_ABSTRACT_Hh_
 
 

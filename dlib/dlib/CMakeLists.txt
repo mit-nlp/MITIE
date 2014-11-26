@@ -155,7 +155,8 @@ if (NOT TARGET dlib)
             else()
                message(" *****************************************************************************")
                message(" *** DLIB GUI SUPPORT DISABLED BECAUSE X11 DEVELOPMENT LIBRARIES NOT FOUND ***")
-               message(" *** Make sure libx11-dev is installed if you want GUI support             ***")
+               message(" *** Make sure XQuartz is installed if you want GUI support.               ***")
+               message(" *** You can download XQuartz from: http://xquartz.macosforge.org/landing/ ***")
                message(" *****************************************************************************")
                set(DLIB_NO_GUI_SUPPORT ON CACHE STRING ${DLIB_NO_GUI_SUPPORT_STR} FORCE )
             endif()
@@ -261,7 +262,7 @@ if (NOT TARGET dlib)
 
       if (DLIB_LINK_WITH_LIBJPEG)
          # try to find libjpeg 
-         include(FindJPEG)
+         find_package(JPEG QUIET)
          if (JPEG_FOUND)
             include_directories(${JPEG_INCLUDE_DIR})
             set (dlib_needed_libraries ${dlib_needed_libraries} ${JPEG_LIBRARY})
@@ -294,10 +295,30 @@ if (NOT TARGET dlib)
                   external/libjpeg/jmemnobs.cpp
                   external/libjpeg/jquant1.cpp
                   external/libjpeg/jquant2.cpp
-                  external/libjpeg/jutils.cpp  )
+                  external/libjpeg/jutils.cpp  
+                  external/libjpeg/jcapimin.cpp
+                  external/libjpeg/jdatadst.cpp
+                  external/libjpeg/jcparam.cpp
+                  external/libjpeg/jcapistd.cpp
+                  external/libjpeg/jcmarker.cpp
+                  external/libjpeg/jcinit.cpp
+                  external/libjpeg/jcmaster.cpp
+                  external/libjpeg/jcdctmgr.cpp
+                  external/libjpeg/jccoefct.cpp  
+                  external/libjpeg/jccolor.cpp  
+                  external/libjpeg/jchuff.cpp  
+                  external/libjpeg/jcmainct.cpp  
+                  external/libjpeg/jcphuff.cpp  
+                  external/libjpeg/jcprepct.cpp  
+                  external/libjpeg/jcsample.cpp
+                  external/libjpeg/jfdctint.cpp
+                  external/libjpeg/jfdctflt.cpp
+                  external/libjpeg/jfdctfst.cpp
+                  )
          endif()
          set(source_files ${source_files}
             image_loader/jpeg_loader.cpp
+            image_saver/save_jpeg.cpp
             )
       endif()
 

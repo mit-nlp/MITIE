@@ -1,11 +1,12 @@
 // Copyright (C) 2013  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#undef DLIB_fHOG_ABSTRACT_H__
-#ifdef DLIB_fHOG_ABSTRACT_H__
+#undef DLIB_fHOG_ABSTRACT_Hh_
+#ifdef DLIB_fHOG_ABSTRACT_Hh_
 
 #include "../matrix/matrix_abstract.h"
 #include "../array2d/array2d_kernel_abstract.h"
 #include "../array/array_kernel_abstract.h"
+#include "../image_processing/generic_image.h"
 
 namespace dlib
 {
@@ -29,9 +30,8 @@ namespace dlib
             - cell_size > 0
             - filter_rows_padding > 0
             - filter_cols_padding > 0
-            - image_type == is an implementation of array2d/array2d_kernel_abstract.h
-            - img contains some kind of pixel type. 
-              (i.e. pixel_traits<typename image_type::type> is defined)
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
             - T should be float or double
         ensures
             - This function implements the HOG feature extraction method described in 
@@ -62,8 +62,11 @@ namespace dlib
               area of a hog image (note that you should use the following planar version of
               extract_fhog_features() instead of the interlaced version if you want to use
               spatially_filter_image() on a hog image).
-            - #hog.nr() is approximately equal to img.nr()/cell_size + filter_rows_padding-1.
-            - #hog.nc() is approximately equal to img.nc()/cell_size + filter_cols_padding-1.
+            - #hog.nr() == max(round(img.nr()/(double)cell_size)-2,0) + filter_rows_padding-1.
+            - #hog.nc() == max(round(img.nc()/(double)cell_size)-2,0) + filter_cols_padding-1.
+              (i.e.  Each output dimension is roughly 1/cell_size the original size but
+              there is a one cell_size border all around the image that is lost and then we
+              add on any additional padding that is requested.)
             - for all valid r and c:
                 - #hog[r][c] == the FHOG vector describing the cell centered at the pixel location 
                   fhog_to_image(point(c,r),cell_size,filter_rows_padding,filter_cols_padding) in img.
@@ -89,9 +92,8 @@ namespace dlib
             - cell_size > 0
             - filter_rows_padding > 0
             - filter_cols_padding > 0
-            - image_type  == is an implementation of array2d/array2d_kernel_abstract.h
-            - img contains some kind of pixel type. 
-              (i.e. pixel_traits<typename image_type::type> is defined)
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
             - T should be float or double
         ensures
             - This function is identical to the above extract_fhog_features() routine
@@ -124,9 +126,8 @@ namespace dlib
             - cell_size > 0
             - filter_rows_padding > 0
             - filter_cols_padding > 0
-            - image_type  == is an implementation of array2d/array2d_kernel_abstract.h
-            - img contains some kind of pixel type. 
-              (i.e. pixel_traits<typename image_type::type> is defined)
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
         ensures
             - This function calls the above extract_fhog_features() routine and simply
               packages the entire output into a dlib::matrix.  The matrix is constructed
@@ -158,9 +159,8 @@ namespace dlib
             - cell_size > 0
             - filter_rows_padding > 0
             - filter_cols_padding > 0
-            - image_type  == is an implementation of array2d/array2d_kernel_abstract.h
-            - img contains some kind of pixel type. 
-              (i.e. pixel_traits<typename image_type::type> is defined)
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
             - T is float, double, or long double
         ensures
             - This function is identical to the above version of extract_fhog_features()
@@ -332,6 +332,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_fHOG_ABSTRACT_H__
+#endif // DLIB_fHOG_ABSTRACT_Hh_
 
 

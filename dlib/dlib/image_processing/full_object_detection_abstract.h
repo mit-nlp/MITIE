@@ -1,7 +1,7 @@
 // Copyright (C) 2012  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#undef DLIB_FULL_OBJECT_DeTECTION_ABSTRACT_H__
-#ifdef DLIB_FULL_OBJECT_DeTECTION_ABSTRACT_H__
+#undef DLIB_FULL_OBJECT_DeTECTION_ABSTRACT_Hh_
+#ifdef DLIB_FULL_OBJECT_DeTECTION_ABSTRACT_Hh_
 
 #include <vector>
 #include "../geometry.h"
@@ -64,6 +64,14 @@ namespace dlib
                   this should be the bounding box for the object.
         !*/
 
+        rectangle& get_rect(
+        ); 
+        /*!
+            ensures
+                - returns the rectangle that indicates where this object is.  In general,
+                  this should be the bounding box for the object.
+        !*/
+
         unsigned long num_parts(
         ) const;
         /*!
@@ -74,6 +82,19 @@ namespace dlib
         const point& part(
             unsigned long idx
         ) const; 
+        /*!
+            requires
+                - idx < num_parts()
+            ensures
+                - returns the location of the center of the idx-th part of this object.
+                  Note that it is valid for a part to be "not present".  This is indicated
+                  when the return value of part() is equal to OBJECT_PART_NOT_PRESENT. 
+                  This is useful for modeling object parts that are not always observed.
+        !*/
+
+        point& part(
+            unsigned long idx
+        ); 
         /*!
             requires
                 - idx < num_parts()
@@ -120,6 +141,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_FULL_OBJECT_DeTECTION_ABSTRACT_H__
+#endif // DLIB_FULL_OBJECT_DeTECTION_ABSTRACT_Hh_
 
 

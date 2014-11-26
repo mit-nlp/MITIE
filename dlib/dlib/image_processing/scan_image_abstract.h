@@ -1,11 +1,12 @@
 // Copyright (C) 2011  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#undef DLIB_SCAN_iMAGE_ABSTRACT_H__
-#ifdef DLIB_SCAN_iMAGE_ABSTRACT_H__
+#undef DLIB_SCAN_iMAGE_ABSTRACT_Hh_
+#ifdef DLIB_SCAN_iMAGE_ABSTRACT_Hh_
 
 #include <vector>
 #include <utility>
 #include "../algs.h"
+#include "../image_processing/generic_image.h"
 
 namespace dlib
 {
@@ -21,7 +22,8 @@ namespace dlib
     /*!
         requires
             - image_array_type       == an implementation of array/array_kernel_abstract.h
-            - image_array_type::type == an implementation of array2d/array2d_kernel_abstract.h
+            - image_array_type::type == an image object that implements the interface
+              defined in dlib/image_processing/generic_image.h 
         ensures
             - if (all elements of images have the same dimensions (i.e. 
               for all i and j: get_rect(images[i]) == get_rect(images[j]))) then
@@ -43,8 +45,9 @@ namespace dlib
     /*!
         requires
             - image_array_type             == an implementation of array/array_kernel_abstract.h
-            - image_array_type::type       == an implementation of array2d/array2d_kernel_abstract.h
-            - image_array_type::type::type == a scalar pixel type (e.g. int rather than rgb_pixel)
+            - image_array_type::type       == an image object that implements the interface
+              defined in dlib/image_processing/generic_image.h.  Moreover, these objects must
+              contain a scalar pixel type (e.g. int rather than rgb_pixel)
             - all_images_same_size(images) == true
             - for all valid i: rects[i].first < images.size()
               (i.e. all the rectangles must reference valid elements of images)
@@ -70,8 +73,9 @@ namespace dlib
     /*!
         requires
             - image_array_type             == an implementation of array/array_kernel_abstract.h
-            - image_array_type::type       == an implementation of array2d/array2d_kernel_abstract.h
-            - image_array_type::type::type == a scalar pixel type (e.g. int rather than rgb_pixel)
+            - image_array_type::type       == an image object that implements the interface
+              defined in dlib/image_processing/generic_image.h.  Moreover, these objects must
+              contain a scalar pixel type (e.g. int rather than rgb_pixel)
             - all_images_same_size(images) == true
             - center(window) == point(0,0)
             - for all valid i: 
@@ -109,8 +113,9 @@ namespace dlib
     );
     /*!
         requires
-            - image_type == an implementation of array2d/array2d_kernel_abstract.h
-            - image_type::type == a scalar pixel type (e.g. int rather than rgb_pixel)
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h.  Moreover, these it must contain a
+              scalar pixel type (e.g. int rather than rgb_pixel)
         ensures
             - #dets == a list of points from img which had pixel values >= thresh.  
             - Specifically, we have:
@@ -142,8 +147,9 @@ namespace dlib
     /*!
         requires
             - image_array_type             == an implementation of array/array_kernel_abstract.h
-            - image_array_type::type       == an implementation of array2d/array2d_kernel_abstract.h
-            - image_array_type::type::type == a scalar pixel type (e.g. int rather than rgb_pixel)
+            - image_array_type::type       == an image object that implements the interface
+              defined in dlib/image_processing/generic_image.h.  Moreover, these objects must
+              contain a scalar pixel type (e.g. int rather than rgb_pixel)
             - images.size() > 0
             - rects.size() > 0 
             - all_images_same_size(images) == true
@@ -179,8 +185,9 @@ namespace dlib
     /*!
         requires
             - image_array_type             == an implementation of array/array_kernel_abstract.h
-            - image_array_type::type       == an implementation of array2d/array2d_kernel_abstract.h
-            - image_array_type::type::type == a scalar pixel type (e.g. int rather than rgb_pixel)
+            - image_array_type::type       == an image object that implements the interface
+              defined in dlib/image_processing/generic_image.h.  Moreover, these objects must
+              contain a scalar pixel type (e.g. int rather than rgb_pixel)
             - images.size() > 0
             - all_images_same_size(images) == true
             - center(window) == point(0,0)
@@ -214,7 +221,7 @@ namespace dlib
 
 }
 
-#endif // DLIB_SCAN_iMAGE_ABSTRACT_H__
+#endif // DLIB_SCAN_iMAGE_ABSTRACT_Hh_
 
 
 

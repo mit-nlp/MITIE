@@ -1,7 +1,7 @@
 // Copyright (C) 2013  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#undef DLIB_REMOVE_UnOBTAINABLE_RECTANGLES_ABSTRACT_H__
-#ifdef DLIB_REMOVE_UnOBTAINABLE_RECTANGLES_ABSTRACT_H__
+#undef DLIB_REMOVE_UnOBTAINABLE_RECTANGLES_ABSTRACT_Hh_
+#ifdef DLIB_REMOVE_UnOBTAINABLE_RECTANGLES_ABSTRACT_Hh_
 
 #include "scan_image_pyramid_abstract.h"
 #include "scan_image_boxes_abstract.h"
@@ -18,8 +18,7 @@ namespace dlib
 
     template <
         typename image_scanner_type,
-        typename image_array_type,
-        typename Pyramid_type
+        typename image_array_type
         >
     std::vector<std::vector<rectangle> > remove_unobtainable_rectangles (
         const structural_object_detection_trainer<image_scanner_type>& trainer,
@@ -52,6 +51,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_REMOVE_UnOBTAINABLE_RECTANGLES_ABSTRACT_H__
+#endif // DLIB_REMOVE_UnOBTAINABLE_RECTANGLES_ABSTRACT_Hh_
 
 

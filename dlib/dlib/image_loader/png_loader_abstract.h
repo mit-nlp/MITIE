@@ -7,6 +7,7 @@
 #include "../algs.h"
 #include "../pixel.h"
 #include "../dir_nav.h"
+#include "../image_processing/generic_image.h"
 
 namespace dlib
 {
@@ -127,8 +128,8 @@ namespace dlib
         ) const;
         /*!
             requires
-                - image_type == is an implementation of array2d/array2d_kernel_abstract.h
-                - pixel_traits<typename image_type::type> is defined  
+                - image_type == an image object that implements the interface defined in
+                  dlib/image_processing/generic_image.h 
             ensures
                 - loads the PNG image stored in this object into img
         !*/
@@ -146,8 +147,8 @@ namespace dlib
     );
     /*!
         requires
-            - image_type == is an implementation of array2d/array2d_kernel_abstract.h
-            - pixel_traits<typename image_type::type> is defined  
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
         ensures
             - performs: png_loader(file_name).get_image(image);
     !*/

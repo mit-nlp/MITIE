@@ -1,7 +1,7 @@
 // Copyright (C) 2013  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#ifndef DLIB_sIMD4F_H__
-#define DLIB_sIMD4F_H__
+#ifndef DLIB_sIMD4F_Hh_
+#define DLIB_sIMD4F_Hh_
 
 #include "simd_check.h"
 #include "simd4i.h"
@@ -24,6 +24,12 @@ namespace dlib
         inline simd4f(const simd4i& val):x(_mm_cvtepi32_ps(val)) {}
 
         inline simd4f& operator=(const simd4i& val)
+        {
+            x = simd4f(val);
+            return *this;
+        }
+
+        inline simd4f& operator=(const float& val)
         {
             x = simd4f(val);
             return *this;
@@ -97,6 +103,12 @@ namespace dlib
             temp.a[2] = (int32)x[2];
             temp.a[3] = (int32)x[3];
             return temp;
+        }
+
+        inline simd4f& operator=(const float& val)
+        {
+            *this = simd4f(val);
+            return *this;
         }
 
         inline simd4f& operator=(const simd4i& val)
@@ -475,5 +487,5 @@ namespace dlib
 
 }
 
-#endif // DLIB_sIMD4F_H__
+#endif // DLIB_sIMD4F_Hh_
 

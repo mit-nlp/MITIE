@@ -1,7 +1,7 @@
 // Copyright (C) 2013  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#ifndef DLIB_SCAN_fHOG_PYRAMID_H__
-#define DLIB_SCAN_fHOG_PYRAMID_H__
+#ifndef DLIB_SCAN_fHOG_PYRAMID_Hh_
+#define DLIB_SCAN_fHOG_PYRAMID_Hh_
 
 #include "scan_fhog_pyramid_abstract.h"
 #include "../matrix.h"
@@ -589,8 +589,6 @@ namespace dlib
             feats.set_size(levels);
 
 
-            typedef typename image_type::type pixel_type;
-            typedef typename image_type::mem_manager_type mem_manager_type;
 
             // build our feature pyramid
             fe(img, feats[0], cell_size,filter_rows_padding,filter_cols_padding);
@@ -600,7 +598,8 @@ namespace dlib
 
             if (feats.size() > 1)
             {
-                array2d<pixel_type,mem_manager_type> temp1, temp2;
+                typedef typename image_traits<image_type>::pixel_type pixel_type;
+                array2d<pixel_type> temp1, temp2;
                 pyr(img, temp1);
                 fe(temp1, feats[1], cell_size,filter_rows_padding,filter_cols_padding);
                 swap(temp1,temp2);
@@ -815,7 +814,9 @@ namespace dlib
         {
             for (unsigned long i = 0; i < rects.size(); ++i)
             {
-                if (tester(rects[i].rect, rect.rect))
+                // Only compare detections from the same detector.  That is, we don't want
+                // the output of one detector to stop on the output of another detector. 
+                if (rects[i].weight_index == rect.weight_index && tester(rects[i].rect, rect.rect))
                     return true;
             }
             return false;
@@ -1344,5 +1345,5 @@ namespace dlib
 
 }
 
-#endif // DLIB_SCAN_fHOG_PYRAMID_H__
+#endif // DLIB_SCAN_fHOG_PYRAMID_Hh_
 

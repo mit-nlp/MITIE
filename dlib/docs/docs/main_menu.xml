@@ -287,6 +287,14 @@
                   <link>face_detection_ex.cpp.html</link>
                </item>
                <item>
+                  <name>Face_Landmark_Detection</name>
+                  <link>face_landmark_detection_ex.cpp.html</link>
+               </item>
+               <item>
+                  <name>Train_Shape_Predictor</name>
+                  <link>train_shape_predictor_ex.cpp.html</link>
+               </item>
+               <item>
                   <name>SURF</name>
                   <link>surf_ex.cpp.html</link>
                </item>
@@ -519,8 +527,6 @@
 
          <a href="http://sourceforge.net/projects/dclib"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=130373&amp;type=9" width="80" height="15" border="0" alt="Get dlib C++ Library at SourceForge.net. Fast, secure and Free Open Source software downloads" /></a>
          <br/>
-         <br/>
-         <script type="text/javascript" src="http://www.ohloh.net/p/3306/widgets/project_thin_badge"></script>
          <br/>
       </web>
       Last Modified:<br/>

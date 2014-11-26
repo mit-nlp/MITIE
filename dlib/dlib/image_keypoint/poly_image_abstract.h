@@ -1,12 +1,13 @@
 // Copyright (C) 2011  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#undef DLIB_POLY_ImAGE_ABSTRACT_H__
-#ifdef DLIB_POLY_ImAGE_ABSTRACT_H__
+#undef DLIB_POLY_ImAGE_ABSTRACT_Hh_
+#ifdef DLIB_POLY_ImAGE_ABSTRACT_Hh_
 
 #include "../algs.h"
 #include "../matrix.h"
 #include "../geometry/rectangle_abstract.h"
 #include <cmath>
+#include "../image_processing/generic_image.h"
 
 namespace dlib
 {
@@ -166,8 +167,9 @@ namespace dlib
         );
         /*!
             requires
-                - image_type == is an implementation of array2d/array2d_kernel_abstract.h
-                - pixel_traits<typename image_type::type>::has_alpha == false
+                - image_type == an image object that implements the interface defined in
+                  dlib/image_processing/generic_image.h 
+                - pixel_traits<typename image_traits<image_type>::pixel_type>::has_alpha == false
             ensures
                 - Performs the feature extraction described in the WHAT THIS OBJECT REPRESENTS
                   section above.  This means after load() finishes you can call (*this)(row,col) 
@@ -328,6 +330,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_POLY_ImAGE_ABSTRACT_H__
+#endif // DLIB_POLY_ImAGE_ABSTRACT_Hh_
 
 

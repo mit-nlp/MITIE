@@ -1,7 +1,7 @@
 // Copyright (C) 2011  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#ifndef DLIB_OBJECT_DeTECTOR_H__
-#define DLIB_OBJECT_DeTECTOR_H__
+#ifndef DLIB_OBJECT_DeTECTOR_Hh_
+#define DLIB_OBJECT_DeTECTOR_Hh_
 
 #include "object_detector_abstract.h"
 #include "../geometry.h"
@@ -67,11 +67,12 @@ namespace dlib
 // ----------------------------------------------------------------------------------------
 
     template <
-        typename image_scanner_type
+        typename image_scanner_type_
         >
     class object_detector
     {
     public:
+        typedef image_scanner_type_ image_scanner_type;
         typedef typename image_scanner_type::feature_vector_type feature_vector_type;
 
         object_detector (
@@ -622,6 +623,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_OBJECT_DeTECTOR_H__
+#endif // DLIB_OBJECT_DeTECTOR_Hh_
 
 

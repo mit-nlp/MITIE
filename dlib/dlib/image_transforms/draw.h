@@ -23,10 +23,11 @@ namespace dlib
         long y1,
         long x2,
         long y2,
-        image_type& c,
+        image_type& c_,
         const pixel_type& val
     ) 
     {
+        image_view<image_type> c(c_);
         if (x1 == x2)
         {
             // make sure y1 comes before y2
@@ -67,6 +68,13 @@ namespace dlib
         }
         else
         {
+            // This part is a little more complicated because we are going to perform alpha
+            // blending so the diagonal lines look nice.
+            const rectangle valid_area = get_rect(c);
+            rgb_alpha_pixel alpha_pixel;
+            assign_pixel(alpha_pixel, val);
+            const unsigned char max_alpha = alpha_pixel.alpha;
+
             const long rise = (((long)y2) - ((long)y1));
             const long run = (((long)x2) - ((long)x1));
             if (std::abs(rise) < std::abs(run))
@@ -79,13 +87,13 @@ namespace dlib
 
                 if (x1 > x2)                
                 {
-                    first = x2;
-                    last = x1;
+                    first = std::max(x2,valid_area.left());
+                    last = std::min(x1,valid_area.right());
                 }
                 else
                 {
-                    first = x1;
-                    last = x2;
+                    first = std::max(x1,valid_area.left());
+                    last = std::min(x2,valid_area.right());
                 }                             
 
                 long y;
@@ -94,18 +102,23 @@ namespace dlib
                 const double y1f = y1;
                 for (double i = first; i <= last; ++i)
                 {   
-                    y = static_cast<long>(slope*(i-x1f) + y1f);
-                    x = static_cast<long>(i);
+                    const double dy = slope*(i-x1f) + y1f;
+                    const double dx = i;
+
+                    y = static_cast<long>(dy);
+                    x = static_cast<long>(dx);
 
 
-                    if (y < 0 || y >= c.nr())
-                        continue;
-
-                    if (x < 0 || x >= c.nc())
-                        continue;
-
-
-                    assign_pixel(c[y][x] , val);
+                    if (y >= valid_area.top() && y <= valid_area.bottom())
+                    {
+                        alpha_pixel.alpha = static_cast<unsigned char>((1.0-(dy-y))*max_alpha);
+                        assign_pixel(c[y][x], alpha_pixel);
+                    }
+                    if (y+1 >= valid_area.top() && y+1 <= valid_area.bottom())
+                    {
+                        alpha_pixel.alpha = static_cast<unsigned char>((dy-y)*max_alpha);
+                        assign_pixel(c[y+1][x], alpha_pixel);
+                    }
                 }         
             }
             else
@@ -118,15 +131,14 @@ namespace dlib
 
                 if (y1 > y2)                
                 {
-                    first = y2;
-                    last = y1;
+                    first = std::max(y2,valid_area.top());
+                    last = std::min(y1,valid_area.bottom());
                 }
                 else
                 {
-                    first = y1;
-                    last = y2;
+                    first = std::max(y1,valid_area.top());
+                    last = std::min(y2,valid_area.bottom());
                 }                             
-
 
                 long x;
                 long y;
@@ -134,17 +146,22 @@ namespace dlib
                 const double y1f = y1;
                 for (double i = first; i <= last; ++i)
                 {   
-                    x = static_cast<long>(slope*(i-y1f) + x1f);
-                    y = static_cast<long>(i);
+                    const double dx = slope*(i-y1f) + x1f;
+                    const double dy = i;
 
+                    y = static_cast<long>(dy);
+                    x = static_cast<long>(dx);
 
-                    if (x < 0 || x >= c.nc())
-                        continue;
-
-                    if (y < 0 || y >= c.nr())
-                        continue;
-
-                    assign_pixel(c[y][x] , val);
+                    if (x >= valid_area.left() && x <= valid_area.right())
+                    {
+                        alpha_pixel.alpha = static_cast<unsigned char>((1.0-(dx-x))*max_alpha);
+                        assign_pixel(c[y][x], alpha_pixel);
+                    }
+                    if (x+1 >= valid_area.left() && x+1 <= valid_area.right())
+                    {
+                        alpha_pixel.alpha = static_cast<unsigned char>((dx-x)*max_alpha);
+                        assign_pixel(c[y][x+1], alpha_pixel);
+                    }
                 } 
             }
         }
@@ -198,7 +215,7 @@ namespace dlib
         unsigned int thickness
     ) 
     {
-        for (int i = 0; i < thickness; ++i)
+        for (unsigned int i = 0; i < thickness; ++i)
         {
             if ((i%2)==0)
                 draw_rectangle(c,shrink_rect(rect,(i+1)/2),val);
@@ -214,11 +231,12 @@ namespace dlib
         typename pixel_type
         >
     void fill_rect (
-        image_type& img,
+        image_type& img_,
         const rectangle& rect,
         const pixel_type& pixel
     )
     {
+        image_view<image_type> img(img_);
         rectangle area = rect.intersect(get_rect(img));
 
         for (long r = area.top(); r <= area.bottom(); ++r)
@@ -235,11 +253,11 @@ namespace dlib
     template <
         typename image_array_type
         >
-    matrix<typename image_array_type::value_type::type> tile_images (
+    matrix<typename image_traits<typename image_array_type::value_type>::pixel_type> tile_images (
         const image_array_type& images
     )
     {
-        typedef typename image_array_type::value_type::type T;
+        typedef typename image_traits<typename image_array_type::value_type>::pixel_type T;
 
         if (images.size() == 0)
             return matrix<T>();
@@ -252,8 +270,8 @@ namespace dlib
         long nc = 0;
         for (unsigned long i = 0; i < images.size(); ++i)
         {
-            nr = std::max(images[i].nr(), nr);
-            nc = std::max(images[i].nc(), nc);
+            nr = std::max(num_rows(images[i]), nr);
+            nc = std::max(num_columns(images[i]), nc);
         }
 
         matrix<T> temp(size_nr*nr, size_nc*nc);

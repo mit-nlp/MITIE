@@ -1,7 +1,7 @@
 // Copyright (C) 2010  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#ifndef DLIB_LAPACk_ORMQR_H__
-#define DLIB_LAPACk_ORMQR_H__
+#ifndef DLIB_LAPACk_ORMQR_Hh_
+#define DLIB_LAPACk_ORMQR_Hh_
 
 #include "fortran_id.h"
 #include "../matrix.h"
@@ -16,35 +16,35 @@ namespace dlib
             {
                 void DLIB_FORTRAN_ID(dormqr) (char *side, char *trans, integer *m, integer *n, 
                                               integer *k, const double *a, integer *lda, const double *tau, 
-                                              double * c__, integer *ldc, double *work, integer *lwork, 
+                                              double * c_, integer *ldc, double *work, integer *lwork, 
                                               integer *info);
 
                 void DLIB_FORTRAN_ID(sormqr) (char *side, char *trans, integer *m, integer *n, 
                                               integer *k, const float *a, integer *lda, const float *tau, 
-                                              float * c__, integer *ldc, float *work, integer *lwork, 
+                                              float * c_, integer *ldc, float *work, integer *lwork, 
                                               integer *info);
 
             }
 
             inline int ormqr (char side, char trans, integer m, integer n, 
                               integer k, const double *a, integer lda, const double *tau, 
-                              double *c__, integer ldc, double *work, integer lwork)
+                              double *c_, integer ldc, double *work, integer lwork)
             {
                 integer info = 0;
                 DLIB_FORTRAN_ID(dormqr)(&side, &trans, &m, &n,
                                         &k, a, &lda, tau,
-                                        c__, &ldc, work, &lwork, &info);
+                                        c_, &ldc, work, &lwork, &info);
                 return info;
             }
 
             inline int ormqr (char side, char trans, integer m, integer n, 
                               integer k, const float *a, integer lda, const float *tau, 
-                              float *c__, integer ldc, float *work, integer lwork)
+                              float *c_, integer ldc, float *work, integer lwork)
             {
                 integer info = 0;
                 DLIB_FORTRAN_ID(sormqr)(&side, &trans, &m, &n,
                                         &k, a, &lda, tau,
-                                        c__, &ldc, work, &lwork, &info);
+                                        c_, &ldc, work, &lwork, &info);
                 return info;
             }
 
@@ -220,5 +220,5 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
-#endif // DLIB_LAPACk_ORMQR_H__
+#endif // DLIB_LAPACk_ORMQR_Hh_
 
