@@ -1,7 +1,7 @@
 // Copyright (C) 2010  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#ifndef DLIB_HoG_H__
-#define DLIB_HoG_H__
+#ifndef DLIB_HoG_Hh_
+#define DLIB_HoG_Hh_
 
 #include "hog_abstract.h"
 #include "../algs.h"
@@ -82,7 +82,7 @@ namespace dlib
             const image_type& img
         )
         {
-            COMPILE_TIME_ASSERT( pixel_traits<typename image_type::type>::has_alpha == false );
+            COMPILE_TIME_ASSERT( pixel_traits<typename image_traits<image_type>::pixel_type>::has_alpha == false );
             load_impl(mat(img));
         }
 
@@ -510,5 +510,5 @@ namespace dlib
 
 }
 
-#endif // DLIB_HoG_H__
+#endif // DLIB_HoG_Hh_
 

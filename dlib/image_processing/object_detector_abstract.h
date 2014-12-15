@@ -1,7 +1,7 @@
 // Copyright (C) 2011  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#undef DLIB_OBJECT_DeTECTOR_ABSTRACT_H__
-#ifdef DLIB_OBJECT_DeTECTOR_ABSTRACT_H__
+#undef DLIB_OBJECT_DeTECTOR_ABSTRACT_Hh_
+#ifdef DLIB_OBJECT_DeTECTOR_ABSTRACT_Hh_
 
 #include "../geometry.h"
 #include <vector>
@@ -30,13 +30,13 @@ namespace dlib
 // ----------------------------------------------------------------------------------------
 
     template <
-        typename image_scanner_type
+        typename image_scanner_type_
         >
     class object_detector
     {
         /*!
-            REQUIREMENTS ON image_scanner_type
-                image_scanner_type must be an implementation of 
+            REQUIREMENTS ON image_scanner_type_
+                image_scanner_type_ must be an implementation of 
                 dlib/image_processing/scan_image_pyramid_abstract.h or 
                 dlib/image_processing/scan_fhog_pyramid.h or 
                 dlib/image_processing/scan_image_custom.h or 
@@ -65,6 +65,7 @@ namespace dlib
                 avoids unnecessarily loading the same image into the scanner multiple times.  
         !*/
     public:
+        typedef image_scanner_type_ image_scanner_type;
         typedef typename image_scanner_type::feature_vector_type feature_vector_type;
 
         object_detector (
@@ -399,5 +400,5 @@ namespace dlib
 
 }
 
-#endif // DLIB_OBJECT_DeTECTOR_ABSTRACT_H__
+#endif // DLIB_OBJECT_DeTECTOR_ABSTRACT_Hh_
 

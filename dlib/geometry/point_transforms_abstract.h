@@ -1,7 +1,7 @@
 // Copyright (C) 2003  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#undef DLIB_POINT_TrANSFORMS_ABSTRACT_H__
-#ifdef DLIB_POINT_TrANSFORMS_ABSTRACT_H__
+#undef DLIB_POINT_TrANSFORMS_ABSTRACT_Hh_
+#ifdef DLIB_POINT_TrANSFORMS_ABSTRACT_Hh_
 
 #include "../matrix/matrix_abstract.h"
 #include "vector_abstract.h"
@@ -105,6 +105,29 @@ namespace dlib
               squared parameters is selected (i.e. if you wrote the transformation as a
               matrix then we say we select the transform with minimum Frobenius norm among
               all possible solutions).
+    !*/
+
+// ----------------------------------------------------------------------------------------
+
+    template <typename T>
+    point_transform_affine find_similarity_transform (
+        const std::vector<dlib::vector<T,2> >& from_points,
+        const std::vector<dlib::vector<T,2> >& to_points
+    );
+    /*!
+        requires
+            - from_points.size() == to_points.size()
+            - from_points.size() >= 2
+        ensures
+            - This function is just like find_affine_transform() except it finds the best
+              similarity transform instead of a full affine transform.  This means that it
+              optimizes over only the space of rotations, scale changes, and translations.
+              So for example, if you mapped the 3 vertices of a triangle through a
+              similarity transform then the output would still be the same triangle.
+              However, the triangle itself may be larger or smaller, rotated, or at a
+              different location in the coordinate system.  This is not the case for a
+              general affine transform which can stretch points in ways that cause, for
+              example, an equilateral triangle to turn into an isosceles triangle.
     !*/
 
 // ----------------------------------------------------------------------------------------
@@ -365,6 +388,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_POINT_TrANSFORMS_ABSTRACT_H__
+#endif // DLIB_POINT_TrANSFORMS_ABSTRACT_Hh_
 
 

@@ -1,9 +1,14 @@
 
+cmake_minimum_required(VERSION 2.6.4)
+
+
+set(CMAKE_LEGACY_CYGWIN_WIN32 0) # Remove when CMake >= 2.8.4 is required
+
 # Don't add dlib if it's already been added to the cmake project
 if (NOT TARGET dlib)
 
     # Determine the path to dlib.
-    string(REPLACE "cmake" "" dlib_path ${CMAKE_CURRENT_LIST_FILE})
+    string(REGEX REPLACE "cmake$" "" dlib_path ${CMAKE_CURRENT_LIST_FILE})
 
     if (CMAKE_COMPILER_IS_GNUCXX)
         # By default, g++ won't warn or error if you forget to return a value in a

@@ -1,7 +1,7 @@
 // Copyright (C) 2013 Steve Taylor (steve98654@gmail.com)
 // License: Boost Software License  See LICENSE.txt for full license
-#ifndef DLIB_INTEGRATE_FUNCTION_ADAPT_SIMPSON__
-#define DLIB_INTEGRATE_FUNCTION_ADAPT_SIMPSON__
+#ifndef DLIB_INTEGRATE_FUNCTION_ADAPT_SIMPSONh_
+#define DLIB_INTEGRATE_FUNCTION_ADAPT_SIMPSONh_
 
 #include "integrate_function_adapt_simpson_abstract.h"
 #include "../assert.h"
@@ -13,7 +13,7 @@ namespace dlib
     template <typename T, typename funct>
     T impl_adapt_simp_stop(const funct& f, T a, T b, T fa, T fm, T fb, T is, int cnt)
     {
-        const int MAXINT = 500;
+        const int maxint = 500;
 
         T m   = (a + b)/2.0;
         T h   = (b - a)/4.0;
@@ -30,7 +30,7 @@ namespace dlib
         }
         else 
         {
-            if(cnt < MAXINT)
+            if(cnt < maxint)
             {
                 cnt = cnt + 1;
 
@@ -90,5 +90,4 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
-#endif //DLIB_INTEGRATE_FUNCTION_ADAPT_SIMPSON.h__
-
+#endif // DLIB_INTEGRATE_FUNCTION_ADAPT_SIMPSONh_

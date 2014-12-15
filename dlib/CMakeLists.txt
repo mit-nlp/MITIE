@@ -8,6 +8,7 @@ SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 cmake_minimum_required(VERSION 2.4)
 
+set(CMAKE_LEGACY_CYGWIN_WIN32 0) # Remove when CMake >= 2.8.4 is required
 # Suppress cmake warnings about changes in new versions.
 if(COMMAND cmake_policy) 
    cmake_policy(SET CMP0003 NEW) 
@@ -155,7 +156,8 @@ if (NOT TARGET dlib)
             else()
                message(" *****************************************************************************")
                message(" *** DLIB GUI SUPPORT DISABLED BECAUSE X11 DEVELOPMENT LIBRARIES NOT FOUND ***")
-               message(" *** Make sure libx11-dev is installed if you want GUI support             ***")
+               message(" *** Make sure XQuartz is installed if you want GUI support.               ***")
+               message(" *** You can download XQuartz from: http://xquartz.macosforge.org/landing/ ***")
                message(" *****************************************************************************")
                set(DLIB_NO_GUI_SUPPORT ON CACHE STRING ${DLIB_NO_GUI_SUPPORT_STR} FORCE )
             endif()
@@ -261,7 +263,7 @@ if (NOT TARGET dlib)
 
       if (DLIB_LINK_WITH_LIBJPEG)
          # try to find libjpeg 
-         include(FindJPEG)
+         find_package(JPEG QUIET)
          if (JPEG_FOUND)
             include_directories(${JPEG_INCLUDE_DIR})
             set (dlib_needed_libraries ${dlib_needed_libraries} ${JPEG_LIBRARY})
@@ -294,10 +296,30 @@ if (NOT TARGET dlib)
                   external/libjpeg/jmemnobs.cpp
                   external/libjpeg/jquant1.cpp
                   external/libjpeg/jquant2.cpp
-                  external/libjpeg/jutils.cpp  )
+                  external/libjpeg/jutils.cpp  
+                  external/libjpeg/jcapimin.cpp
+                  external/libjpeg/jdatadst.cpp
+                  external/libjpeg/jcparam.cpp
+                  external/libjpeg/jcapistd.cpp
+                  external/libjpeg/jcmarker.cpp
+                  external/libjpeg/jcinit.cpp
+                  external/libjpeg/jcmaster.cpp
+                  external/libjpeg/jcdctmgr.cpp
+                  external/libjpeg/jccoefct.cpp  
+                  external/libjpeg/jccolor.cpp  
+                  external/libjpeg/jchuff.cpp  
+                  external/libjpeg/jcmainct.cpp  
+                  external/libjpeg/jcphuff.cpp  
+                  external/libjpeg/jcprepct.cpp  
+                  external/libjpeg/jcsample.cpp
+                  external/libjpeg/jfdctint.cpp
+                  external/libjpeg/jfdctflt.cpp
+                  external/libjpeg/jfdctfst.cpp
+                  )
          endif()
          set(source_files ${source_files}
             image_loader/jpeg_loader.cpp
+            image_saver/save_jpeg.cpp
             )
       endif()
 
@@ -346,13 +368,12 @@ if (NOT TARGET dlib)
          # make sure fftw3.h is in the include path
          find_path(fftw_path fftw3.h)
          if (fftw AND fftw_path)
-            get_filename_component(fftw_path2 ${fftw_path} PATH CACHE)
-            include_directories(${fftw_path2})
+            include_directories(${fftw_path})
             set(dlib_needed_libraries ${dlib_needed_libraries} ${fftw} )
          else()
             set(DLIB_LINK_WITH_FFTW OFF CACHE STRING ${DLIB_LINK_WITH_SQLITE3_STR} FORCE )
          endif()
-         mark_as_advanced(fftw fftw_path fftw_path2)
+         mark_as_advanced(fftw fftw_path)
       endif()
 
 

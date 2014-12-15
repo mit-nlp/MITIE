@@ -1,7 +1,7 @@
 // Copyright (C) 2012  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#ifndef DLIB_FINE_HOG_IMaGE_H__
-#define DLIB_FINE_HOG_IMaGE_H__
+#ifndef DLIB_FINE_HOG_IMaGE_Hh_
+#define DLIB_FINE_HOG_IMaGE_Hh_
 
 #include "fine_hog_image_abstract.h"
 #include "../array2d.h"
@@ -66,7 +66,7 @@ namespace dlib
             const image_type& img
         )
         {
-            COMPILE_TIME_ASSERT( pixel_traits<typename image_type::type>::has_alpha == false );
+            COMPILE_TIME_ASSERT( pixel_traits<typename image_traits<image_type>::pixel_type>::has_alpha == false );
             load_impl(mat(img));
         }
 
@@ -374,5 +374,5 @@ namespace dlib
 
 }
 
-#endif // DLIB_FINE_HOG_IMaGE_H__
+#endif // DLIB_FINE_HOG_IMaGE_Hh_
 

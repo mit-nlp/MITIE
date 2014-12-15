@@ -10,6 +10,10 @@
 # takes a folder name and creates an install target that will copy the compiled
 # python module to that folder when you run "make install".  Note that the path
 # given to install_*_to() is relative to your CMakeLists.txt file.
+#
+# Also note that if you set the cmake variable PYTHON3 equal to any non-zero
+# value then we will try and produce a Python 3 compatible library, otherwise
+# we will make a Pyhton 2 library.
 
 
 
@@ -28,8 +32,15 @@ set(BOOST_LIBRARYDIR "C:/local/boost_1_*/lib32-msvc-*")
 #SET(Boost_USE_STATIC_RUNTIME OFF)
 set(Boost_NO_BOOST_CMAKE ON)
 
-FIND_PACKAGE(Boost 1.41.0 COMPONENTS python REQUIRED)
-FIND_PACKAGE(PythonLibs 2.6 REQUIRED)
+
+set(BOOST_LIBRARYDIR  /usr/lib/x86_64-linux-gnu/)
+if (PYTHON3)
+    FIND_PACKAGE(Boost 1.41.0 COMPONENTS python-py34 REQUIRED)
+    FIND_PACKAGE(PythonLibs 3.4 REQUIRED)
+else()
+    FIND_PACKAGE(Boost 1.41.0 COMPONENTS python REQUIRED)
+    FIND_PACKAGE(PythonLibs 2.6 REQUIRED)
+endif()
 
 if (WIN32 AND NOT Boost_LIBRARIES)
     message(FATAL_ERROR "We couldn't find the right version of boost python.  If you installed boost and you are still "
@@ -46,12 +57,18 @@ else()
    INCLUDE_DIRECTORIES("${PYTHON_INCLUDE_DIRS}" )
 endif()
 
+
 if (CMAKE_COMPILER_IS_GNUCXX)
-   add_definitions("-fPIC")
+    # Just setting CMAKE_POSITION_INDEPENDENT_CODE should be enough to set
+    # -fPIC for GCC but sometimes it still doesn't get set, so make sure it
+    # does.
+    add_definitions("-fPIC")
+else()
+    set(CMAKE_POSITION_INDEPENDENT_CODE True)
 endif()
 
 # include dlib so we can link against it
-string(REPLACE "add_python_module" "" dlib_path ${CMAKE_CURRENT_LIST_FILE})
+string(REGEX REPLACE "add_python_module$" "" dlib_path ${CMAKE_CURRENT_LIST_FILE})
 include(${dlib_path}/cmake)
 
 # We put the extra _ on the end of the name just so it's possible to
@@ -86,7 +103,7 @@ macro(add_python_module module_name module_sources )
 
    macro(install_${module_name}_to path)
        # Determine the path to our CMakeLists.txt file.
-       string(REPLACE "CMakeLists.txt" "" base_path ${CMAKE_CURRENT_LIST_FILE})
+       string(REGEX REPLACE "CMakeLists.txt$" "" base_path ${CMAKE_CURRENT_LIST_FILE})
        INSTALL(TARGETS ${module_name}_ 
             DESTINATION "${base_path}/${path}"
            )
@@ -97,8 +114,8 @@ macro(add_python_module module_name module_sources )
        if (WIN32)
            list(GET Boost_LIBRARIES 1 boostlibs1)
            list(GET Boost_LIBRARIES 3 boostlibs2)
-           string(REPLACE ".lib" ".dll" boostdlls1 ${boostlibs1})
-           string(REPLACE ".lib" ".dll" boostdlls2 ${boostlibs2})
+           string(REGEX REPLACE ".lib$" ".dll" boostdlls1 ${boostlibs1})
+           string(REGEX REPLACE ".lib$" ".dll" boostdlls2 ${boostlibs2})
            INSTALL(FILES ${boostdlls1} ${boostdlls2} 
                 DESTINATION "${base_path}/${path}"
                 )

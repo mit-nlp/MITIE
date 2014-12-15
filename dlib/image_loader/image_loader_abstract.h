@@ -6,6 +6,7 @@
 #include <iosfwd>
 #include "../algs.h"
 #include "../pixel.h"
+#include "../image_processing/generic_image.h"
 
 namespace dlib
 {
@@ -29,8 +30,8 @@ namespace dlib
     );
     /*!
         requires
-            - image_type == is an implementation of array2d/array2d_kernel_abstract.h
-            - pixel_traits<typename image_type::type> is defined  
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
         ensures
             - #image == the image of the MS Windows BMP file that was available 
               in the input stream in.  
@@ -61,8 +62,8 @@ namespace dlib
     );
     /*!
         requires
-            - image_type == is an implementation of array2d/array2d_kernel_abstract.h
-            - pixel_traits<typename image_type::type> is defined  
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
         ensures
             - opens the file indicated by file_name with an input file stream named fin 
               and performs:
@@ -87,8 +88,8 @@ namespace dlib
     );
     /*!
         requires
-            - image_type == is an implementation of array2d/array2d_kernel_abstract.h
-            - pixel_traits<typename image_type::type> is defined  
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
         ensures
             - #image == the image of the dlib dng file that was available 
               in the input stream in. 
@@ -119,8 +120,8 @@ namespace dlib
     );
     /*!
         requires
-            - image_type == is an implementation of array2d/array2d_kernel_abstract.h
-            - pixel_traits<typename image_type::type> is defined  
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
         ensures
             - opens the file indicated by file_name with an input file stream named fin 
               and performs:

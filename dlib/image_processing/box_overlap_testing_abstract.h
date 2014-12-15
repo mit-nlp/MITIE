@@ -1,7 +1,7 @@
 // Copyright (C) 2011  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#undef DLIB_BOX_OVERlAP_TESTING_ABSTRACT_H__
-#ifdef DLIB_BOX_OVERlAP_TESTING_ABSTRACT_H__
+#undef DLIB_BOX_OVERlAP_TESTING_ABSTRACT_Hh_
+#ifdef DLIB_BOX_OVERlAP_TESTING_ABSTRACT_Hh_
 
 #include "../geometry.h"
 
@@ -54,7 +54,7 @@ namespace dlib
                 - returns true if a and b overlap "enough". This is defined precisely below.
                 - if (a.intersect(b).area()/(a+b).area() > get_match_thresh() ||
                       a.intersect(b).area()/a.area()     > get_overlap_thresh() ||
-                      a.intersect(b).area()/a.area()     > get_overlap_thresh() ) then
+                      a.intersect(b).area()/b.area()     > get_overlap_thresh() ) then
                     - returns true
                 - else
                     - returns false
@@ -145,6 +145,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_BOX_OVERlAP_TESTING_ABSTRACT_H__
+#endif // DLIB_BOX_OVERlAP_TESTING_ABSTRACT_Hh_
 
 

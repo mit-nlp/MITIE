@@ -707,6 +707,41 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
+    template <typename T, typename U>
+    double distance_to_line (
+        const std::pair<vector<T,2>,vector<T,2> >& line,
+        const vector<U,2>& p
+    );
+    /*!
+        ensures
+            - returns the euclidean distance between the given line and the point p.  That
+              is, given a line that passes though the points line.first and line.second,
+              what is the distance between p and the nearest point on the line?  This
+              function returns that distance.
+    !*/
+
+// ----------------------------------------------------------------------------------------
+
+    void clip_line_to_rectangle (
+        const rectangle& box,
+        point& p1,
+        point& p2
+    );
+    /*!
+        ensures
+            - clips the line segment that goes from points p1 to p2 so that it is entirely
+              within the given box.  In particular, we will have:
+                - box.contains(#p1) == true
+                - box.contains(#p2) == true
+                - The line segment #p1 to #p2 is entirely contained within the line segment
+                  p1 to p2.  Moreover, #p1 to #p2 is the largest such line segment that
+                  fits within the given box.
+            - If the line segment does not intersect the box then the result is some
+              arbitrary line segment inside the box.
+    !*/
+
+// ----------------------------------------------------------------------------------------
+
     template <
         typename T 
         >
@@ -715,9 +750,12 @@ namespace dlib
     );
     /*!
         requires
-            - T has nr() and nc() functions that return longs
+            - It must be possible to determine the number of "rows" and "columns" in m.
+              Either by calling num_rows(m) and num_columns(m) or by calling m.nr() and
+              m.nc() to obtain the number of rows and columns respectively.  Moreover,
+              these routines should return longs.
         ensures
-            - returns rectangle(0, 0, m.nc()-1, m.nr()-1)
+            - returns rectangle(0, 0, num_columns(m)-1, num_rows(m)-1)
               (i.e. assuming T represents some kind of rectangular grid, such as
               the dlib::matrix or dlib::array2d objects, this function returns the
               bounding rectangle for that gridded object.)

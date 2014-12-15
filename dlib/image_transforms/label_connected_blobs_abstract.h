@@ -5,6 +5,7 @@
 
 #include "../geometry.h"
 #include <vector>
+#include "../image_processing/generic_image.h"
 
 namespace dlib
 {
@@ -58,9 +59,9 @@ namespace dlib
                 with the label_connected_blobs() routine defined below.
         !*/
 
-        template <typename image_type>
+        template <typename image_view_type>
         bool operator() (
-            const image_type& img,
+            const image_view_type& img,
             const point& a,
             const point& b
         ) const
@@ -77,9 +78,9 @@ namespace dlib
                 with the label_connected_blobs() routine defined below.
         !*/
 
-        template <typename image_type>
+        template <typename image_view_type>
         bool operator() (
-            const image_type& img,
+            const image_view_type& img,
             const point& a,
             const point& b
         ) const
@@ -98,9 +99,9 @@ namespace dlib
                 with the label_connected_blobs() routine defined below.
         !*/
 
-        template <typename image_type>
+        template <typename image_view_type>
         bool operator() (
-            const image_type& img,
+            const image_view_type& img,
             const point& p
         ) const
         {
@@ -117,9 +118,9 @@ namespace dlib
                 with the label_connected_blobs() routine defined below.
         !*/
 
-        template <typename image_type>
+        template <typename image_view_type>
         bool operator() (
-            const image_type&, 
+            const image_view_type&, 
             const point& 
         ) const
         {
@@ -146,9 +147,10 @@ namespace dlib
     );
     /*!
         requires
-            - image_type       == is an implementation of array2d/array2d_kernel_abstract.h
-            - label_image_type == is an implementation of array2d/array2d_kernel_abstract.h
-              and it must contain integers.
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h 
+            - label_image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h and it must contain integer pixels.
             - is_background(img, point(c,r)) is a legal expression that evaluates to a bool.
             - is_connected(img, point(c,r), point(c2,r2)) is a legal expression that
               evaluates to a bool.

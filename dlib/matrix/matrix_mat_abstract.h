@@ -1,7 +1,7 @@
 // Copyright (C) 2006  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#undef DLIB_MATRIx_MAT_ABSTRACT_H__
-#ifdef DLIB_MATRIx_MAT_ABSTRACT_H__
+#undef DLIB_MATRIx_MAT_ABSTRACT_Hh_
+#ifdef DLIB_MATRIx_MAT_ABSTRACT_Hh_
 
 #include "matrix_abstract.h"
 #inclue <vector>
@@ -28,14 +28,20 @@ namespace dlib
 // ----------------------------------------------------------------------------------------
 
     template <
-        typename T,
-        typename MM
+        typename image_type
         >
     const matrix_exp mat (
-        const array2d<T,MM>& array
+        const image_type& img
     );
     /*!
+        requires
+            - image_type == an image object that implements the interface defined in
+              dlib/image_processing/generic_image.h or image_type is a image_view or
+              const_image_view object.
         ensures
+            - This function converts any kind of generic image object into a dlib::matrix
+              expression.  Therefore, it is capable of converting objects like dlib::array2d
+              of dlib::cv_image.
             - returns a matrix R such that:
                 - R.nr() == array.nr() 
                 - R.nc() == array.nc()
@@ -203,6 +209,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_MATRIx_MAT_ABSTRACT_H__
+#endif // DLIB_MATRIx_MAT_ABSTRACT_Hh_
 
 

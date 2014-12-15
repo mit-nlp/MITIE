@@ -1,7 +1,7 @@
 // Copyright (C) 2011  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#ifndef DLIB_POLY_ImAGE_H__
-#define DLIB_POLY_ImAGE_H__
+#ifndef DLIB_POLY_ImAGE_Hh_
+#define DLIB_POLY_ImAGE_Hh_
 
 #include "poly_image_abstract.h"
 #include "build_separable_poly_filters.h"
@@ -138,7 +138,7 @@ namespace dlib
             const image_type& img
         )
         {
-            COMPILE_TIME_ASSERT( pixel_traits<typename image_type::type>::has_alpha == false );
+            COMPILE_TIME_ASSERT( pixel_traits<typename image_traits<image_type>::pixel_type>::has_alpha == false );
 
             poly_coef.resize(get_num_dimensions());
             des.set_size(get_num_dimensions());
@@ -644,6 +644,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_POLY_ImAGE_H__
+#endif // DLIB_POLY_ImAGE_Hh_
 
 

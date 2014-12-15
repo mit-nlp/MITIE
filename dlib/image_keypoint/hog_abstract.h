@@ -1,7 +1,7 @@
 // Copyright (C) 2010  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#undef DLIB_HoG_ABSTRACT_H__
-#ifdef DLIB_HoG_ABSTRACT_H__
+#undef DLIB_HoG_ABSTRACT_Hh_
+#ifdef DLIB_HoG_ABSTRACT_Hh_
 
 #include "../algs.h"
 #include "../matrix.h"
@@ -158,8 +158,8 @@ namespace dlib
         /*!
             requires
                 - image_type is a dlib::matrix or something convertible to a matrix
-                  via mat()
-                - pixel_traits<typename image_type::type>::has_alpha == false
+                  via mat().
+                - pixel_traits<typename image_traits<image_type>::pixel_type>::has_alpha == false
             ensures
                 - if (img.nr() < min_size || img.nc() < min_size) then
                     - the image is too small so we don't compute anything on it
@@ -330,6 +330,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_HoG_ABSTRACT_H__
+#endif // DLIB_HoG_ABSTRACT_Hh_
 
 

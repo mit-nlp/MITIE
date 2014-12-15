@@ -1,7 +1,7 @@
 // Copyright (C) 2011  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#ifndef DLIB_HASHED_IMAGE_FEATUrES_H__
-#define DLIB_HASHED_IMAGE_FEATUrES_H__
+#ifndef DLIB_HASHED_IMAGE_FEATUrES_Hh_
+#define DLIB_HASHED_IMAGE_FEATUrES_Hh_
 
 #include "../lsh/projection_hash.h"
 #include "hashed_feature_image_abstract.h"
@@ -309,7 +309,7 @@ namespace dlib
             // use the inverse frequency as the scale for each feature.  We also scale
             // these counts so that they are invariant to the size of the image (we scale
             // them so they all look like they come from a 500x400 images).
-            const double scale = img.size()/(500.0*400.0);
+            const double scale = image_size(img)/(500.0*400.0);
             for (unsigned long i = 0; i < feat_counts.size(); ++i)
             {
                 feat_counts[i] = scale/feat_counts[i];
@@ -513,6 +513,6 @@ namespace dlib
 
 }
 
-#endif // DLIB_HASHED_IMAGE_FEATUrES_H__
+#endif // DLIB_HASHED_IMAGE_FEATUrES_Hh_
 
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2010  Davis E. King (davis@dlib.net)
 // License: Boost Software License   See LICENSE.txt for the full license.
-#ifndef DLIB_LAPACk_EVR_H__
-#define DLIB_LAPACk_EVR_H__
+#ifndef DLIB_LAPACk_EVR_Hh_
+#define DLIB_LAPACk_EVR_Hh_
 
 #include "fortran_id.h"
 #include "../matrix.h"
@@ -17,13 +17,13 @@ namespace dlib
                 void DLIB_FORTRAN_ID(dsyevr) (char *jobz, char *range, char *uplo, integer *n, 
                                               double *a, integer *lda, double *vl, double *vu, integer * il, 
                                               integer *iu, double *abstol, integer *m, double *w, 
-                                              double *z__, integer *ldz, integer *isuppz, double *work, 
+                                              double *z_, integer *ldz, integer *isuppz, double *work, 
                                               integer *lwork, integer *iwork, integer *liwork, integer *info);
 
                 void DLIB_FORTRAN_ID(ssyevr) (char *jobz, char *range, char *uplo, integer *n, 
                                               float *a, integer *lda, float *vl, float *vu, integer * il, 
                                               integer *iu, float *abstol, integer *m, float *w, 
-                                              float *z__, integer *ldz, integer *isuppz, float *work, 
+                                              float *z_, integer *ldz, integer *isuppz, float *work, 
                                               integer *lwork, integer *iwork, integer *liwork, integer *info);
             }
 
@@ -439,7 +439,7 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
-#endif // DLIB_LAPACk_EVR_H__
+#endif // DLIB_LAPACk_EVR_Hh_
 
 
 
