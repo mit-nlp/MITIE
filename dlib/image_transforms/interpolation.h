@@ -1506,7 +1506,7 @@ namespace dlib
         from.push_back(rotate_point<double>(center(details.rect),details.rect.tr_corner(),details.angle));
         to.push_back(p3);  
         from.push_back(rotate_point<double>(center(details.rect),details.rect.br_corner(),details.angle));
-        return find_similarity_transform(from, to);
+        return find_affine_transform(from, to);
     }
 
 // ----------------------------------------------------------------------------------------
@@ -1621,7 +1621,7 @@ namespace dlib
         }
 
         // now make an image pyramid
-        dlib::array<image_type1> levels(max_depth);
+        dlib::array<array2d<typename image_traits<image_type1>::pixel_type> > levels(max_depth);
         if (levels.size() != 0)
             pyr(img,levels[0]);
         for (unsigned long i = 1; i < levels.size(); ++i)
@@ -1661,7 +1661,7 @@ namespace dlib
                 from.push_back(get_rect(chips[i]).tl_corner());  to.push_back(rotate_point<double>(center(rect),rect.tl_corner(),chip_locations[i].angle));
                 from.push_back(get_rect(chips[i]).tr_corner());  to.push_back(rotate_point<double>(center(rect),rect.tr_corner(),chip_locations[i].angle));
                 from.push_back(get_rect(chips[i]).bl_corner());  to.push_back(rotate_point<double>(center(rect),rect.bl_corner(),chip_locations[i].angle));
-                point_transform_affine trns = find_similarity_transform(from,to);
+                point_transform_affine trns = find_affine_transform(from,to);
 
                 // now extract the actual chip
                 if (level == -1)

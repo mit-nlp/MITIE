@@ -12,6 +12,9 @@ set(CMAKE_LEGACY_CYGWIN_WIN32 0) # Remove when CMake >= 2.8.4 is required
 # Suppress cmake warnings about changes in new versions.
 if(COMMAND cmake_policy) 
    cmake_policy(SET CMP0003 NEW) 
+   if (POLICY CMP0054)
+      cmake_policy(SET CMP0054 NEW)
+   endif()
 endif()
 
 
@@ -210,13 +213,16 @@ if (NOT TARGET dlib)
             )
       endif()
 
+      INCLUDE (CheckFunctionExists)
 
       if (DLIB_LINK_WITH_LIBPNG)
          # try to find libpng 
-         set(ZLIB_FIND_QUIETLY ON)
-         set(PNG_FIND_QUIETLY ON)
-         include(FindPNG)
-         if (PNG_FOUND)
+         find_package(PNG QUIET)
+         # Make sure there isn't something wrong with the version of LIBPNG
+         # installed on this system.  
+         set(CMAKE_REQUIRED_LIBRARIES ${PNG_LIBRARY})
+         CHECK_FUNCTION_EXISTS(png_create_read_struct LIBPNG_IS_GOOD)
+         if (PNG_FOUND AND LIBPNG_IS_GOOD)
             include_directories(${PNG_INCLUDE_DIR})
             set (dlib_needed_libraries ${dlib_needed_libraries} ${PNG_LIBRARY})
          else()
@@ -264,7 +270,12 @@ if (NOT TARGET dlib)
       if (DLIB_LINK_WITH_LIBJPEG)
          # try to find libjpeg 
          find_package(JPEG QUIET)
-         if (JPEG_FOUND)
+         # Make sure there isn't something wrong with the version of libjpeg 
+         # installed on this system.  Also don't use the installed libjpeg
+         # if this is an APPLE system because apparently it's broken (as of 2015/01/01).
+         set(CMAKE_REQUIRED_LIBRARIES ${JPEG_LIBRARY})
+         CHECK_FUNCTION_EXISTS(jpeg_read_header LIBJPEG_IS_GOOD)
+         if (JPEG_FOUND AND LIBJPEG_IS_GOOD AND NOT APPLE)
             include_directories(${JPEG_INCLUDE_DIR})
             set (dlib_needed_libraries ${dlib_needed_libraries} ${JPEG_LIBRARY})
          else()
