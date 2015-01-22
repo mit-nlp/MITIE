@@ -13,8 +13,13 @@ void bind_svm_rank_trainer();
 void bind_cca();
 void bind_sequence_segmenter();
 void bind_svm_struct();
+void bind_image_classes();
 void bind_object_detection();
+void bind_shape_predictors();
 
+#ifndef DLIB_NO_GUI_SUPPORT
+void bind_gui();
+#endif
 
 BOOST_PYTHON_MODULE(dlib)
 {
@@ -32,6 +37,11 @@ BOOST_PYTHON_MODULE(dlib)
     bind_cca();
     bind_sequence_segmenter();
     bind_svm_struct();
+    bind_image_classes();
     bind_object_detection();
+    bind_shape_predictors();
+#ifndef DLIB_NO_GUI_SUPPORT
+    bind_gui();
+#endif
 }
 
