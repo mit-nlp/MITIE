@@ -93,7 +93,11 @@ namespace mitie
                     - #chunk_tags[i] == the label for the entity at location #chunks[i].  Moreover, 
                       chunk tag ID numbers are contiguous and start at 0.  Therefore we have:
                         - 0 <= #chunk_tags[i] < get_tag_name_strings().size()
-                    - #chuck_score[i] == the score for the entity at location #chunks[i].
+                    - #chuck_score[i] == the score for the entity at location #chunks[i]. The value
+                      represents a confidence score, but does not represent a probability. Accordingly,
+                      values may range outside of the closed interval of 0 to 1. The larger scores
+                      represent higher confidence and scores < 0 indicate that the label is likely
+                      incorrect.
                     - #chunks[i] == a half open range indicating where the entity is within
                       sentence.  In particular, the entity is composed of the tokens
                       sentence[#chunks[i].first] through sentence[#chunks[i].second-1].
