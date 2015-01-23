@@ -75,6 +75,31 @@ namespace mitie
                   verify that the same named_entity_extractor is being used later on.
         !*/
 
+        void predict(
+            const std::vector<std::string>& sentence,
+            std::vector<std::pair<unsigned long, unsigned long> >& chunks,
+            std::vector<unsigned long>& chunk_tags,
+            std::vector<double>& chunk_scores
+        ) const;
+        /*!
+            ensures
+                - Runs the named entity recognizer on the sequence of tokenized words
+                  inside sentence.  The detected named entities are stored into chunks.  
+                - #chunks == the locations of the named entities. 
+                - The identified named entities are listed inside chunks in the order in
+                  which they appeared in the input sentence.  
+                - #chunks.size() == #chunk_tags.size()
+                - for all valid i:
+                    - #chunk_tags[i] == the label for the entity at location #chunks[i].  Moreover, 
+                      chunk tag ID numbers are contiguous and start at 0.  Therefore we have:
+                        - 0 <= #chunk_tags[i] < get_tag_name_strings().size()
+                    - #chuck_score[i] == the score for the entity at location #chunks[i].
+                    - #chunks[i] == a half open range indicating where the entity is within
+                      sentence.  In particular, the entity is composed of the tokens
+                      sentence[#chunks[i].first] through sentence[#chunks[i].second-1].
+                    - The textual label for the i-th entity is get_tag_name_strings()[#chunk_tags[i]].
+        !*/
+
         void operator() (
             const std::vector<std::string>& sentence,
             std::vector<std::pair<unsigned long, unsigned long> >& chunks,
