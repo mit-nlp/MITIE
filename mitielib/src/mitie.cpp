@@ -322,6 +322,7 @@ extern "C"
     {
         std::vector<std::pair<unsigned long, unsigned long> > ranges;
         std::vector<unsigned long> predicted_labels;
+        std::vector<double> predicted_scores;
         std::vector<std::string> tags;
     };
 
@@ -439,7 +440,7 @@ extern "C"
             for (unsigned long i = 0; tokens[i]; ++i)
                 words.push_back(tokens[i]);
 
-            ner(words, impl->ranges, impl->predicted_labels);
+            ner.predict(words, impl->ranges, impl->predicted_labels, impl->predicted_scores);
             impl->tags = ner.get_tag_name_strings();
             return impl;
         }
@@ -487,6 +488,16 @@ extern "C"
         assert(dets);
         assert(idx < mitie_ner_get_num_detections(dets));
         return dets->predicted_labels[idx];
+    }
+
+    double mitie_ner_get_detection_score (
+        const mitie_named_entity_detections* dets,
+        unsigned long idx
+    )
+    {
+        assert(dets);
+        assert(idx < mitie_ner_get_num_detections(dets));
+        return dets->predicted_scores[idx];
     }
 
     const char* mitie_ner_get_detection_tagstr (
