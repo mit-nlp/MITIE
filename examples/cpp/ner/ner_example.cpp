@@ -76,7 +76,8 @@ int main(int argc, char** argv)
         // Now detect all the entities in the text file we loaded and print them to the screen.
         // The output of this function is a set of "chunks" of tokens, each a named entity.
         // Additionally, if it is useful for your application a confidence score for each "chunk"
-        // is available by using the predict() method.
+        // is available by using the predict() method.  The larger the score the more
+        // confident MITIE is in the tag.
         ner.predict(tokens, chunks, chunk_tags, chunk_scores);
 
         // If a confidence score is not necessary for your application you can detect entities

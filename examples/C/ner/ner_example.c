@@ -91,7 +91,7 @@ void print_entity (
     pos = mitie_ner_get_detection_position(dets, i);
     len = mitie_ner_get_detection_length(dets, i);
     // Print the label and score for each named entity and also the text of the named entity
-    // itself.
+    // itself.  The larger the score the more confident MITIE is in the tag.
     printf("   Tag %lu: Score: %0.3f: %s: ", mitie_ner_get_detection_tag(dets,i),
                                              mitie_ner_get_detection_score(dets,i),
                                              mitie_ner_get_detection_tagstr(dets,i));

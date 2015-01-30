@@ -31,9 +31,10 @@ print "\nEntities found:", entities
 print "\nNumber of entities detected:", len(entities)
 
 # entities is a list of tuples, each containing an xrange that indicates which
-# tokens are part of the entity, the entity tag and an associate score.  The
+# tokens are part of the entity, the entity tag, and an associate score.  The
 # entities are also listed in the order they appear in the input text file.
 # Here we just print the score, tag, and text for each entity to the screen.
+# The larger the score the more confident MITIE is in its prediction.
 for e in entities:
     range = e[0]
     tag = e[1]
