@@ -47,12 +47,14 @@ if (NOT DEFINED ENV{JAVA_HOME})
    # Pick out the parent directories
    get_filename_component(JAVA_PATH1 ${JAVA_EXECUTABLE} PATH)
    get_filename_component(JAVA_PATH2 ${JAVA_PATH1} PATH)
+   get_filename_component(JAVA_PATH3 ${JAVA_PATH2} PATH)
    # and search them for include/jni.h.  If we find that then we probably have
    # a good java home candidate.
    find_path(AUTO_JAVA_HOME include/jni.h
       PATHS
       ${JAVA_PATH1}
       ${JAVA_PATH2}
+      ${JAVA_PATH3}
       "C:/Program Files/Java/jdk*"
       "C:/Program Files (x86)/Java/jdk*"
       )
