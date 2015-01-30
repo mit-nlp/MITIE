@@ -38,13 +38,17 @@ public class NerExample
         // Now print out all the named entities and their tags
         for (int i = 0; i < entities.size(); ++i)
         {
-            // Each EntityMention contains three integers.  The start and end define the
-            // range of tokens in the words vector that are part of the entity.  There is
-            // also a tag which indicates which element of possibleTags is associated with
-            // the entity.  So we can print out all the tagged entities as follows:
+            // Each EntityMention contains three integers and a double. The start and end
+            // define the range of tokens in the words vector that are part of the entity.
+            // There is also a tag which indicates which element of possibleTags is
+            // associated with the entity. There is also a score which indicates a
+            // confidence associated with the predicted tag. So we can print out all
+            // the tagged entities as follows:
             EntityMention entity = entities.get(i);
             String tag = possibleTags.get(entity.getTag());
-            System.out.print("Entity tag: " + tag + "\t Entity text: ");
+            Double score = entity.getScore();
+            String scoreStr = String.format("%1$,.3f",score);
+            System.out.print("   Score: " + scoreStr + ": " + tag + ":");
             printEntity(words, entity);
         }
 

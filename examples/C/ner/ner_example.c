@@ -90,9 +90,11 @@ void print_entity (
 
     pos = mitie_ner_get_detection_position(dets, i);
     len = mitie_ner_get_detection_length(dets, i);
-    // Print the label for each named entity and also the text of the named entity
+    // Print the label and score for each named entity and also the text of the named entity
     // itself.
-    printf("   Tag %lu:%s: ", mitie_ner_get_detection_tag(dets,i), mitie_ner_get_detection_tagstr(dets,i));
+    printf("   Tag %lu: Score: %0.3f: %s: ", mitie_ner_get_detection_tag(dets,i),
+                                             mitie_ner_get_detection_score(dets,i),
+                                             mitie_ner_get_detection_tagstr(dets,i));
     while(len > 0)
     {
         printf("%s ", tokens[pos++]);

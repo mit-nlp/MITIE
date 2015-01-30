@@ -94,13 +94,14 @@ std::vector<TokenIndexPair> tokenizeWithOffsets (
 class EntityMention
 {
 public:
-    EntityMention() : start(0),end(0),tag(0) {}
-    EntityMention (int start_, int end_) : start(start_), end(end_), tag(0) {}
-    EntityMention (int start_, int end_, int tag_) : start(start_), end(end_), tag(tag_) {}
+    EntityMention() : start(0),end(0),tag(0),score(0.0) {}
+    EntityMention (int start_, int end_) : start(start_), end(end_), tag(0), score(0.0) {}
+    EntityMention (int start_, int end_, int tag_, double score_) : start(start_), end(end_), tag(tag_), score(score_) {}
 
     int start;
     int end;
     int tag;
+    double score;
 };
 
 struct BinaryRelation
@@ -141,10 +142,11 @@ public:
     {
         std::vector<std::pair<unsigned long, unsigned long> > ranges;
         std::vector<unsigned long> predicted_labels; 
-        impl(tokens, ranges, predicted_labels);
+        std::vector<double> predicted_scores;
+        impl.predict(tokens, ranges, predicted_labels, predicted_scores);
         std::vector<EntityMention> temp;
         for (unsigned long i = 0; i < ranges.size(); ++i)
-            temp.push_back(EntityMention(ranges[i].first, ranges[i].second, predicted_labels[i]));
+            temp.push_back(EntityMention(ranges[i].first, ranges[i].second, predicted_labels[i], predicted_scores[i]));
         return temp;
     }
 

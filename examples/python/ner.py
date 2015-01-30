@@ -30,15 +30,17 @@ entities = ner.extract_entities(tokens)
 print "\nEntities found:", entities
 print "\nNumber of entities detected:", len(entities)
 
-# entities is a list of tuples, each containing the entity tag and a xrange
-# that indicates which tokens are part of the entity.  The entities are also
-# listed in the order they appear in the input text file.  Here we just print
-# the text and tag for each entity to the screen.
+# entities is a list of tuples, each containing an xrange that indicates which
+# tokens are part of the entity, the entity tag and an associate score.  The
+# entities are also listed in the order they appear in the input text file.
+# Here we just print the score, tag, and text for each entity to the screen.
 for e in entities:
     range = e[0]
     tag = e[1]
+    score = e[2]
+    score_text = "{:0.3f}".format(score)
     entity_text = " ".join(tokens[i] for i in range)
-    print "    " + tag + ": " + entity_text
+    print "   Score: " + score_text + ": " + tag + ": " + entity_text
 
 
 

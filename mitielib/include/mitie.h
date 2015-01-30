@@ -252,6 +252,23 @@ extern "C"
             - The returned pointer is valid until mitie_free(dets) is called.
     !*/
 
+    MITIE_EXPORT double mitie_ner_get_detection_score (
+        const mitie_named_entity_detections* dets,
+        unsigned long idx
+    );
+    /*!
+        requires
+            - dets != NULL
+            - idx < mitie_ner_get_num_detections(dets)
+        ensures
+            - returns a score for the labeling of the idx-th named entity. That is,
+              the value represents a confidence score, but does not represent a
+              probability. Accordingly, the value may range outside of the closed
+              interval of 0 to 1. A larger value represents a higher confidence.
+              A value < 0 indicates that the label is likely incorrect. That is,
+              the canonical decision threshold is at 0.
+    !*/
+
 // ----------------------------------------------------------------------------------------
 
     typedef struct mitie_binary_relation_detector mitie_binary_relation_detector;
