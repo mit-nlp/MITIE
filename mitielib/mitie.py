@@ -65,6 +65,9 @@ _f.mitie_ner_get_detection_length.argtypes = ctypes.c_void_p, ctypes.c_ulong
 _f.mitie_ner_get_detection_tag.restype = ctypes.c_ulong
 _f.mitie_ner_get_detection_tag.argtypes = ctypes.c_void_p, ctypes.c_ulong
 
+_f.mitie_ner_get_detection_score.restype = ctypes.c_double
+_f.mitie_ner_get_detection_score.argtypes = ctypes.c_void_p, ctypes.c_ulong
+
 _f.mitie_ner_get_num_detections.restype = ctypes.c_ulong
 _f.mitie_ner_get_num_detections.argtypes = ctypes.c_void_p,
 
@@ -204,7 +207,8 @@ class named_entity_extractor:
         num = _f.mitie_ner_get_num_detections(dets)
         temp = ([(xrange(_f.mitie_ner_get_detection_position(dets,i),
             _f.mitie_ner_get_detection_position(dets,i)+_f.mitie_ner_get_detection_length(dets,i)),
-            tags[_f.mitie_ner_get_detection_tag(dets,i)]
+            tags[_f.mitie_ner_get_detection_tag(dets,i)],
+            _f.mitie_ner_get_detection_score(dets,i)
             ) for i in xrange(num)])
         _f.mitie_free(dets)
         return temp

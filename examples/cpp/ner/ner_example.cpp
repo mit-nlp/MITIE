@@ -6,6 +6,7 @@
 #include <mitie/named_entity_extractor.h>
 #include <mitie/conll_tokenizer.h>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <cstdlib>
 
@@ -70,13 +71,24 @@ int main(int argc, char** argv)
 
         vector<pair<unsigned long, unsigned long> > chunks;
         vector<unsigned long> chunk_tags;
+        vector<double> chunk_scores;
+
         // Now detect all the entities in the text file we loaded and print them to the screen.
         // The output of this function is a set of "chunks" of tokens, each a named entity.
-        ner(tokens, chunks, chunk_tags);
+        // Additionally, if it is useful for your application a confidence score for each "chunk"
+        // is available by using the predict() method.
+        ner.predict(tokens, chunks, chunk_tags, chunk_scores);
+
+        // If a confidence score is not necessary for your application you can detect entities
+        // using the operator() method as shown in the following line.
+        //ner(tokens, chunks, chunk_tags);
+
         cout << "\nNumber of named entities detected: " << chunks.size() << endl;
         for (unsigned int i = 0; i < chunks.size(); ++i)
         {
-            cout << "   Tag " << chunk_tags[i] << ":" << tagstr[chunk_tags[i]] << ": ";
+            cout << "   Tag " << chunk_tags[i] << ": ";
+            cout << "Score: " << fixed << setprecision(3) << chunk_scores[i] << ": ";
+            cout << tagstr[chunk_tags[i]] << ": ";
             // chunks[i] defines a half open range in tokens that contains the entity.
             for (unsigned long j = chunks[i].first; j < chunks[i].second; ++j)
                 cout << tokens[j] << " ";
