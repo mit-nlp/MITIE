@@ -11,6 +11,7 @@
 #include <sqlite3.h>
 #include "../smart_pointers.h"
 #include "../serialize.h"
+#include <limits>
 
 // --------------------------------------------------------------------------------------------
 
@@ -223,6 +224,32 @@ namespace dlib
             return sql_string;
         }
 
+        template <typename T>
+        typename enable_if_c<std::numeric_limits<T>::is_integer>::type get_column (
+            unsigned long idx,
+            T& item
+        ) const
+        {
+            // unsigned ints won't fit into int all the time so put those into 64bit ints.
+            if (sizeof(T) < sizeof(int) || (sizeof(T)==sizeof(int) && is_signed_type<T>::value))
+                item = get_column_as_int(idx);
+            else
+                item = get_column_as_int64(idx);
+        }
+
+        void get_column(unsigned long idx, std::string& item) const { item = get_column_as_text(idx); }
+        void get_column(unsigned long idx, float& item      ) const { item = get_column_as_double(idx); }
+        void get_column(unsigned long idx, double& item     ) const { item = get_column_as_double(idx); }
+        void get_column(unsigned long idx, long double& item) const { item = get_column_as_double(idx); }
+
+        template <typename T>
+        typename disable_if_c<std::numeric_limits<T>::is_integer>::type get_column (
+            unsigned long idx,
+            T& item
+        ) const
+        {
+            get_column_as_object(idx, item);
+        }
 
         const std::vector<char> get_column_as_blob (
             unsigned long idx
@@ -352,6 +379,33 @@ namespace dlib
         ) const
         {
             return sqlite3_bind_parameter_index(stmt, name.c_str());
+        }
+
+        template <typename T>
+        typename enable_if_c<std::numeric_limits<T>::is_integer>::type bind (
+            unsigned long idx,
+            const T& item
+        ) 
+        {
+            // unsigned ints won't fit into int all the time so put those into 64bit ints.
+            if (sizeof(T) < sizeof(int) || (sizeof(T)==sizeof(int) && is_signed_type<T>::value))
+                bind_int(idx, item);
+            else
+                bind_int64(idx, item);
+        }
+
+        void bind(unsigned long idx, const std::string& item) { bind_text(idx, item); }
+        void bind(unsigned long idx, const float& item      ) { bind_double(idx, item); }
+        void bind(unsigned long idx, const double& item     ) { bind_double(idx, item); }
+        void bind(unsigned long idx, const long double& item) { bind_double(idx, item); }
+
+        template <typename T>
+        typename disable_if_c<std::numeric_limits<T>::is_integer>::type bind (
+            unsigned long idx,
+            const T& item
+        ) 
+        {
+            bind_object(idx, item);
         }
 
         void bind_blob (

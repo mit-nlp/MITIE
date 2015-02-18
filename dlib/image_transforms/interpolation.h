@@ -16,6 +16,80 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
+    template <typename T>
+    struct sub_image_proxy
+    {
+        sub_image_proxy (
+            T& img_,
+            const rectangle& rect_
+        ) : img(img_), rect(rect_.intersect(get_rect(img_)))
+        {}
+
+        T& img;
+        const rectangle rect;
+    };
+
+    template <typename T>
+    struct image_traits<sub_image_proxy<T> >
+    {
+        typedef typename image_traits<T>::pixel_type pixel_type;
+    };
+    template <typename T>
+    struct image_traits<const sub_image_proxy<T> >
+    {
+        typedef typename image_traits<T>::pixel_type pixel_type;
+    };
+
+    template <typename T>
+    inline long num_rows( const sub_image_proxy<T>& img) { return img.rect.height(); }
+    template <typename T>
+    inline long num_columns( const sub_image_proxy<T>& img) { return img.rect.width(); }
+
+    template <typename T>
+    inline void* image_data( sub_image_proxy<T>& img) 
+    { 
+        typedef typename image_traits<T>::pixel_type pixel_type;
+        return (char*)image_data(img.img) + sizeof(pixel_type)*img.rect.left() + img.rect.top()*width_step(img); 
+    } 
+    template <typename T>
+    inline const void* image_data( const sub_image_proxy<T>& img) 
+    {
+        typedef typename image_traits<T>::pixel_type pixel_type;
+        return (const char*)image_data(img.img) + sizeof(pixel_type)*img.rect.left() + img.rect.top()*width_step(img); 
+    }
+
+    template <typename T>
+    inline long width_step(
+        const sub_image_proxy<T>& img
+    ) 
+    { 
+        return width_step(img.img);
+    }
+
+    template <
+        typename image_type
+        >
+    sub_image_proxy<image_type> sub_image (
+        image_type& img,
+        const rectangle& rect
+    )
+    {
+        return sub_image_proxy<image_type>(img,rect);
+    }
+
+    template <
+        typename image_type
+        >
+    const sub_image_proxy<const image_type> sub_image (
+        const image_type& img,
+        const rectangle& rect
+    )
+    {
+        return sub_image_proxy<const image_type>(img,rect);
+    }
+
+// ----------------------------------------------------------------------------------------
+
     class interpolate_nearest_neighbor
     {
     public:
@@ -1427,14 +1501,15 @@ namespace dlib
     {
         chip_details() : angle(0), rows(0), cols(0) {}
         chip_details(const rectangle& rect_) : rect(rect_),angle(0), rows(rect_.height()), cols(rect_.width()) {}
-        chip_details(const rectangle& rect_, unsigned long size) : rect(rect_),angle(0) 
+        chip_details(const drectangle& rect_) : rect(rect_),angle(0), rows(rect_.height()), cols(rect_.width()) {}
+        chip_details(const drectangle& rect_, unsigned long size) : rect(rect_),angle(0) 
         { compute_dims_from_size(size); }
-        chip_details(const rectangle& rect_, unsigned long size, double angle_) : rect(rect_),angle(angle_) 
+        chip_details(const drectangle& rect_, unsigned long size, double angle_) : rect(rect_),angle(angle_) 
         { compute_dims_from_size(size); }
 
-        chip_details(const rectangle& rect_, const chip_dims& dims) : 
+        chip_details(const drectangle& rect_, const chip_dims& dims) : 
             rect(rect_),angle(0),rows(dims.rows), cols(dims.cols) {}
-        chip_details(const rectangle& rect_, const chip_dims& dims, double angle_) : 
+        chip_details(const drectangle& rect_, const chip_dims& dims, double angle_) : 
             rect(rect_),angle(angle_),rows(dims.rows), cols(dims.cols) {}
 
         template <typename T>
@@ -1463,13 +1538,13 @@ namespace dlib
             // Note that the translation and scale part are represented by the extraction
             // rectangle.  So here we build the appropriate rectangle.
             const double scale = length(p); 
-            rect = centered_rect(tform(point(dims.cols,dims.rows)/2.0), 
-                static_cast<unsigned long>(dims.cols*scale + 0.5), 
-                static_cast<unsigned long>(dims.rows*scale + 0.5));
+            rect = centered_drect(tform(point(dims.cols,dims.rows)/2.0), 
+                                  dims.cols*scale, 
+                                  dims.rows*scale);
         }
 
 
-        rectangle rect;
+        drectangle rect;
         double angle;
         unsigned long rows; 
         unsigned long cols;
@@ -1611,7 +1686,7 @@ namespace dlib
         for (unsigned long i = 0; i < chip_locations.size(); ++i)
         {
             long depth = 0;
-            rectangle rect = pyr.rect_down(chip_locations[i].rect);
+            drectangle rect = pyr.rect_down(chip_locations[i].rect);
             while (rect.area() > chip_locations[i].size())
             {
                 rect = pyr.rect_down(rect);
@@ -1647,7 +1722,7 @@ namespace dlib
 
                 // figure out which level in the pyramid to use to extract the chip
                 int level = -1;
-                rectangle rect = chip_locations[i].rect;
+                drectangle rect = chip_locations[i].rect;
                 while (pyr.rect_down(rect).area() > chip_locations[i].size())
                 {
                     ++level;
