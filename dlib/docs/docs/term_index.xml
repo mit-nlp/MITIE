@@ -202,6 +202,7 @@
          <term file="algorithms.html" name="disjoint_subsets"              include="dlib/disjoint_subsets.h"/>
          <term link="algorithms.html#disjoint_subsets" name="union-find"   include="dlib/disjoint_subsets.h"/>
          <term file="linear_algebra.html" name="rectangle"                 include="dlib/geometry.h"/>
+         <term file="linear_algebra.html" name="drectangle"                 include="dlib/geometry.h"/>
          <term file="linear_algebra.html" name="border_enumerator"         include="dlib/geometry.h"/>
          <term file="graph_tools.html" name="edge"                         include="dlib/graph_utils.h"/>
          <term file="graph_tools.html" name="is_join_tree"                 include="dlib/graph_utils.h"/>
@@ -412,6 +413,7 @@
          <term file="ml.html" name="find_clusters_using_kmeans"                     include="dlib/clustering.h"/>
          <term file="ml.html" name="nearest_center"                                 include="dlib/clustering.h"/>
          <term file="ml.html" name="newman_cluster"                                 include="dlib/clustering.h"/>
+         <term file="ml.html" name="spectral_cluster"                               include="dlib/clustering.h"/>
          <term file="ml.html" name="chinese_whispers"                               include="dlib/clustering.h"/>
          <term file="ml.html" name="modularity"                                     include="dlib/clustering.h"/>
          <term file="ml.html" name="pick_initial_centers"                           include="dlib/clustering.h"/>
@@ -1263,6 +1265,8 @@
          <term file="imaging.html" name="rotate_image"            include="dlib/image_transforms.h"/>
          <term file="imaging.html" name="resize_image"            include="dlib/image_transforms.h"/>
          <term file="imaging.html" name="extract_image_chips"     include="dlib/image_transforms.h"/>
+         <term file="imaging.html" name="sub_image"               include="dlib/image_transforms.h"/>
+         <term file="dlib/image_transforms/interpolation_abstract.h.html" name="sub_image_proxy"     include="dlib/image_transforms.h"/>
          <term file="dlib/image_transforms/interpolation_abstract.h.html" name="extract_image_chip"     include="dlib/image_transforms.h"/>
          <term file="dlib/image_transforms/interpolation_abstract.h.html" name="chip_details"           include="dlib/image_transforms.h"/>
          <term file="dlib/image_transforms/interpolation_abstract.h.html" name="get_face_chip_details"  include="dlib/image_transforms.h"/>
@@ -1329,6 +1333,7 @@
          <term file="imaging.html" name="remove_unobtainable_rectangles"        include="dlib/image_processing.h"/>
          <term file="imaging.html" name="get_frontal_face_detector"         include="dlib/image_processing/frontal_face_detector.h"/>
          <term file="imaging.html" name="object_detector"         include="dlib/image_processing.h"/>
+         <term file="imaging.html" name="correlation_tracker"         include="dlib/image_processing.h"/>
          <term file="dlib/image_processing/object_detector_abstract.h.html" name="rect_detection"        include="dlib/image_processing.h"/>
          <term file="dlib/image_processing/object_detector_abstract.h.html" name="full_detection"        include="dlib/image_processing.h"/>
          <term file="imaging.html" name="full_object_detection"   include="dlib/image_processing.h"/>

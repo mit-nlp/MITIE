@@ -103,6 +103,7 @@
          <item>test_box_overlap</item>
          <item>remove_unobtainable_rectangles</item>
          <item>setup_hashed_features</item>
+         <item>correlation_tracker</item>
          <item nolink="true">
             <name>Scan Image Pyramid Tools</name>
             <sub>
@@ -213,6 +214,7 @@
          <item>flip_image_dataset_left_right</item> 
          <item>rotate_image_dataset</item> 
          <item>extract_image_chips</item> 
+         <item>sub_image</item> 
       </section>
 
       <section>
@@ -1631,6 +1633,19 @@
    <!-- ************************************************************************* -->
 
       <component>
+         <name>sub_image</name>
+         <file>dlib/image_transforms.h</file>
+         <spec_file link="true">dlib/image_transforms/interpolation_abstract.h</spec_file>
+         <description>        
+            This function returns a lightweight sub-image of another image.  In particular,
+            the returned sub-image simply holds a pointer to the original image, meaning there
+            is no overhead for using or creating the sub-image.
+         </description>
+      </component>
+
+   <!-- ************************************************************************* -->
+
+      <component>
          <name>add_image_left_right_flips</name>
          <file>dlib/image_transforms.h</file>
          <spec_file link="true">dlib/image_transforms/interpolation_abstract.h</spec_file>
@@ -2144,6 +2159,31 @@
 
             <example>face_detector.py.html</example>
             <example>train_object_detector.py.html</example>
+         </examples>
+                                 
+      </component>
+            
+   <!-- ************************************************************************* -->
+
+      <component>
+         <name>correlation_tracker</name>
+         <file>dlib/image_processing.h</file>
+         <spec_file link="true">dlib/image_processing/correlation_tracker_abstract.h</spec_file>
+         <description>        
+                This is a tool for tracking moving objects in a video stream.  You give it
+                the bounding box of an object in the first frame and it attempts to track the
+                object in the box from frame to frame.  
+
+                <p>
+                  This tool is an implementation of the method described in the following paper:
+                  <blockquote>
+                     Danelljan, Martin, et al. "Accurate scale estimation for robust visual
+                     tracking." Proceedings of the British Machine Vision Conference BMVC. 2014.
+                  </blockquote>
+                </p>
+         </description>
+         <examples>
+            <example>video_tracking_ex.cpp.html</example>
          </examples>
                                  
       </component>
