@@ -229,6 +229,18 @@ namespace mitie
     !*/
     {
         DLIB_CASSERT(size() > 0, "You can't train a named_entity_extractor if you don't give any training data.");
+
+        // Print out all the labels the user gave to the screen.
+        std::vector<std::string> all_labels = get_all_labels();
+        cout << "Training to recognize " << all_labels.size() << " labels: ";
+        for (unsigned long i = 0; i < all_labels.size(); ++i)
+        {
+            cout << "'" << all_labels[i] << "'";
+            if (i+1 < all_labels.size())
+                cout << ", ";
+        }
+        cout << endl;
+
         sequence_segmenter<ner_feature_extractor> segmenter;
         train_segmenter(segmenter);
 
