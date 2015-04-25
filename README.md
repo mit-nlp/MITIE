@@ -88,6 +88,11 @@ run `make` as follows:
 cd mitielib 
 make BLAS_PATH=/path/to/openblas.a LIBGFORTRAN_PATH=/path/to/libfortran.a
 ```
+Note that if your BLAS libraries are not in standard locations cmake will fail to find them.  However,
+you can tell it what folder to look in by replacing `cmake ..` with a statement such as:
+```
+cmake -DCMAKE_LIBRARY_PATH=/home/me/place/i/put/blas/lib ..
+```
 
 ### Using MITIE from a Python 2.7 program
 
