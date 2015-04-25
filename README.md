@@ -77,6 +77,16 @@ cmake --build . --config Release --target install
 
 Either of these methods will create a MITIE shared library in the mitielib folder.
 
+### Compiling MITIE using OpenBLAS
+
+MITIE can use OpenBLAS in place of linear algebra routines built into
+DLIB.  To do this, locate `libopenblas.a` and `libgfortran.a`, then
+run `make` as follows:
+```
+cd mitielib 
+make BLAS_PATH=/path/to/openblas.a LIBGFORTRAN_PATH=/path/to/libfortran.a
+```
+
 ### Using MITIE from a Python 2.7 program
 
 Once you have built the MITIE shared library, you can go to the [examples/python](examples/python) folder

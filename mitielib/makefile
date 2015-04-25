@@ -1,4 +1,15 @@
+#BLAS_PATH=../../OpenBLAS-0.2.14/libopenblas.a
+#LIBGFORTRAN_PATH=/usr/local/gfortran/lib/libgfortran.a
 
+CFLAGS=
+ifeq ($(BLAS_PATH),)
+	BLAS=
+	CFLAGS=
+else
+	BLAS=$(BLAS_PATH) $(LIBGFORTRAN_PATH)
+	CFLAGS += -DDLIB_USE_BLAS
+#	BLAS=-L$(BLAS_PATH) -lopenblas -L/usr/local/gfortran/lib -lgfortran
+endif
 INSTALL_PREFIX=/usr/local
 
 SRC = src/mitie.cpp
@@ -19,9 +30,8 @@ SRC += ../dlib/dlib/threads/thread_pool_extension.cpp
 SRC += ../dlib/dlib/misc_api/misc_api_kernel_1.cpp
 SRC += ../dlib/dlib/misc_api/misc_api_kernel_2.cpp
 
-
-CFLAGS =  -fpic  -Wall -W  -O3   -Iinclude -I../dlib 
-LFLAGS = -shared  
+CFLAGS +=  -fpic  -Wall -W  -O3   -Iinclude -I../dlib 
+LDFLAGS = -shared
 CC = g++
 
 HEADERS=include/mitie.h
@@ -36,11 +46,11 @@ all: libmitie.so libmitie.a
 
 libmitie.so: $(OBJ) 
 	@echo Linking $@
-	@$(CC) $(OBJ) -o $@ $(LFLAGS) 
+	@$(CC) -shared $(OBJ) $(BLAS) -o $@
 
 libmitie.a: libmitie.so
 	@echo Making $@
-	@ar -rsc $@ $(OBJ)
+	@ar -rsc $@ $(OBJ) $(BLAS)
 	@echo Build Complete
 
 .cpp.o: $<
