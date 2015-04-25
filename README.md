@@ -65,7 +65,7 @@ by running:
 cd mitielib
 make
 ```
-This produces shared and static library files in the mitielib folder.  On a non-UNIX system you can use
+This produces shared and static library files in the mitielib folder.  Or you can use
 CMake to compile a shared library by typing:
 ```
 cd mitielib
@@ -75,12 +75,14 @@ cmake ..
 cmake --build . --config Release --target install
 ```
 
-Either of these methods will create a MITIE shared library in the mitielib folder.
+Either of these methods will create a MITIE shared library in the mitielib folder. 
 
 ### Compiling MITIE using OpenBLAS
 
-MITIE can use OpenBLAS in place of linear algebra routines built into
-DLIB.  To do this, locate `libopenblas.a` and `libgfortran.a`, then
+If you compile MITIE using cmake then it will automatically find and use any optimized BLAS
+libraries on your machine.  However, if you compile using regular make then you have
+to manually locate your BLAS libaries or DLIB will default to its built in, but slower, BLAS
+implementation.   Therefore, to use OpenBLAS when compiling without cmake, locate `libopenblas.a` and `libgfortran.a`, then
 run `make` as follows:
 ```
 cd mitielib 
