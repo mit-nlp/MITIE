@@ -241,12 +241,16 @@ namespace mitie
         }
         cout << endl;
 
+        cout << "Part I: train segmenter" << endl;
+
         sequence_segmenter<ner_feature_extractor> segmenter;
         train_segmenter(segmenter);
 
         std::vector<ner_sample_type> samples;
         std::vector<unsigned long> labels;
         extract_ner_segment_feats(segmenter, samples, labels);
+
+        cout << "Part II: train segment classifier" << endl;
 
         classifier_type df = train_ner_segment_classifier(samples, labels);
 
@@ -266,8 +270,10 @@ namespace mitie
             const std::vector<unsigned long>& labels_,
             unsigned long num_threads_,
             double beta_,
-            unsigned long num_labels_
-        ) : samples(samples_), labels(labels_), num_threads(num_threads_), beta(beta_), num_labels(num_labels_)
+            unsigned long num_labels_,
+            unsigned long max_iterations_
+        ) : samples(samples_), labels(labels_), num_threads(num_threads_), beta(beta_), num_labels(num_labels_),
+            max_iterations(max_iterations_)
         {}
 
         double operator() (
@@ -278,6 +284,7 @@ namespace mitie
 
             trainer.set_c(C);
             trainer.set_num_threads(num_threads);
+            trainer.set_max_iterations(max_iterations);
             matrix<double> res = cross_validate_multiclass_trainer(trainer, samples, labels, 2);
             double score = compute_fscore(res, num_labels);
             cout << "C: " << C << "   f-score: "<< score << endl;
@@ -308,6 +315,7 @@ namespace mitie
         const unsigned long num_threads;
         const double beta;
         const unsigned long num_labels;
+        const unsigned long max_iterations;
     };
 
 // ----------------------------------------------------------------------------------------
@@ -344,13 +352,14 @@ namespace mitie
         svm_multiclass_linear_trainer<sparse_linear_kernel<ner_sample_type>,unsigned long> trainer;
 
         trainer.set_c(300);
-        //trainer.be_verbose();
         trainer.set_num_threads(num_threads);
         trainer.set_epsilon(0.0001);
+        trainer.set_max_iterations(2000);
+        //trainer.be_verbose();
 
         if (count_of_least_common_label(labels) > 1)
         {
-            train_ner_segment_classifier_objective obj(samples, labels, num_threads, beta, get_all_labels().size());
+            train_ner_segment_classifier_objective obj(samples, labels, num_threads, beta, get_all_labels().size(), 2000);
 
             double C = 300;
             const double min_C = 0.01;
@@ -494,15 +503,18 @@ namespace mitie
 
         const double C = 20.0; 
         const double eps = 0.01;
+        const unsigned long max_iterations = 2000;
         const double loss_per_missed_segment = 3.0; 
         const unsigned long cache_size = 5; 
         cout << "C:           "<< C << endl;
         cout << "epsilon:     "<< eps << endl;
         cout << "num threads: "<< num_threads << endl;
         cout << "cache size:  "<< cache_size << endl;
+        cout << "max iterations: " << max_iterations << endl;
         cout << "loss per missed segment:  "<< loss_per_missed_segment << endl;
         trainer.set_c(C);
         trainer.set_epsilon(eps);
+        trainer.set_max_iterations(max_iterations);
         trainer.set_num_threads(num_threads);
         trainer.set_max_cache_size(cache_size);
         trainer.set_loss_per_missed_segment(loss_per_missed_segment);
