@@ -5,6 +5,7 @@
 #include <mitie/ner_trainer.h>
 #include <dlib/svm_threaded.h>
 #include <dlib/optimization.h>
+#include <dlib/misc_api.h>
 
 using namespace std;
 using namespace dlib;
@@ -230,6 +231,9 @@ namespace mitie
     {
         DLIB_CASSERT(size() > 0, "You can't train a named_entity_extractor if you don't give any training data.");
 
+	// timestaper used for printouts
+	dlib::timestamper ts;
+
         // Print out all the labels the user gave to the screen.
         std::vector<std::string> all_labels = get_all_labels();
         cout << "Training to recognize " << all_labels.size() << " labels: ";
@@ -243,8 +247,14 @@ namespace mitie
 
         cout << "Part I: train segmenter" << endl;
 
+	dlib::uint64 start = ts.get_timestamp();
+
         sequence_segmenter<ner_feature_extractor> segmenter;
         train_segmenter(segmenter);
+
+	dlib::uint64 stop = ts.get_timestamp();
+
+	cout << "Part I: elapsed time: " << (stop - start)/1000/1000 << " seconds." << endl << endl;
 
         std::vector<ner_sample_type> samples;
         std::vector<unsigned long> labels;
@@ -252,7 +262,13 @@ namespace mitie
 
         cout << "Part II: train segment classifier" << endl;
 
+	start = ts.get_timestamp();
+
         classifier_type df = train_ner_segment_classifier(samples, labels);
+
+	stop = ts.get_timestamp();
+
+	cout << "Part II: elapsed time: " << (stop - start)/1000/1000 << " seconds." << endl;
 
         cout << "df.number_of_classes(): "<< df.number_of_classes() << endl;
 
@@ -285,6 +301,7 @@ namespace mitie
             trainer.set_c(C);
             trainer.set_num_threads(num_threads);
             trainer.set_max_iterations(max_iterations);
+            //trainer.be_verbose();
             matrix<double> res = cross_validate_multiclass_trainer(trainer, samples, labels, 2);
             double score = compute_fscore(res, num_labels);
             cout << "C: " << C << "   f-score: "<< score << endl;
@@ -546,6 +563,7 @@ namespace mitie
             trainer.set_c(params(0));
             trainer.set_loss_per_missed_segment(params(1)/LOSS_SCALE);
         }
+
 
         segmenter = trainer.train(samples, local_chunks);
 
