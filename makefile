@@ -8,10 +8,12 @@ examples: tools/ner_stream examples/C/ner examples/C/relation_extraction
 	cp examples/C/relation_extraction/relation_extraction_example .
 	cp tools/ner_stream/ner_stream .
 
-MITIE-models:
-	wget -O - http://sourceforge.net/projects/mitie/files/binaries/MITIE-models-v0.2.tar.bz2 > MITIE-models-v0.2.tar.bz2
-	tar -xjf MITIE-models-v0.2.tar.bz2
+MITIE-models-v0.2.tar.bz2:
+	curl -LO http://sourceforge.net/projects/mitie/files/binaries/MITIE-models-v0.2.tar.bz2
 
+MITIE-models: MITIE-models-v0.2.tar.bz2
+	tar -xjf MITIE-models-v0.2.tar.bz2
+	
 test: all examples MITIE-models
 	./ner_stream MITIE-models/english/ner_model.dat < sample_text.txt > /tmp/MITIE_test.out
 	diff /tmp/MITIE_test.out sample_text.reference-output
