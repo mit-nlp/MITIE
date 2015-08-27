@@ -158,6 +158,7 @@
          <term file="optimization.html" name="solve_qp3_using_smo"            include="dlib/optimization.h"/>
          <term file="optimization.html" name="solve_qp4_using_smo"            include="dlib/optimization.h"/>
          <term file="optimization.html" name="oca"                            include="dlib/optimization.h"/>
+         <term file="optimization.html" name="mpc"                            include="dlib/control.h"/>
          <term link="optimization.html#find_min_bobyqa" name="BOBYQA"         include="dlib/optimization.h"/>
          <term file="optimization.html" name="find_max"                       include="dlib/optimization.h"/>
          <term file="optimization.html" name="find_max_single_variable"       include="dlib/optimization.h"/>
@@ -423,10 +424,12 @@
          <term file="dlib/statistics/dpca_abstract.h.html" name="discriminant_pca_error"  include="dlib/statistics.h"/>
          <term file="ml.html" name="kkmeans"                                        include="dlib/clustering.h"/>
          <term file="ml.html" name="find_clusters_using_kmeans"                     include="dlib/clustering.h"/>
+         <term file="ml.html" name="find_clusters_using_angular_kmeans"             include="dlib/clustering.h"/>
          <term file="ml.html" name="nearest_center"                                 include="dlib/clustering.h"/>
          <term file="ml.html" name="newman_cluster"                                 include="dlib/clustering.h"/>
          <term file="ml.html" name="spectral_cluster"                               include="dlib/clustering.h"/>
          <term file="ml.html" name="chinese_whispers"                               include="dlib/clustering.h"/>
+         <term file="ml.html" name="bottom_up_cluster"                               include="dlib/clustering.h"/>
          <term file="ml.html" name="modularity"                                     include="dlib/clustering.h"/>
          <term file="ml.html" name="pick_initial_centers"                           include="dlib/clustering.h"/>
          <term file="ml.html" name="rank_features"                                  include="dlib/svm.h"/>

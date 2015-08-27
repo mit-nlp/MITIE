@@ -435,6 +435,9 @@ namespace dlib
         void give_input_focus (
         );
 
+        bool has_input_focus (
+        ) const;
+
         void select_all_text (
         );
 
@@ -3706,13 +3709,6 @@ namespace dlib
             bool is_double_click
         );
 
-        void on_mouse_up (
-            unsigned long btn,
-            unsigned long state,
-            long x,
-            long y
-        );
-
         void on_mouse_move (
             unsigned long state,
             long x,
@@ -3724,17 +3720,16 @@ namespace dlib
             const std::pair<overlay_dot,float>& b
         ) { return a.second < b.second; }
 
-        void sort_dots();
 
         point last;
         std::vector<overlay_line> overlay_lines;
-        std::vector<std::pair<overlay_dot,float> > overlay_dots;
+        std::vector<overlay_dot> overlay_dots;
 
         camera_transform tform;
         vector<double> sum_pts;
         vector<double> max_pts;
         any_function<void(const vector<double>&)> dot_clicked_event_handler;
-        bool dot_sorting_is_stale;
+        mutable array2d<float> depth;
     };
 
 // ----------------------------------------------------------------------------------------

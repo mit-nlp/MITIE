@@ -457,6 +457,16 @@ namespace dlib
 
 // ----------------------------------------------------------------------------------------
 
+    bool text_field::
+    has_input_focus (
+    ) const
+    {
+        auto_mutex M(m);
+        return has_focus;
+    }
+
+// ----------------------------------------------------------------------------------------
+
     void text_field::
     select_all_text (
     )
@@ -5722,14 +5732,12 @@ namespace dlib
             max_pts.z() = std::max(overlay[i].p2.z(), max_pts.z());
         }
 
-        dot_sorting_is_stale = true;
         tform = camera_transform(max_pts,
             sum_pts/(overlay_lines.size()*2+overlay_dots.size()),
             vector<double>(0,0,1),
             tform.get_camera_field_of_view(),
             std::min(rect.width(),rect.height()));
 
-        sort_dots();
 
         // make the parent window redraw us now that we changed the overlay
         parent.invalidate_rectangle(rect);
@@ -5748,7 +5756,7 @@ namespace dlib
 
         for (unsigned long i = 0; i < overlay.size(); ++i)
         {
-            overlay_dots.push_back(std::make_pair(overlay[i], 0));
+            overlay_dots.push_back(overlay[i]);
 
             sum_pts += overlay[i].p;
             max_pts.x() = std::max(overlay[i].p.x(), max_pts.x());
@@ -5756,7 +5764,6 @@ namespace dlib
             max_pts.z() = std::max(overlay[i].p.z(), max_pts.z());
         }
 
-        dot_sorting_is_stale = true;
         tform = camera_transform(max_pts,
             sum_pts/(overlay_lines.size()*2+overlay_dots.size()),
             vector<double>(0,0,1),
@@ -5803,6 +5810,10 @@ namespace dlib
         const canvas& c
     ) const
     {
+        if (depth.nr() < (long)c.height() || depth.nc() < (long)c.width())
+            depth.set_size(c.height(), c.width());
+        assign_all_pixels(depth, std::numeric_limits<float>::infinity());
+
         rectangle area = rect.intersect(c);
         fill_rect(c, area, 0);
         for (unsigned long i = 0; i < overlay_lines.size(); ++i)
@@ -5814,9 +5825,13 @@ namespace dlib
         }
         for (unsigned long i = 0; i < overlay_dots.size(); ++i)
         {
-            point p = tform(overlay_dots[i].first.p) + rect.tl_corner();
-            if (area.contains(p))
-                assign_pixel(c[p.y()-c.top()][p.x()-c.left()], overlay_dots[i].first.color);
+            double scale, distance;
+            point p = tform(overlay_dots[i].p, scale, distance) + rect.tl_corner();
+            if (area.contains(p) && depth[p.y()-c.top()][p.x()-c.left()] > distance)
+            {
+                depth[p.y()-c.top()][p.x()-c.left()] = distance;
+                assign_pixel(c[p.y()-c.top()][p.x()-c.left()], overlay_dots[i].color);
+            }
         }
 
     }
@@ -5885,7 +5900,7 @@ namespace dlib
             const dpoint pp(x,y);
             for (unsigned long i = 0; i < overlay_dots.size(); ++i)
             {
-                dpoint p = tform(overlay_dots[i].first.p) + rect.tl_corner();
+                dpoint p = tform(overlay_dots[i].p) + rect.tl_corner();
                 double dist = length_squared(p-pp);
                 if (dist < best_dist)
                 {
@@ -5894,43 +5909,7 @@ namespace dlib
                 }
             }
             if (dot_clicked_event_handler.is_set())
-                dot_clicked_event_handler(overlay_dots[best_idx].first.p);
-        }
-    }
-
-// ----------------------------------------------------------------------------------------
-
-    void perspective_display::
-    sort_dots (
-    )
-    {
-        if (dot_sorting_is_stale)
-        {
-            // sort the dots so that the dots farthest from the camera are drawn first.
-            // We begin by updating the distance from each dot to the camera.
-            const vector<double> cam = tform.get_camera_pos();
-            for (unsigned long i = 0; i < overlay_dots.size(); ++i)
-                overlay_dots[i].second = length_squared(overlay_dots[i].first.p-cam);
-            std::sort(overlay_dots.rbegin(), overlay_dots.rend(), compare_second);
-
-            dot_sorting_is_stale = false;
-            parent.invalidate_rectangle(rect);
-        }
-    }
-
-// ----------------------------------------------------------------------------------------
-
-    void perspective_display::
-    on_mouse_up (
-        unsigned long,// btn,
-        unsigned long,// state,
-        long,// x,
-        long// y
-    )
-    {
-        if (!hidden && enabled && overlay_dots.size() != 0)
-        {
-            sort_dots();
+                dot_clicked_event_handler(overlay_dots[best_idx].p);
         }
     }
 
@@ -5961,7 +5940,6 @@ namespace dlib
             // now make it have the correct radius relative to the looking at point.
             new_pos = (new_pos-tform.get_camera_looking_at()).normalize()*length(radius) + tform.get_camera_looking_at();
 
-            dot_sorting_is_stale = true;
             tform = camera_transform(new_pos,
                 tform.get_camera_looking_at(),
                 tangent_y,
@@ -5984,7 +5962,6 @@ namespace dlib
             vector<double> offset = tangent_x*delta.x() + tangent_y*-delta.y(); 
 
 
-            dot_sorting_is_stale = true;
             tform = camera_transform(
                 tform.get_camera_pos()+offset,
                 tform.get_camera_looking_at()+offset,
@@ -6335,6 +6312,9 @@ namespace dlib
             std::map<std::string,point>::const_iterator itr;
             for (itr = overlay_rects[i].parts.begin(); itr != overlay_rects[i].parts.end(); ++itr)
             {
+                if (itr->second == OBJECT_PART_NOT_PRESENT)
+                    continue;
+
                 rectangle temp = centered_rect(get_rect_on_screen(centered_rect(itr->second,1,1)), part_width, part_width);
 
                 if (rect_is_selected && selected_rect == i && 
@@ -6527,6 +6507,9 @@ namespace dlib
                 std::map<std::string,point>::const_iterator itr;
                 for (itr = overlay_rects[i].parts.begin(); itr != overlay_rects[i].parts.end(); ++itr)
                 {
+                    if (itr->second == OBJECT_PART_NOT_PRESENT)
+                        continue;
+
                     rectangle temp = centered_rect(get_rect_on_screen(centered_rect(itr->second,1,1)), part_width, part_width);
                     point c = center(temp);
 
@@ -6670,6 +6653,9 @@ namespace dlib
                 std::map<std::string,point>::const_iterator itr;
                 for (itr = overlay_rects[i].parts.begin(); itr != overlay_rects[i].parts.end(); ++itr)
                 {
+                    if (itr->second == OBJECT_PART_NOT_PRESENT)
+                        continue;
+
                     rectangle temp = centered_rect(get_rect_on_screen(centered_rect(itr->second,1,1)), part_width, part_width);
                     point c = center(temp);
 
