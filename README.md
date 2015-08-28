@@ -3,9 +3,10 @@ MITIE: MIT Information Extraction
 
 This project provides free (even for commercial use)
 [state-of-the-art](../../wiki/Evaluation) information extraction
-tools. The current release includes tools for performing named entity
-extraction and binary relation detection as well as tools for training
-custom extractors and relation detectors.  
+tools. The current release includes tools for performing [named entity
+extraction](http://blog.dlib.net/2014/04/mitie-completely-free-and-state-of-art.html) 
+and [binary relation detection](http://blog.dlib.net/2014/07/mitie-v02-released-now-includes-python.html) 
+as well as tools for training custom extractors and relation detectors.  
 
 MITIE comes with trained models for English and Spanish.  The English named entity recognition model is 
 trained based on data from the English Gigaword news corpus, the CoNLL 2003 named entity recognition task,
