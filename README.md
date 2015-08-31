@@ -101,7 +101,7 @@ Once you have built the MITIE shared library, you can go to the [examples/python
 and simply run any of the Python scripts.  Each script is a tutorial explaining some aspect of
 MITIE: [named entity recognition and relation extraction](examples/python/ner.py), 
 [training a custom NER tool](examples/python/train_ner.py), or 
-[training a custom relation extractor](examples/python/train_ner.py).
+[training a custom relation extractor](examples/python/train_relation_extraction.py).
 
 ### Using MITIE from R
 
