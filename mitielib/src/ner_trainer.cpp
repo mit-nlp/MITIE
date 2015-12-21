@@ -39,6 +39,13 @@ namespace mitie
 
     ner_training_instance::
     ner_training_instance (
+
+    )
+    {
+    }
+
+    ner_training_instance::
+    ner_training_instance (
         const std::vector<std::string>& tokens_
     ) : tokens(tokens_)
     {

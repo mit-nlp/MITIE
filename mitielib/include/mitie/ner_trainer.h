@@ -28,6 +28,10 @@ namespace mitie
         !*/
 
     public:
+        ner_training_instance (
+
+        );
+
         explicit ner_training_instance (
             const std::vector<std::string>& tokens
         );

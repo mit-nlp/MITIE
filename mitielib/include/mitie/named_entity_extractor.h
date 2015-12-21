@@ -27,7 +27,6 @@ namespace mitie
                 without mutex locking it first.
         !*/
     public:
-
         named_entity_extractor():fingerprint(0){}
         /*!
             ensures

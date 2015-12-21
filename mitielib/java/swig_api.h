@@ -22,6 +22,7 @@
 #include <mitie/conll_tokenizer.h>
 #include <mitie/binary_relation_detector.h>
 #include <mitie/named_entity_extractor.h>
+#include <mitie/ner_trainer.h>
 
 
 // ----------------------------------------------------------------------------------------
@@ -112,6 +113,10 @@ struct BinaryRelation
 class NamedEntityExtractor
 {
 public:
+    NamedEntityExtractor (mitie::named_entity_extractor namedEntityExtractor) {
+        impl = &namedEntityExtractor;
+    }
+
     NamedEntityExtractor (
         const std::string& filename
     )
@@ -120,20 +125,23 @@ public:
         dlib::deserialize(filename) >> classname;
         if (classname != "mitie::named_entity_extractor")
             throw dlib::error("This file does not contain a mitie::named_entity_extractor. Contained: " + classname);
-        dlib::deserialize(filename) >> classname >> impl;
+
+        mitie::named_entity_extractor namedEntityExtractor;
+        dlib::deserialize(filename) >> classname >> namedEntityExtractor;
+        impl = &namedEntityExtractor;
     }
 
     std::vector<std::string> getPossibleNerTags (
     ) const
     {
-        return impl.get_tag_name_strings();
+        return impl->get_tag_name_strings();
     }
 
     void saveToDisk (
         const std::string& filename
     ) const
     {
-        dlib::serialize(filename) << "mitie::named_entity_extractor" << impl;
+        dlib::serialize(filename) << "mitie::named_entity_extractor" << *impl;
     }
 
     std::vector<EntityMention> extractEntities (
@@ -143,7 +151,7 @@ public:
         std::vector<std::pair<unsigned long, unsigned long> > ranges;
         std::vector<unsigned long> predicted_labels; 
         std::vector<double> predicted_scores;
-        impl.predict(tokens, ranges, predicted_labels, predicted_scores);
+        impl->predict(tokens, ranges, predicted_labels, predicted_scores);
         std::vector<EntityMention> temp;
         for (unsigned long i = 0; i < ranges.size(); ++i)
             temp.push_back(EntityMention(ranges[i].first, ranges[i].second, predicted_labels[i], predicted_scores[i]));
@@ -178,11 +186,11 @@ public:
         temp.item = extract_binary_relation(tokens, 
                                             std::make_pair(arg1.start,arg1.end), 
                                             std::make_pair(arg2.start,arg2.end), 
-                                            impl.get_total_word_feature_extractor());
+                                            impl->get_total_word_feature_extractor());
         return temp;
     }
 private:
-    mitie::named_entity_extractor impl;
+    mitie::named_entity_extractor* impl;
 };
 
 // ----------------------------------------------------------------------------------------
@@ -229,20 +237,56 @@ private:
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-/* TODO, fill out the training API for java at some point.
-class NerTrainingInstance
-{
+class NerTrainingInstance {
+public:
+    NerTrainingInstance(const std::vector<std::string> &tokens
+    ) {
+        this->impl = new mitie::ner_training_instance(tokens);
+    }
+
+    ~NerTrainingInstance(){
+        delete this->impl;
+    }
+
+    void addEntity(unsigned long start,
+                   unsigned long length,
+                   const char *label) {
+        impl->add_entity(start, length, label);
+    }
+
+    mitie::ner_training_instance* impl;
 };
 
-class NerTrainer
-{
+class NerTrainer {
+public:
+    NerTrainer(const std::string& wordFeatureExtractorPath) {
+        impl = new mitie::ner_trainer(wordFeatureExtractorPath);
+    }
+
+    void add(const NerTrainingInstance &instance) {
+        impl->add(*instance.impl);
+    }
+
+    void setNumThreads(unsigned long num) {
+        impl->set_num_threads(num);
+    }
+
+    NamedEntityExtractor train() {
+        return NamedEntityExtractor(impl->train());
+    }
+
+private:
+    mitie::ner_trainer* impl;
 };
 
+
+
+
+/*
 class BinaryRelationDetectorTrainer
 {
 };
 */
-
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
