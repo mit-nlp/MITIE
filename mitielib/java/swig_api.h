@@ -250,18 +250,40 @@ public:
         return impl->num_tokens();
     }
 
-private:
+/*    mitie::ner_trainer_instance getImpl() {
+        return impl
+    }*/
+
+public:
     mitie::ner_training_instance* impl;
 };
 
-
-
-
-/*
-class BinaryRelationDetectorTrainer
+class NerTrainer
 {
+public:
+    NerTrainer(const std::string& filename) {
+        impl = new mitie::ner_trainer(filename);
+    }
+
+    void add(mitie::ner_training_instance& item) {
+        impl->add(item);
+    }
+
+    unsigned long getSize() {
+        return impl->size();
+    }
+
+    void setThreadNum(unsigned long num) {
+        impl->set_num_threads(num);
+    }
+
+    void train(const std::string& filename) const {
+        dlib::serialize(filename) << "mitie::named_entity_extractor" << (impl->train());
+    }
+private:
+    mitie::ner_trainer* impl;
 };
-*/
+
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
