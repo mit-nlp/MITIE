@@ -235,13 +235,9 @@ private:
 
 class NerTrainingInstance {
 public:
-    NerTrainingInstance(const std::vector<std::string> &tokens
+    NerTrainingInstance(std::vector<std::string> &tokens
     ) {
-        this->impl = new mitie::ner_training_instance(tokens);
-    }
-
-    ~NerTrainingInstance(){
-        delete this->impl;
+        impl = new mitie::ner_training_instance(tokens);
     }
 
     void addEntity(unsigned long start,
@@ -250,34 +246,12 @@ public:
         impl->add_entity(start, length, label);
     }
 
-    mitie::ner_training_instance* impl;
-};
-
-class NerTrainer {
-public:
-    NerTrainer() {
-
-    }
-
-    NerTrainer(const std::string& wordFeatureExtractorPath) {
-        impl = new mitie::ner_trainer(wordFeatureExtractorPath);
-    }
-
-    void add(const NerTrainingInstance &instance) {
-        impl->add(*instance.impl);
-    }
-
-    void setNumThreads(unsigned long num) {
-        impl->set_num_threads(num);
-    }
-
-    void train(const std::string& modelPath) {
-        mitie::named_entity_extractor ner = impl -> train();
-        dlib::serialize(modelPath) << "mitie::named_entity_extractor" << ner;
+    unsigned long getSize() {
+        return impl->num_tokens();
     }
 
 private:
-    mitie::ner_trainer* impl;
+    mitie::ner_training_instance* impl;
 };
 
 
