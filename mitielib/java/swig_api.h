@@ -114,40 +114,37 @@ class NamedEntityExtractor
 {
 public:
     NamedEntityExtractor (
-        const std::string& filename
+            const std::string& filename
     )
     {
         std::string classname;
         dlib::deserialize(filename) >> classname;
         if (classname != "mitie::named_entity_extractor")
             throw dlib::error("This file does not contain a mitie::named_entity_extractor. Contained: " + classname);
-
-        mitie::named_entity_extractor namedEntityExtractor;
-        dlib::deserialize(filename) >> classname >> namedEntityExtractor;
-        impl = &namedEntityExtractor;
+        dlib::deserialize(filename) >> classname >> impl;
     }
 
     std::vector<std::string> getPossibleNerTags (
     ) const
     {
-        return impl->get_tag_name_strings();
+        return impl.get_tag_name_strings();
     }
 
     void saveToDisk (
-        const std::string& filename
+            const std::string& filename
     ) const
     {
-        dlib::serialize(filename) << "mitie::named_entity_extractor" << *impl;
+        dlib::serialize(filename) << "mitie::named_entity_extractor" << impl;
     }
 
     std::vector<EntityMention> extractEntities (
-        const std::vector<std::string>& tokens
+            const std::vector<std::string>& tokens
     ) const
     {
         std::vector<std::pair<unsigned long, unsigned long> > ranges;
-        std::vector<unsigned long> predicted_labels; 
+        std::vector<unsigned long> predicted_labels;
         std::vector<double> predicted_scores;
-        impl->predict(tokens, ranges, predicted_labels, predicted_scores);
+        impl.predict(tokens, ranges, predicted_labels, predicted_scores);
         std::vector<EntityMention> temp;
         for (unsigned long i = 0; i < ranges.size(); ++i)
             temp.push_back(EntityMention(ranges[i].first, ranges[i].second, predicted_labels[i], predicted_scores[i]));
@@ -155,7 +152,7 @@ public:
     }
 
     std::vector<EntityMention> extractEntities (
-        const std::vector<TokenIndexPair>& tokens
+            const std::vector<TokenIndexPair>& tokens
     ) const
     {
         std::vector<std::string> temp;
@@ -168,9 +165,9 @@ public:
     }
 
     BinaryRelation extractBinaryRelation(
-        const std::vector<std::string>& tokens, 
-        const EntityMention& arg1, 
-        const EntityMention& arg2
+            const std::vector<std::string>& tokens,
+            const EntityMention& arg1,
+            const EntityMention& arg2
     ) const
     {
         if (!(arg1.start < arg1.end && arg1.end <= tokens.size() &&
@@ -179,14 +176,14 @@ public:
             throw dlib::error("Invalid entity mention ranges given to NamedEntityExtractor.extractBinaryRelation().");
         }
         BinaryRelation temp;
-        temp.item = extract_binary_relation(tokens, 
-                                            std::make_pair(arg1.start,arg1.end), 
-                                            std::make_pair(arg2.start,arg2.end), 
-                                            impl->get_total_word_feature_extractor());
+        temp.item = extract_binary_relation(tokens,
+                                            std::make_pair(arg1.start,arg1.end),
+                                            std::make_pair(arg2.start,arg2.end),
+                                            impl.get_total_word_feature_extractor());
         return temp;
     }
 private:
-    mitie::named_entity_extractor* impl;
+    mitie::named_entity_extractor impl;
 };
 
 // ----------------------------------------------------------------------------------------
@@ -267,10 +264,6 @@ public:
 
     void add(mitie::ner_training_instance& item) {
         impl->add(item);
-    }
-
-    unsigned long getSize() {
-        return impl->size();
     }
 
     void setThreadNum(unsigned long num) {
