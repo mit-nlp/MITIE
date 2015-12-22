@@ -113,10 +113,6 @@ struct BinaryRelation
 class NamedEntityExtractor
 {
 public:
-    NamedEntityExtractor (mitie::named_entity_extractor namedEntityExtractor) {
-        impl = &namedEntityExtractor;
-    }
-
     NamedEntityExtractor (
         const std::string& filename
     )
@@ -259,6 +255,10 @@ public:
 
 class NerTrainer {
 public:
+    NerTrainer() {
+
+    }
+
     NerTrainer(const std::string& wordFeatureExtractorPath) {
         impl = new mitie::ner_trainer(wordFeatureExtractorPath);
     }
@@ -271,8 +271,9 @@ public:
         impl->set_num_threads(num);
     }
 
-    NamedEntityExtractor train() {
-        return NamedEntityExtractor(impl->train());
+    void train(const std::string& modelPath) {
+        mitie::named_entity_extractor ner = impl -> train();
+        dlib::serialize(modelPath) << "mitie::named_entity_extractor" << ner;
     }
 
 private:
