@@ -81,14 +81,14 @@ int main(int argc, char** argv)
     // and wordrep will create a total_word_feature_extractor.dat based on the supplied
     // text files.  Note that wordrep can take a long time to run or require a lot of RAM
     // if a large text dataset is given.  So use a powerful machine and be patient.
-//    if (argc != 2)
-//    {
-//        cout << "You must give the path to the MITIE English total_word_feature_extractor.dat file." << endl;
-//        cout << "So run this program with a command like: " << endl;
-//        cout << "./train_ner_example ../../../MITIE-models/english/total_word_feature_extractor.dat" << endl;
-//        return 1;
-//    }
-    ner_trainer trainer("/Users/wihoho/Github/MITIE/MITIE-models/english/total_word_feature_extractor.dat");
+    if (argc != 2)
+    {
+        cout << "You must give the path to the MITIE English total_word_feature_extractor.dat file." << endl;
+        cout << "So run this program with a command like: " << endl;
+        cout << "./train_ner_example ../../../MITIE-models/english/total_word_feature_extractor.dat" << endl;
+        return 1;
+    }
+    ner_trainer trainer(argv[1]);
     // Don't forget to add the training data.  Here we have only two examples, but for real
     // uses you need to have thousands.  
     trainer.add(sample);

@@ -114,7 +114,7 @@ class NamedEntityExtractor
 {
 public:
     NamedEntityExtractor (
-            const std::string& filename
+        const std::string& filename
     )
     {
         std::string classname;
@@ -131,14 +131,14 @@ public:
     }
 
     void saveToDisk (
-            const std::string& filename
+        const std::string& filename
     ) const
     {
         dlib::serialize(filename) << "mitie::named_entity_extractor" << impl;
     }
 
     std::vector<EntityMention> extractEntities (
-            const std::vector<std::string>& tokens
+        const std::vector<std::string>& tokens
     ) const
     {
         std::vector<std::pair<unsigned long, unsigned long> > ranges;
@@ -152,7 +152,7 @@ public:
     }
 
     std::vector<EntityMention> extractEntities (
-            const std::vector<TokenIndexPair>& tokens
+        const std::vector<TokenIndexPair>& tokens
     ) const
     {
         std::vector<std::string> temp;
@@ -165,9 +165,9 @@ public:
     }
 
     BinaryRelation extractBinaryRelation(
-            const std::vector<std::string>& tokens,
-            const EntityMention& arg1,
-            const EntityMention& arg2
+        const std::vector<std::string>& tokens,
+        const EntityMention& arg1,
+        const EntityMention& arg2
     ) const
     {
         if (!(arg1.start < arg1.end && arg1.end <= tokens.size() &&
@@ -246,10 +246,6 @@ public:
     unsigned long getSize() {
         return impl->num_tokens();
     }
-
-/*    mitie::ner_trainer_instance getImpl() {
-        return impl
-    }*/
 
 public:
     mitie::ner_training_instance* impl;
