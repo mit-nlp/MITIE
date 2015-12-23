@@ -22,6 +22,7 @@
 #include <mitie/conll_tokenizer.h>
 #include <mitie/binary_relation_detector.h>
 #include <mitie/named_entity_extractor.h>
+#include <mitie/ner_trainer.h>
 
 
 // ----------------------------------------------------------------------------------------
@@ -141,7 +142,7 @@ public:
     ) const
     {
         std::vector<std::pair<unsigned long, unsigned long> > ranges;
-        std::vector<unsigned long> predicted_labels; 
+        std::vector<unsigned long> predicted_labels;
         std::vector<double> predicted_scores;
         impl.predict(tokens, ranges, predicted_labels, predicted_scores);
         std::vector<EntityMention> temp;
@@ -164,8 +165,8 @@ public:
     }
 
     BinaryRelation extractBinaryRelation(
-        const std::vector<std::string>& tokens, 
-        const EntityMention& arg1, 
+        const std::vector<std::string>& tokens,
+        const EntityMention& arg1,
         const EntityMention& arg2
     ) const
     {
@@ -175,9 +176,9 @@ public:
             throw dlib::error("Invalid entity mention ranges given to NamedEntityExtractor.extractBinaryRelation().");
         }
         BinaryRelation temp;
-        temp.item = extract_binary_relation(tokens, 
-                                            std::make_pair(arg1.start,arg1.end), 
-                                            std::make_pair(arg2.start,arg2.end), 
+        temp.item = extract_binary_relation(tokens,
+                                            std::make_pair(arg1.start,arg1.end),
+                                            std::make_pair(arg2.start,arg2.end),
                                             impl.get_total_word_feature_extractor());
         return temp;
     }
@@ -229,19 +230,55 @@ private:
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-/* TODO, fill out the training API for java at some point.
-class NerTrainingInstance
-{
+class NerTrainingInstance {
+public:
+    NerTrainingInstance(std::vector<std::string> &tokens
+    ) : impl(tokens)
+    {
+    }
+
+    void addEntity(unsigned long start,
+                   unsigned long length,
+                   const char *label) 
+    {
+        impl.add_entity(start, length, label);
+    }
+
+    unsigned long getSize() 
+    {
+        return impl.num_tokens();
+    }
+
+private:
+    friend class NerTrainer;
+    mitie::ner_training_instance impl;
 };
 
 class NerTrainer
 {
-};
+public:
+    NerTrainer(const std::string& filename) : impl(filename) 
+    {
+    }
 
-class BinaryRelationDetectorTrainer
-{
+    void add(const NerTrainingInstance& item) 
+    {
+        impl.add(item.impl);
+    }
+
+    void setThreadNum(unsigned long num) 
+    {
+        impl.set_num_threads(num);
+    }
+
+    void train(const std::string& filename) const 
+    {
+        mitie::named_entity_extractor obj = impl.train();
+        dlib::serialize(filename) << "mitie::named_entity_extractor" << obj;
+    }
+private:
+    mitie::ner_trainer impl;
 };
-*/
 
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------

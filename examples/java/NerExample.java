@@ -5,7 +5,7 @@
 */
 import edu.mit.ll.mitie.*;
 
-public class NerExample 
+public class NerExample
 {
     public static void main(String args[])
     {
@@ -15,7 +15,7 @@ public class NerExample
         // dll file is in your system PATH if on Windows or the LD_LIBRARY_PATH environment
         // variable if on a UNIX system.  This example program comes with both .bat and .sh
         // scripts that show how to do this on any system.
-        
+
 
 
         System.out.println("loading NER model...");
@@ -98,8 +98,8 @@ public class NerExample
     }
 
     public static void printEntity (
-        StringVector words,
-        EntityMention ent
+            StringVector words,
+            EntityMention ent
     )
     {
         // Print all the words in the range indicated by the entity ent.
@@ -111,4 +111,3 @@ public class NerExample
     }
 
 }
-
