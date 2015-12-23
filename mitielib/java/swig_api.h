@@ -23,6 +23,7 @@
 #include <mitie/binary_relation_detector.h>
 #include <mitie/named_entity_extractor.h>
 #include <mitie/ner_trainer.h>
+#include <mitie/ner_feature_extraction.h>
 
 
 // ----------------------------------------------------------------------------------------
@@ -122,6 +123,37 @@ public:
         if (classname != "mitie::named_entity_extractor")
             throw dlib::error("This file does not contain a mitie::named_entity_extractor. Contained: " + classname);
         dlib::deserialize(filename) >> classname >> impl;
+    }
+
+    NerTrainer(const std::string& dfName, const std::string& segmenterName, const std::string& tagStringsName, const std::string& extractorName ) {
+        std::string classname;
+        dlib::deserialize(dfName) >> classname;
+        if (classname != "mitie::named_entity_extractor_dl")
+            throw dlib::error("This file does not contain a mitie::named_entity_extractor. Contained: " + classname);
+
+        dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
+        dlib::deserialize(filename) >> classname >> df;
+
+
+        dlib::deserialize(segmenterName) >> classname;
+        if (classname != "mitie::named_entity_extractor_segmenter")
+            throw dlib::error("This file does not contain a mitie::named_entity_extractor. Contained: " + classname);
+
+        dlib::sequence_segmenter<ner_feature_extractor> segmenter;
+        dlib::deserialize(segmenterName) >> classname >> segmenter;
+
+        dlib::deserialize(tagStringsName) >> classname;
+        if (classname != "mitie::named_entity_extractor_tns")
+            throw dlib::error("This file does not contain a mitie::named_entity_extractor. Contained: " + classname);
+
+        std::vector<std::string> tns;
+        dlib::deserialize(tagStringsName) >> classname >> tns;
+
+
+        total_word_feature_extractor twfe;
+        dlib::deserialize(extractorName) >> classname >> twfe;
+
+        impl = mitie::named_entity_extractor(tns, twfe, segmenter, df);
     }
 
     std::vector<std::string> getPossibleNerTags (
@@ -274,7 +306,9 @@ public:
     void train(const std::string& filename) const 
     {
         mitie::named_entity_extractor obj = impl.train();
-        dlib::serialize(filename) << "mitie::named_entity_extractor" << obj;
+        dlib::serialize(filename+".df.dat") << "mitie::named_entity_extractor_df" << obj.get_df();
+        dlib::serialize(filename+".segmenter.dat") << "mitie::named_entity_extractor_segmenter" << obj.get_segmenter();
+        dlib::serialize(filename+".tns.dat") << "mitie::named_entity_extractor_tns" << obj.get_tag_name_strings();
     }
 private:
     mitie::ner_trainer impl;

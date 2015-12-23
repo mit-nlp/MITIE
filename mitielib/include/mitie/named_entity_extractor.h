@@ -161,6 +161,15 @@ namespace mitie
         const total_word_feature_extractor& get_total_word_feature_extractor(
         ) const { return fe; }
 
+        const dlib::sequence_segmenter<ner_feature_extractor>& get_segmenter() const {
+            return segmenter;
+        }
+
+        const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& get_df() const {
+            return df;
+        };
+
+
     private:
         void compute_fingerprint()
         {
