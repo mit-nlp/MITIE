@@ -233,44 +233,51 @@ private:
 class NerTrainingInstance {
 public:
     NerTrainingInstance(std::vector<std::string> &tokens
-    ) {
-        impl = new mitie::ner_training_instance(tokens);
+    ) : impl(tokens)
+    {
     }
 
     void addEntity(unsigned long start,
                    unsigned long length,
-                   const char *label) {
-        impl->add_entity(start, length, label);
+                   const char *label) 
+    {
+        impl.add_entity(start, length, label);
     }
 
-    unsigned long getSize() {
-        return impl->num_tokens();
+    unsigned long getSize() 
+    {
+        return impl.num_tokens();
     }
 
-public:
-    mitie::ner_training_instance* impl;
+private:
+    friend class NerTrainer;
+    mitie::ner_training_instance impl;
 };
 
 class NerTrainer
 {
 public:
-    NerTrainer(const std::string& filename) {
-        impl = new mitie::ner_trainer(filename);
+    NerTrainer(const std::string& filename) : impl(filename) 
+    {
     }
 
-    void add(mitie::ner_training_instance& item) {
-        impl->add(item);
+    void add(const NerTrainingInstance& item) 
+    {
+        impl.add(item.impl);
     }
 
-    void setThreadNum(unsigned long num) {
-        impl->set_num_threads(num);
+    void setThreadNum(unsigned long num) 
+    {
+        impl.set_num_threads(num);
     }
 
-    void train(const std::string& filename) const {
-        dlib::serialize(filename) << "mitie::named_entity_extractor" << (impl->train());
+    void train(const std::string& filename) const 
+    {
+        mitie::named_entity_extractor obj = impl.train();
+        dlib::serialize(filename) << "mitie::named_entity_extractor" << obj;
     }
 private:
-    mitie::ner_trainer* impl;
+    mitie::ner_trainer impl;
 };
 
 // ----------------------------------------------------------------------------------------

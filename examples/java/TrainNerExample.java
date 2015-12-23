@@ -5,7 +5,7 @@
 */
 import edu.mit.ll.mitie.*;
 
-public class train_ner
+public class TrainNerExample 
 {
     public static void main(String args[])
     {
@@ -45,8 +45,8 @@ public class train_ner
         nerTrainingInstance1.addEntity(10, 1, "org");
 
         NerTrainer nerTrainer = new NerTrainer("../../MITIE-models/english/total_word_feature_extractor.dat");
-        nerTrainer.add(nerTrainingInstance.getImpl());
-        nerTrainer.add(nerTrainingInstance1.getImpl());
+        nerTrainer.add(nerTrainingInstance);
+        nerTrainer.add(nerTrainingInstance1);
 
         nerTrainer.setThreadNum(4);
 
