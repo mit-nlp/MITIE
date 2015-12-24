@@ -41,7 +41,14 @@ namespace mitie
             const total_word_feature_extractor& fe,
             const dlib::sequence_segmenter<ner_feature_extractor>& segmenter,
             const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& df
-        ); 
+        );
+
+        named_entity_extractor(const std::string& dfName,
+                               const std::string& segmenterName,
+                               const std::string& tagStringsName,
+                               const std::string& extractorName
+        );
+
         /*!
             requires
                 - segmenter.get_feature_extractor().num_features() == fe.get_num_dimensions() 

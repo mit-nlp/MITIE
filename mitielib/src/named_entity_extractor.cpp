@@ -32,6 +32,33 @@ namespace mitie
         compute_fingerprint();
     }
 
+    named_entity_extractor::
+    named_entity_extractor(const std::string& dfName,
+                           const std::string& segmenterName,
+                           const std::string& tagStringsName,
+                           const std::string& extractorName
+    ) {
+        std::string classname;
+        dlib::deserialize(dfName) >> classname;
+        if (classname != "mitie::named_entity_extractor_df")
+            throw dlib::error("This file does not contain a mitie::named_entity_extractor. Contained: " + classname);
+
+        dlib::deserialize(dfName) >> classname >> df;
+
+        dlib::deserialize(segmenterName) >> classname;
+        if (classname != "mitie::named_entity_extractor_segmenter")
+            throw dlib::error("This file does not contain a mitie::named_entity_extractor. Contained: " + classname);
+
+        dlib::deserialize(segmenterName) >> classname >> segmenter;
+
+        dlib::deserialize(tagStringsName) >> classname;
+        if (classname != "mitie::named_entity_extractor_tns")
+            throw dlib::error("This file does not contain a mitie::named_entity_extractor. Contained: " + classname);
+
+        dlib::deserialize(tagStringsName) >> classname >> tag_name_strings;
+
+        dlib::deserialize(extractorName) >> classname >> fe;
+    }
 // ----------------------------------------------------------------------------------------
 
     void named_entity_extractor::
