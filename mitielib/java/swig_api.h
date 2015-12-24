@@ -23,7 +23,6 @@
 #include <mitie/binary_relation_detector.h>
 #include <mitie/named_entity_extractor.h>
 #include <mitie/ner_trainer.h>
-#include <mitie/ner_feature_extraction.h>
 
 
 // ----------------------------------------------------------------------------------------
