@@ -3,7 +3,6 @@
 // Authors: Davis E. King (davis@dlib.net)
 
 #include <mitie/named_entity_extractor.h>
-#include <set>
 
 using namespace dlib;
 
@@ -32,6 +31,25 @@ namespace mitie
         compute_fingerprint();
     }
 
+    named_entity_extractor::
+    named_entity_extractor(const std::string& pureModelName,
+                           const std::string& extractorName
+    ) {
+        std::string classname;
+        dlib::deserialize(pureModelName) >> classname;
+        if (classname != "mitie::named_entity_extractor_pure_model")
+            throw dlib::error(
+                    "This file does not contain a mitie::named_entity_extractor_pure_model. Contained: " + classname);
+
+        dlib::deserialize(pureModelName) >> classname >> df >> segmenter >> tag_name_strings;
+
+        dlib::deserialize(extractorName) >> classname;
+        if (classname != "mitie::total_word_feature_extractor")
+            throw dlib::error(
+                    "This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
+
+        dlib::deserialize(extractorName) >> classname >> fe;
+    }
 // ----------------------------------------------------------------------------------------
 
     void named_entity_extractor::

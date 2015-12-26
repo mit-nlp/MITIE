@@ -41,7 +41,12 @@ namespace mitie
             const total_word_feature_extractor& fe,
             const dlib::sequence_segmenter<ner_feature_extractor>& segmenter,
             const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& df
-        ); 
+        );
+
+        named_entity_extractor(const std::string& pureModelName,
+                               const std::string& extractorName
+        );
+
         /*!
             requires
                 - segmenter.get_feature_extractor().num_features() == fe.get_num_dimensions() 
@@ -160,6 +165,15 @@ namespace mitie
 
         const total_word_feature_extractor& get_total_word_feature_extractor(
         ) const { return fe; }
+
+        const dlib::sequence_segmenter<ner_feature_extractor>& get_segmenter() const {
+            return segmenter;
+        }
+
+        const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& get_df() const {
+            return df;
+        };
+
 
     private:
         void compute_fingerprint()

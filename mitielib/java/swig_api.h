@@ -124,6 +124,13 @@ public:
         dlib::deserialize(filename) >> classname >> impl;
     }
 
+    NamedEntityExtractor(const std::string& pureModelName,
+               const std::string& extractorName
+    ) :impl(pureModelName, extractorName)
+    {
+
+    }
+
     std::vector<std::string> getPossibleNerTags (
     ) const
     {
@@ -271,10 +278,20 @@ public:
         impl.set_num_threads(num);
     }
 
-    void train(const std::string& filename) const 
+    void train(const std::string& filename) const
     {
         mitie::named_entity_extractor obj = impl.train();
         dlib::serialize(filename) << "mitie::named_entity_extractor" << obj;
+    }
+
+    void trainSeparateModels(const std::string& filename) const
+    {
+        mitie::named_entity_extractor obj = impl.train();
+        dlib::serialize(filename)
+        << "mitie::named_entity_extractor_pure_model"
+        << obj.get_df()
+        << obj.get_segmenter()
+        << obj.get_tag_name_strings();
     }
 private:
     mitie::ner_trainer impl;
