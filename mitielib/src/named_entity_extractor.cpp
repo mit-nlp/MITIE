@@ -32,33 +32,21 @@ namespace mitie
     }
 
     named_entity_extractor::
-    named_entity_extractor(const std::string& dfName,
-                           const std::string& segmenterName,
-                           const std::string& tagStringsName,
+    named_entity_extractor(const std::string& pureModelName,
                            const std::string& extractorName
     ) {
         std::string classname;
-        dlib::deserialize(dfName) >> classname;
-        if (classname != "mitie::named_entity_extractor_df")
-            throw dlib::error("This file does not contain a mitie::named_entity_extractor_df. Contained: " + classname);
+        dlib::deserialize(pureModelName) >> classname;
+        if (classname != "mitie::named_entity_extractor_pure_model")
+            throw dlib::error(
+                    "This file does not contain a mitie::named_entity_extractor_pure_model. Contained: " + classname);
 
-        dlib::deserialize(dfName) >> classname >> df;
-
-        dlib::deserialize(segmenterName) >> classname;
-        if (classname != "mitie::named_entity_extractor_segmenter")
-            throw dlib::error("This file does not contain a mitie::named_entity_extractor_segmenter. Contained: " + classname);
-
-        dlib::deserialize(segmenterName) >> classname >> segmenter;
-
-        dlib::deserialize(tagStringsName) >> classname;
-        if (classname != "mitie::named_entity_extractor_tns")
-            throw dlib::error("This file does not contain a mitie::named_entity_extractor_tns. Contained: " + classname);
-
-        dlib::deserialize(tagStringsName) >> classname >> tag_name_strings;
+        dlib::deserialize(pureModelName) >> classname >> df >> segmenter >> tag_name_strings;
 
         dlib::deserialize(extractorName) >> classname;
         if (classname != "mitie::total_word_feature_extractor")
-            throw dlib::error("This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
+            throw dlib::error(
+                    "This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
 
         dlib::deserialize(extractorName) >> classname >> fe;
     }

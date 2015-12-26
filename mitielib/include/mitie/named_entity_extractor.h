@@ -43,9 +43,7 @@ namespace mitie
             const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& df
         );
 
-        named_entity_extractor(const std::string& dfName,
-                               const std::string& segmenterName,
-                               const std::string& tagStringsName,
+        named_entity_extractor(const std::string& pureModelName,
                                const std::string& extractorName
         );
 

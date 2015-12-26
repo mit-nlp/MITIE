@@ -72,17 +72,12 @@ public class TrainSeparateNerExample {
 
         // This function does the work of training.  Note that it can take a long time to run
         // when using larger training datasets.  So be patient.  When it finishes it will
-        // save the resulting model into three different files including
-        // * test_ner_model.df.dat - decision function
-        // * test_ner_model.segmenter.dat - sequence_segmenter
-        // * test_ner_model.tns.dat - label and id mappings
-        nerTrainer.trainSeparateModels("test_ner_model");
+        // save the resulting pure model
+        nerTrainer.trainSeparateModels("pure_ner_model.dat");
 
-        // restore the model using the separated serialized files
+        // restore the model using the pure model and extractor
         NamedEntityExtractor ner = new NamedEntityExtractor(
-                "test_ner_model.df.dat",
-                "test_ner_model.segmenter.dat",
-                "test_ner_model.tns.dat",
+                "pure_ner_model.dat",
                 "../../MITIE-models/english/total_word_feature_extractor.dat"
         );
 
@@ -116,7 +111,5 @@ public class TrainSeparateNerExample {
             System.out.print("   Score: " + scoreStr + ": " + tag + ":");
             NerExample.printEntity(testStringVector, entity);
         }
-
-
     }
 }
