@@ -106,7 +106,7 @@ string(REGEX REPLACE "\\." "/" package_path ${java_package_name})
 string(REGEX REPLACE "\\..*" "" package_root_name ${java_package_name})
 
 set(CMAKE_SWIG_FLAGS -package ${java_package_name})
-set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/lib/java_src/${package_path})
+set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/../maven/src/main/java/${package_path})
 
 set(output_library_name ${PROJECT_NAME})
 
@@ -163,7 +163,7 @@ swig_link_libraries(${output_library_name}  ${additional_link_libraries})
 # Things to delete when "make clean" is run.
 set(clean_files
     ${CMAKE_CURRENT_BINARY_DIR}/intermediate_files_compiled
-    ${CMAKE_CURRENT_BINARY_DIR}/lib/java_src 
+    ${CMAKE_CURRENT_BINARY_DIR}/lib//../maven/src/main/java/${package_path}
     )
 set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${clean_files}")
 
