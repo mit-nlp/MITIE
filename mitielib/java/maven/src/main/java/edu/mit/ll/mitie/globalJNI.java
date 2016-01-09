@@ -20,6 +20,7 @@ public class globalJNI {
           NativeUtils.loadLibraryFromJar("/natives/libjavamitie.jnilib");
           break;
         case "Linux":
+          System.out.println("loaded libmitie.so ");
           NativeUtils.loadLibraryFromJar("/natives/libmitie.so");
           break;
       }
@@ -34,7 +35,7 @@ public class globalJNI {
       System.exit(1);
     }
   }
-    
+
   public final static native long new_StringVector__SWIG_0();
   public final static native long new_StringVector__SWIG_1(long jarg1);
   public final static native long StringVector_size(long jarg1, StringVector jarg1_);
