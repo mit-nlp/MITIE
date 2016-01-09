@@ -6,7 +6,7 @@ before_script:
   - unset GEM_PATH GEM_HOME IRBRC JRUBY_OPTSq
   - "export PATH=`pwd`/bin:$PATH"
   - echo $HOME
-  - cd /mitielib/java/maven
+  - cd mitielib/java/maven
 
 jdk:
   - oraclejdk8
