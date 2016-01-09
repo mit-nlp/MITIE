@@ -19,6 +19,9 @@ public class globalJNI {
         case "Mac OS X":
           NativeUtils.loadLibraryFromJar("/natives/libjavamitie.jnilib");
           break;
+        case "Linux":
+          NativeUtils.loadLibraryFromJar("/natives/libmitie.so");
+          break;
       }
 
     } catch (UnsatisfiedLinkError e) {
