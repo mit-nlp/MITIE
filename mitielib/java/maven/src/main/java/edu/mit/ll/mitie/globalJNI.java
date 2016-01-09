@@ -20,12 +20,9 @@ public class globalJNI {
           NativeUtils.loadLibraryFromJar("/natives/libjavamitie.jnilib");
           break;
         case "Linux":
-          System.out.println("loaded libmitie.so ");
           NativeUtils.loadLibraryFromJar("/natives/libmitie.so");
           break;
       }
-
-      System.out.println(osName);
 
     } catch (UnsatisfiedLinkError e) {
       System.err.println("Native code library failed to load. \n" + e);
