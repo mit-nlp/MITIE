@@ -30,7 +30,7 @@ public class NamedEntityExtractorTest {
 
         FileOutputStream fileOutputStream = new FileOutputStream(file);
 
-        InputStream modelStream = Resources.getResource("testModel.dat").openStream();
+        InputStream modelStream = Resources.getResource("models/testModel.dat").openStream();
         ByteStreams.copy(modelStream, fileOutputStream);
         modelStream.close();
         fileOutputStream.close();
