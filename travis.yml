@@ -1,0 +1,13 @@
+language: java
+
+
+before_script:
+  - export MAVEN_SKIP_RC=true
+  - export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=192m"
+  - unset GEM_PATH GEM_HOME IRBRC JRUBY_OPTSq
+  - "export PATH=`pwd`/bin:$PATH"
+  - echo $HOME
+  - export TRAVIS_BUILD_DIR=/mitielib/java/maven
+
+jdk:
+  - oraclejdk8
