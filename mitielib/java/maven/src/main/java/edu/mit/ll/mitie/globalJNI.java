@@ -12,23 +12,23 @@ import java.io.IOException;
 
 public class globalJNI {
 
-    static {
-        try {
-            String osName = System.getProperty("os.name");
-            switch (osName) {
-              case "Mac OS X":
-                NativeUtils.loadLibraryFromJar("/natives/libjavamitie.jnilib");
-                break;
-            }
+  static {
+    try {
+      String osName = System.getProperty("os.name");
+      switch (osName) {
+        case "Mac OS X":
+          NativeUtils.loadLibraryFromJar("/natives/libjavamitie.jnilib");
+          break;
+      }
 
-        } catch (UnsatisfiedLinkError e) {
-          System.err.println("Native code library failed to load. \n" + e);
-          System.exit(1);
-        } catch (IOException e) {
-          System.err.println("Native code library failed to load. \n" + e);
-          System.exit(1);
-        }
+    } catch (UnsatisfiedLinkError e) {
+      System.err.println("Native code library failed to load. \n" + e);
+      System.exit(1);
+    } catch (IOException e) {
+      System.err.println("Native code library failed to load. \n" + e);
+      System.exit(1);
     }
+  }
     
   public final static native long new_StringVector__SWIG_0();
   public final static native long new_StringVector__SWIG_1(long jarg1);

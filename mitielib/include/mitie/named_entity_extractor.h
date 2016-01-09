@@ -47,6 +47,10 @@ namespace mitie
                                const std::string& extractorName
         );
 
+        named_entity_extractor(const std::string& pureModelName,
+                               const total_word_feature_extractor fe
+        );
+
         /*!
             requires
                 - segmenter.get_feature_extractor().num_features() == fe.get_num_dimensions() 

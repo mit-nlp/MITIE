@@ -128,6 +128,10 @@ namespace mitie
                   NER training process.  
         !*/
 
+        explicit ner_trainer (
+                const total_word_feature_extractor& fe
+        );
+
         unsigned long size(
         ) const;
         /*!

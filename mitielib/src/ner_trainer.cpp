@@ -125,6 +125,14 @@ namespace mitie
         dlib::deserialize(filename) >> classname >> tfe;
     }
 
+    ner_trainer::
+    ner_trainer (
+            const total_word_feature_extractor& fe_
+    ) : beta(0.5), num_threads(4), tfe(fe_)
+    {
+
+    }
+
 // ----------------------------------------------------------------------------------------
 
     unsigned long ner_trainer::

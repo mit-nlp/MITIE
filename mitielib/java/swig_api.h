@@ -110,6 +110,23 @@ struct BinaryRelation
     mitie::binary_relation item;
 };
 
+class TotalWordFeatureExtractor {
+public:
+    TotalWordFeatureExtractor(const std::string& filename)
+    {
+        string classname;
+        dlib::deserialize(filename) >> classname;
+        if (classname != "mitie::total_word_feature_extractor")
+            throw dlib::error("This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
+        dlib::deserialize(filename) >> classname >> impl;
+    }
+
+private:
+    friend class NamedEntityExtractor;
+    friend class NerTrainer;
+    mitie::total_word_feature_extractor impl;
+};
+
 class NamedEntityExtractor
 {
 public:
@@ -127,6 +144,13 @@ public:
     NamedEntityExtractor(const std::string& pureModelName,
                const std::string& extractorName
     ) :impl(pureModelName, extractorName)
+    {
+
+    }
+
+    NamedEntityExtractor(const std::string& pureModelName,
+                         const TotalWordFeatureExtractor& extractorObject
+    ) :impl(pureModelName, extractorObject.impl)
     {
 
     }
@@ -267,6 +291,12 @@ public:
     NerTrainer(const std::string& filename) : impl(filename) 
     {
     }
+
+    NerTrainer( const TotalWordFeatureExtractor& extractorObject) : impl(extractorObject.impl)
+    {
+
+    }
+
 
     void add(const NerTrainingInstance& item) 
     {

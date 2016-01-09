@@ -54,6 +54,13 @@ public class NativeUtils {
      */
     public static void loadLibraryFromJar(String path) throws IOException {
 
+        String tempPath = getTempPathFromJar(path);
+
+        // Finally, load the library
+        System.load(tempPath);
+    }
+
+    public static String getTempPathFromJar(String path) throws IOException {
         if (!path.startsWith("/")) {
             throw new IllegalArgumentException("The path has to be absolute (start with '/').");
         }
@@ -105,8 +112,6 @@ public class NativeUtils {
             os.close();
             is.close();
         }
-
-        // Finally, load the library
-        System.load(temp.getAbsolutePath());
+        return temp.getAbsolutePath();
     }
 }
