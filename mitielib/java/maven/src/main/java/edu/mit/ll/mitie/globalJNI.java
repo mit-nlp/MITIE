@@ -20,7 +20,7 @@ public class globalJNI {
           NativeUtils.loadLibraryFromJar("/natives/libjavamitie.jnilib");
           break;
         case "Linux":
-          NativeUtils.loadLibraryFromJar("/natives/libmitie.so");
+          NativeUtils.loadLibraryFromJar("/natives/libjavamitie.so");
           break;
       }
 
