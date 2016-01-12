@@ -7,7 +7,7 @@ before_script:
   - "export PATH=`pwd`/bin:$PATH"
   - echo $HOME
   - cd mitielib/java/maven
-  - mvn install
+  - mvn test
 
 jdk:
   - oraclejdk8
