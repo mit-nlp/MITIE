@@ -16,6 +16,8 @@
 #include <mitie/binary_relation_detector.h>
 #include <mitie/ner_trainer.h>
 #include <mitie/binary_relation_detector_trainer.h>
+#include <mitie/micro_ner.h>
+
 
 using namespace mitie;
 

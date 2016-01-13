@@ -3,8 +3,9 @@
     recognition. 
 */
 
-#include <mitie/named_entity_extractor.h>
+#include <mitie/total_word_feature_extractor.h>
 #include <mitie/conll_tokenizer.h>
+#include <mitie/micro_ner.h>
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -43,12 +44,13 @@ int main(int argc, char** argv)
 {
     try
     {
-        if (argc != 3)
-        {
-            printf("You must give a MITIE ner model file as the first command line argument\n");
-            printf("followed by a text file to process.\n");
-            return EXIT_FAILURE;
-        }
+//        if (argc != 4)
+//        {
+//            printf("You must give a MITIE ner model file as the first command line argument\n");
+//	    printf("a pure ner model file as the second argument\n");
+//            printf("followed by a text file to process.\n");
+//            return EXIT_FAILURE;
+//        }
 
         // Load MITIE's named entity extractor from disk.  Each file in the MITIE-models
         // folder begins with a string containing the name of the serialized class.  In
@@ -56,8 +58,14 @@ int main(int argc, char** argv)
         // identify what is in any particular file.  However, in this example we don't need
         // it so it is just ignored.
         string classname;
-        named_entity_extractor ner;
-        dlib::deserialize(argv[1]) >> classname >> ner;
+	    total_word_feature_extractor fe;
+        dlib::deserialize("/home/yichao/MITIE/examples/cpp/ner/total_word_feature_extractor.dat") >> classname >> fe;
+
+        micro_ner ner;
+        dlib::deserialize("/home/yichao/MITIE/examples/cpp/ner/testModel.dat") >> classname >> ner.df >> ner.segmenter >> ner.tag_name_strings;
+
+        micro_ner ner1;
+        dlib::deserialize("/home/yichao/MITIE/examples/cpp/ner/testModel.dat") >> classname >> ner1.df >> ner1.segmenter >> ner1.tag_name_strings;
 
         // Print out what kind of tags this tagger can predict.
         const vector<string> tagstr = ner.get_tag_name_strings();
@@ -67,7 +75,7 @@ int main(int argc, char** argv)
 
 
         // Before we can try out the tagger we need to load some data.
-        vector<string> tokens = tokenize_file(argv[2]);
+        vector<string> tokens = tokenize_file("/home/yichao/MITIE/examples/cpp/ner/sample_text.txt");
 
         vector<pair<unsigned long, unsigned long> > chunks;
         vector<unsigned long> chunk_tags;
@@ -78,7 +86,9 @@ int main(int argc, char** argv)
         // Additionally, if it is useful for your application a confidence score for each "chunk"
         // is available by using the predict() method.  The larger the score the more
         // confident MITIE is in the tag.
-        ner.predict(tokens, chunks, chunk_tags, chunk_scores);
+        ner.predict(fe, tokens, chunks, chunk_tags, chunk_scores);
+
+        ner1.predict(fe, tokens, chunks, chunk_tags, chunk_scores);
 
         // If a confidence score is not necessary for your application you can detect entities
         // using the operator() method as shown in the following line.

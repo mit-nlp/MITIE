@@ -23,6 +23,7 @@
 #include <mitie/binary_relation_detector.h>
 #include <mitie/named_entity_extractor.h>
 #include <mitie/ner_trainer.h>
+#include <mitie/micro_ner.h>
 
 
 // ----------------------------------------------------------------------------------------
@@ -124,7 +125,57 @@ public:
 private:
     friend class NamedEntityExtractor;
     friend class NerTrainer;
+    friend class MicroNER;
     mitie::total_word_feature_extractor impl;
+};
+
+class MicroNER
+{
+public:
+    
+    MicroNER(const std::string& pureModelName                        
+    ) :impl(pureModelName)
+    {
+
+    }
+
+    std::vector<std::string> getPossibleNerTags (
+    ) const
+    {
+        return impl.get_tag_name_strings();
+    }
+
+    std::vector<EntityMention> extractEntities (
+        const TotalWordFeatureExtractor& extractorObject,
+        const std::vector<std::string>& tokens
+    ) const
+    {
+        std::vector<std::pair<unsigned long, unsigned long> > ranges;
+        std::vector<unsigned long> predicted_labels;
+        std::vector<double> predicted_scores;
+        impl.predict(extractorObject.impl, tokens, ranges, predicted_labels, predicted_scores);
+        std::vector<EntityMention> temp;
+        for (unsigned long i = 0; i < ranges.size(); ++i)
+            temp.push_back(EntityMention(ranges[i].first, ranges[i].second, predicted_labels[i], predicted_scores[i]));
+        return temp;
+    }
+
+    std::vector<EntityMention> extractEntities (
+        const TotalWordFeatureExtractor& extractorObject,
+        const std::vector<TokenIndexPair>& tokens
+    ) const
+    {
+        std::vector<std::string> temp;
+        temp.reserve(tokens.size());
+        for (unsigned long i = 0; i < tokens.size(); ++i)
+        {
+            temp.push_back(tokens[i].token);
+        }
+        return extractEntities(extractorObject, temp);
+    }
+
+private:
+    mitie::micro_ner impl;
 };
 
 class NamedEntityExtractor

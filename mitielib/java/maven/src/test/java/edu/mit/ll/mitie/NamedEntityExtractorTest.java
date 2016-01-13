@@ -1,20 +1,19 @@
 package edu.mit.ll.mitie;
 
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Resources;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by wihoho on 9/1/16.
@@ -36,9 +35,12 @@ public class NamedEntityExtractorTest {
         fileOutputStream.close();
 
         TotalWordFeatureExtractor totalWordFeatureExtractor = TotalWordFeatureExtractor.getEnglishExtractor();
-        NamedEntityExtractor ner = new NamedEntityExtractor(file.getAbsolutePath(), totalWordFeatureExtractor);
-        NamedEntityExtractor ner2 = new NamedEntityExtractor(file.getAbsolutePath(), totalWordFeatureExtractor);
-        NamedEntityExtractor ner3 = new NamedEntityExtractor(file.getAbsolutePath(), totalWordFeatureExtractor);
+
+        MicroNER ner = new MicroNER(file.getAbsolutePath());
+        MicroNER ner1 = new MicroNER(file.getAbsolutePath());
+        //NamedEntityExtractor ner = new NamedEntityExtractor(file.getAbsolutePath(), totalWordFeatureExtractor);
+        //NamedEntityExtractor ner2 = new NamedEntityExtractor(file.getAbsolutePath(), totalWordFeatureExtractor);
+        //NamedEntityExtractor ner3 = new NamedEntityExtractor(file.getAbsolutePath(), totalWordFeatureExtractor);
 
         System.out.println("Tags output by this NER model are: ");
         StringVector possibleTags = ner.getPossibleNerTags();
@@ -56,7 +58,9 @@ public class NamedEntityExtractorTest {
         StringVector words = global.tokenize("Ted Mosby studies at NTU.");
 
         // Now ask MITIE to find all the named entities in the file we just loaded.
-        EntityMentionVector entities = ner.extractEntities(words);
+        //EntityMentionVector entities = ner.extractEntities(words);
+        EntityMentionVector entities = ner.extractEntities(totalWordFeatureExtractor, words);
+        EntityMentionVector entities1 = ner.extractEntities(totalWordFeatureExtractor, words);
         System.out.println("Number of entities found: " + entities.size());
 
         // Now print out all the named entities and their tags
