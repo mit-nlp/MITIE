@@ -22,6 +22,11 @@ public class globalJNI {
             case "Linux":
               NativeUtils.loadLibraryFromJar("/natives/libjavamitie.so");
               break;
+            case "Windows 7":
+              NativeUtils.loadLibraryFromJar("/natives/javamitie.dll");
+              NativeUtils.loadLibraryFromJar("/natives/msvcp140.dll");
+              NativeUtils.loadLibraryFromJar("/natives/vcruntime140.dll");
+              break;
           }
         } catch (UnsatisfiedLinkError e) {
         System.err.println("Native code library failed to load. \n" + e);
