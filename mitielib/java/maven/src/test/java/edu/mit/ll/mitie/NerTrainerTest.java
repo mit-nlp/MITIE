@@ -1,13 +1,12 @@
 package edu.mit.ll.mitie;
 
-import edu.mit.ll.mitie.*;
-import org.junit.Test;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by wihoho on 9/1/16.
@@ -30,9 +29,9 @@ public class NerTrainerTest {
         stringVector.add("MIT");
         stringVector.add(".");
 
-        NerTrainingInstance nerTrainingInstance = new NerTrainingInstance(stringVector);
-        nerTrainingInstance.addEntity(3, 2, "person");
-        nerTrainingInstance.addEntity(9, 1, "org");
+        NerMicroTrainingInstance nerMicroTrainingInstance = new NerMicroTrainingInstance(stringVector);
+        nerMicroTrainingInstance.addEntity(3, 2, "person");
+        nerMicroTrainingInstance.addEntity(9, 1, "org");
 
         StringVector stringVector12 = new StringVector();
         stringVector12.add("The");
@@ -48,19 +47,23 @@ public class NerTrainerTest {
         stringVector12.add("CMU");
         stringVector12.add(".");
 
-        NerTrainingInstance nerTrainingInstance1 = new NerTrainingInstance(stringVector12);
-        nerTrainingInstance1.addEntity(7, 2, "person");
-        nerTrainingInstance1.addEntity(10, 1, "org");
+        NerMicroTrainingInstance nerMicroTrainingInstance1 = new NerMicroTrainingInstance(stringVector12);
+        nerMicroTrainingInstance1.addEntity(7, 2, "person");
+        nerMicroTrainingInstance1.addEntity(10, 1, "org");
 
         TotalWordFeatureExtractor totalWordFeatureExtractor = TotalWordFeatureExtractor.getEnglishExtractor();
-        NerTrainer nerTrainer = new NerTrainer(totalWordFeatureExtractor);
+        MicroTrainer microTrainer = new MicroTrainer();
+        MicroTrainer microTrainer1 = new MicroTrainer();
 
-        nerTrainer.add(nerTrainingInstance);
-        nerTrainer.add(nerTrainingInstance1);
+        microTrainer.add(nerMicroTrainingInstance);
+        microTrainer.add(nerMicroTrainingInstance1);
+
+        microTrainer1.add(nerMicroTrainingInstance);
+        microTrainer1.add(nerMicroTrainingInstance1);
 
         // The trainer can take advantage of a multi-core CPU.  So set the number of threads
         // equal to the number of processing cores for maximum training speed.
-        nerTrainer.setThreadNum(4);
+        microTrainer.setThreadNum(4);
 
         // This function does the work of training.  Note that it can take a long time to run
         // when using larger training datasets.  So be patient.  When it finishes it will
@@ -68,13 +71,12 @@ public class NerTrainerTest {
         File file = File.createTempFile( "train", "model.dat");
         file.deleteOnExit();
 
-        nerTrainer.trainSeparateModels(file.getAbsolutePath());
+        microTrainer.trainSeparateModels(totalWordFeatureExtractor, file.getAbsolutePath());
+
+        microTrainer1.trainSeparateModels(totalWordFeatureExtractor, file.getAbsolutePath());
 
         // restore the model using the pure model and extractor
-        NamedEntityExtractor ner = new NamedEntityExtractor(
-                file.getAbsolutePath(),
-                totalWordFeatureExtractor
-        );
+        MicroNER ner = new MicroNER(file.getAbsolutePath());
 
         // Finally, lets test out our new model on an example sentence
         StringVector testStringVector = new StringVector();
@@ -93,7 +95,7 @@ public class NerTrainerTest {
             System.out.println(possibleTags.get(i));
 
         // Now ask MITIE to find all the named entities in the file we just loaded.
-        EntityMentionVector entities = ner.extractEntities(testStringVector);
+        EntityMentionVector entities = ner.extractEntities(totalWordFeatureExtractor, testStringVector);
         System.out.println("Number of entities found: " + entities.size());
 
         Map<String, String> mapResult = new HashMap<>();
@@ -113,6 +115,9 @@ public class NerTrainerTest {
         assertEquals("John Becker ", mapResult.get("person"));
         assertEquals("HBU ", mapResult.get("org"));
     }
+
+
+
 
 
     public static String printEntity (

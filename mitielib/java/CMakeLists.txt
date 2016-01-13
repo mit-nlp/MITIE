@@ -13,6 +13,7 @@ set(source_files
    ../src/stem.c
    ../src/stemmer.cpp
    ../src/micro_ner.cpp
+   ../src/micro_trainer.cpp
    )
 
 include_directories(

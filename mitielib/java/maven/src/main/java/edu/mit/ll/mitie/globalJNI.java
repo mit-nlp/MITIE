@@ -114,6 +114,15 @@ public class globalJNI {
   public final static native void NerTrainingInstance_addEntity(long jarg1, NerTrainingInstance jarg1_, long jarg2, long jarg3, String jarg4);
   public final static native long NerTrainingInstance_getSize(long jarg1, NerTrainingInstance jarg1_);
   public final static native void delete_NerTrainingInstance(long jarg1);
+  public final static native long new_NerMicroTrainingInstance(long jarg1, StringVector jarg1_);
+  public final static native void NerMicroTrainingInstance_addEntity(long jarg1, NerMicroTrainingInstance jarg1_, long jarg2, long jarg3, String jarg4);
+  public final static native long NerMicroTrainingInstance_getSize(long jarg1, NerMicroTrainingInstance jarg1_);
+  public final static native void delete_NerMicroTrainingInstance(long jarg1);
+  public final static native long new_MicroTrainer();
+  public final static native void MicroTrainer_add(long jarg1, MicroTrainer jarg1_, long jarg2, NerMicroTrainingInstance jarg2_);
+  public final static native void MicroTrainer_setThreadNum(long jarg1, MicroTrainer jarg1_, long jarg2);
+  public final static native void MicroTrainer_trainSeparateModels(long jarg1, MicroTrainer jarg1_, long jarg2, TotalWordFeatureExtractor jarg2_, String jarg3);
+  public final static native void delete_MicroTrainer(long jarg1);
   public final static native long new_NerTrainer__SWIG_0(String jarg1);
   public final static native long new_NerTrainer__SWIG_1(long jarg1, TotalWordFeatureExtractor jarg1_);
   public final static native void NerTrainer_add(long jarg1, NerTrainer jarg1_, long jarg2, NerTrainingInstance jarg2_);

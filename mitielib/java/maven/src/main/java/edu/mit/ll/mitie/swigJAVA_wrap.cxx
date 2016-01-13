@@ -2230,6 +2230,225 @@ SWIGEXPORT void JNICALL Java_edu_mit_ll_mitie_globalJNI_delete_1NerTrainingInsta
 }
 
 
+SWIGEXPORT jlong JNICALL Java_edu_mit_ll_mitie_globalJNI_new_1NerMicroTrainingInstance(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  std::vector< std::string > *arg1 = 0 ;
+  NerMicroTrainingInstance *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(std::vector< std::string > **)&jarg1;
+  if (!arg1) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "std::vector< std::string > & reference is null");
+    return 0;
+  } 
+  {
+    try {
+      result = (NerMicroTrainingInstance *)new NerMicroTrainingInstance(*arg1);
+    } catch(std::exception& e) {
+      jclass clazz = jenv->FindClass("java/lang/Exception");
+      jenv->ThrowNew(clazz, e.what());
+      return 0;
+    }
+  }
+  *(NerMicroTrainingInstance **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_mit_ll_mitie_globalJNI_NerMicroTrainingInstance_1addEntity(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jlong jarg3, jstring jarg4) {
+  NerMicroTrainingInstance *arg1 = (NerMicroTrainingInstance *) 0 ;
+  unsigned long arg2 ;
+  unsigned long arg3 ;
+  char *arg4 = (char *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(NerMicroTrainingInstance **)&jarg1; 
+  arg2 = (unsigned long)jarg2; 
+  arg3 = (unsigned long)jarg3; 
+  arg4 = 0;
+  if (jarg4) {
+    arg4 = (char *)jenv->GetStringUTFChars(jarg4, 0);
+    if (!arg4) return ;
+  }
+  {
+    try {
+      (arg1)->addEntity(arg2,arg3,(char const *)arg4);
+    } catch(std::exception& e) {
+      jclass clazz = jenv->FindClass("java/lang/Exception");
+      jenv->ThrowNew(clazz, e.what());
+      return ;
+    }
+  }
+  if (arg4) jenv->ReleaseStringUTFChars(jarg4, (const char *)arg4);
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_mit_ll_mitie_globalJNI_NerMicroTrainingInstance_1getSize(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_) {
+  jlong jresult = 0 ;
+  NerMicroTrainingInstance *arg1 = (NerMicroTrainingInstance *) 0 ;
+  unsigned long result;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(NerMicroTrainingInstance **)&jarg1; 
+  {
+    try {
+      result = (unsigned long)(arg1)->getSize();
+    } catch(std::exception& e) {
+      jclass clazz = jenv->FindClass("java/lang/Exception");
+      jenv->ThrowNew(clazz, e.what());
+      return 0;
+    }
+  }
+  jresult = (jlong)result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_mit_ll_mitie_globalJNI_delete_1NerMicroTrainingInstance(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  NerMicroTrainingInstance *arg1 = (NerMicroTrainingInstance *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(NerMicroTrainingInstance **)&jarg1; 
+  {
+    try {
+      delete arg1;
+    } catch(std::exception& e) {
+      jclass clazz = jenv->FindClass("java/lang/Exception");
+      jenv->ThrowNew(clazz, e.what());
+      return ;
+    }
+  }
+}
+
+
+SWIGEXPORT jlong JNICALL Java_edu_mit_ll_mitie_globalJNI_new_1MicroTrainer(JNIEnv *jenv, jclass jcls) {
+  jlong jresult = 0 ;
+  MicroTrainer *result = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  {
+    try {
+      result = (MicroTrainer *)new MicroTrainer();
+    } catch(std::exception& e) {
+      jclass clazz = jenv->FindClass("java/lang/Exception");
+      jenv->ThrowNew(clazz, e.what());
+      return 0;
+    }
+  }
+  *(MicroTrainer **)&jresult = result; 
+  return jresult;
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_mit_ll_mitie_globalJNI_MicroTrainer_1add(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_) {
+  MicroTrainer *arg1 = (MicroTrainer *) 0 ;
+  NerMicroTrainingInstance *arg2 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(MicroTrainer **)&jarg1; 
+  arg2 = *(NerMicroTrainingInstance **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "NerMicroTrainingInstance const & reference is null");
+    return ;
+  } 
+  {
+    try {
+      (arg1)->add((NerMicroTrainingInstance const &)*arg2);
+    } catch(std::exception& e) {
+      jclass clazz = jenv->FindClass("java/lang/Exception");
+      jenv->ThrowNew(clazz, e.what());
+      return ;
+    }
+  }
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_mit_ll_mitie_globalJNI_MicroTrainer_1setThreadNum(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2) {
+  MicroTrainer *arg1 = (MicroTrainer *) 0 ;
+  unsigned long arg2 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  arg1 = *(MicroTrainer **)&jarg1; 
+  arg2 = (unsigned long)jarg2; 
+  {
+    try {
+      (arg1)->setThreadNum(arg2);
+    } catch(std::exception& e) {
+      jclass clazz = jenv->FindClass("java/lang/Exception");
+      jenv->ThrowNew(clazz, e.what());
+      return ;
+    }
+  }
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_mit_ll_mitie_globalJNI_MicroTrainer_1trainSeparateModels(JNIEnv *jenv, jclass jcls, jlong jarg1, jobject jarg1_, jlong jarg2, jobject jarg2_, jstring jarg3) {
+  MicroTrainer *arg1 = (MicroTrainer *) 0 ;
+  TotalWordFeatureExtractor *arg2 = 0 ;
+  std::string *arg3 = 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  (void)jarg1_;
+  (void)jarg2_;
+  arg1 = *(MicroTrainer **)&jarg1; 
+  arg2 = *(TotalWordFeatureExtractor **)&jarg2;
+  if (!arg2) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "TotalWordFeatureExtractor const & reference is null");
+    return ;
+  } 
+  if(!jarg3) {
+    SWIG_JavaThrowException(jenv, SWIG_JavaNullPointerException, "null string");
+    return ;
+  }
+  const char *arg3_pstr = (const char *)jenv->GetStringUTFChars(jarg3, 0); 
+  if (!arg3_pstr) return ;
+  std::string arg3_str(arg3_pstr);
+  arg3 = &arg3_str;
+  jenv->ReleaseStringUTFChars(jarg3, arg3_pstr); 
+  {
+    try {
+      ((MicroTrainer const *)arg1)->trainSeparateModels((TotalWordFeatureExtractor const &)*arg2,(std::string const &)*arg3);
+    } catch(std::exception& e) {
+      jclass clazz = jenv->FindClass("java/lang/Exception");
+      jenv->ThrowNew(clazz, e.what());
+      return ;
+    }
+  }
+}
+
+
+SWIGEXPORT void JNICALL Java_edu_mit_ll_mitie_globalJNI_delete_1MicroTrainer(JNIEnv *jenv, jclass jcls, jlong jarg1) {
+  MicroTrainer *arg1 = (MicroTrainer *) 0 ;
+  
+  (void)jenv;
+  (void)jcls;
+  arg1 = *(MicroTrainer **)&jarg1; 
+  {
+    try {
+      delete arg1;
+    } catch(std::exception& e) {
+      jclass clazz = jenv->FindClass("java/lang/Exception");
+      jenv->ThrowNew(clazz, e.what());
+      return ;
+    }
+  }
+}
+
+
 SWIGEXPORT jlong JNICALL Java_edu_mit_ll_mitie_globalJNI_new_1NerTrainer_1_1SWIG_10(JNIEnv *jenv, jclass jcls, jstring jarg1) {
   jlong jresult = 0 ;
   std::string *arg1 = 0 ;
