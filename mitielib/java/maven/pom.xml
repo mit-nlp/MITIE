@@ -6,7 +6,7 @@
 
     <groupId>edu.mit.ll</groupId>
     <artifactId>mitie</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
 
     <name>MIT Information Extraction</name>
     <description>This project provides free (even for commercial use) state-of-the-art information extraction tools. The current release includes tools for performing named entity extraction and binary relation detection as well as tools for training custom extractors and relation detectors.</description>
