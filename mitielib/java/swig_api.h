@@ -23,7 +23,8 @@
 #include <mitie/binary_relation_detector.h>
 #include <mitie/named_entity_extractor.h>
 #include <mitie/ner_trainer.h>
-
+#include <mitie/micro_ner.h>
+#include <mitie/micro_trainer.h>
 
 // ----------------------------------------------------------------------------------------
 
@@ -110,6 +111,73 @@ struct BinaryRelation
     mitie::binary_relation item;
 };
 
+class TotalWordFeatureExtractor {
+public:
+    TotalWordFeatureExtractor(const std::string& filename)
+    {
+        string classname;
+        dlib::deserialize(filename) >> classname;
+        if (classname != "mitie::total_word_feature_extractor")
+            throw dlib::error("This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
+        dlib::deserialize(filename) >> classname >> impl;
+    }
+
+private:
+    friend class NamedEntityExtractor;
+    friend class NerTrainer;
+    friend class MicroNER;
+    friend class MicroTrainer;
+    mitie::total_word_feature_extractor impl;
+};
+
+class MicroNER
+{
+public:    
+    MicroNER(const std::string& pureModelName                        
+    ) :impl(pureModelName)
+    {
+
+    }
+
+    std::vector<std::string> getPossibleNerTags (
+    ) const
+    {
+        return impl.get_tag_name_strings();
+    }
+
+    std::vector<EntityMention> extractEntities (
+        const TotalWordFeatureExtractor& extractorObject,
+        const std::vector<std::string>& tokens
+    ) const
+    {
+        std::vector<std::pair<unsigned long, unsigned long> > ranges;
+        std::vector<unsigned long> predicted_labels;
+        std::vector<double> predicted_scores;
+        impl.predict(extractorObject.impl, tokens, ranges, predicted_labels, predicted_scores);
+        std::vector<EntityMention> temp;
+        for (unsigned long i = 0; i < ranges.size(); ++i)
+            temp.push_back(EntityMention(ranges[i].first, ranges[i].second, predicted_labels[i], predicted_scores[i]));
+        return temp;
+    }
+
+    std::vector<EntityMention> extractEntities (
+        const TotalWordFeatureExtractor& extractorObject,
+        const std::vector<TokenIndexPair>& tokens
+    ) const
+    {
+        std::vector<std::string> temp;
+        temp.reserve(tokens.size());
+        for (unsigned long i = 0; i < tokens.size(); ++i)
+        {
+            temp.push_back(tokens[i].token);
+        }
+        return extractEntities(extractorObject, temp);
+    }
+
+private:
+    mitie::micro_ner impl;
+};
+
 class NamedEntityExtractor
 {
 public:
@@ -127,6 +195,13 @@ public:
     NamedEntityExtractor(const std::string& pureModelName,
                const std::string& extractorName
     ) :impl(pureModelName, extractorName)
+    {
+
+    }
+
+    NamedEntityExtractor(const std::string& pureModelName,
+                         const TotalWordFeatureExtractor& extractorObject
+    ) :impl(pureModelName, extractorObject.impl)
     {
 
     }
@@ -261,12 +336,75 @@ private:
     mitie::ner_training_instance impl;
 };
 
+class NerMicroTrainingInstance {
+public:
+    NerMicroTrainingInstance(std::vector<std::string> &tokens
+    ) : impl(tokens)
+    {
+    }
+
+    void addEntity(unsigned long start,
+                   unsigned long length,
+                   const char *label) 
+    {
+        impl.add_entity(start, length, label);
+    }
+
+    unsigned long getSize() 
+    {
+        return impl.num_tokens();
+    }
+
+private:
+    friend class MicroTrainer;
+    mitie::ner_micro_training_instance impl;
+};
+
+class MicroTrainer
+{
+public:
+    MicroTrainer() : impl() 
+    {
+    }
+
+    void add(const NerMicroTrainingInstance& item) 
+    {
+        impl.add(item.impl);
+    }
+
+    void setThreadNum(unsigned long num) 
+    {
+        impl.set_num_threads(num);
+    }
+
+    void trainSeparateModels(
+        const TotalWordFeatureExtractor& extractorObject, 
+        const std::string& filename
+    ) const
+    {
+        mitie::micro_ner obj = impl.train(extractorObject.impl);
+        dlib::serialize(filename)
+        << "mitie::named_entity_extractor_pure_model"
+        << obj.get_df()
+        << obj.get_segmenter()
+        << obj.get_tag_name_strings();
+    }
+private:
+    mitie::micro_trainer impl;
+};
+
 class NerTrainer
 {
 public:
     NerTrainer(const std::string& filename) : impl(filename) 
     {
     }
+
+    NerTrainer( const TotalWordFeatureExtractor& extractorObject) : impl(extractorObject.impl)
+    {
+
+    }
+
 
     void add(const NerTrainingInstance& item) 
     {

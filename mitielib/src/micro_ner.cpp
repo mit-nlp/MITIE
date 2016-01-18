@@ -2,26 +2,22 @@
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis@dlib.net)
 
-#include <mitie/named_entity_extractor.h>
+#include <mitie/micro_ner.h>
 
 using namespace dlib;
 
 namespace mitie
 {
-
-// ----------------------------------------------------------------------------------------
-
-    named_entity_extractor::
-    named_entity_extractor(
+    micro_ner::
+    micro_ner(
         const std::vector<std::string>& tag_name_strings_,
-        const total_word_feature_extractor& fe_,
         const dlib::sequence_segmenter<ner_feature_extractor>& segmenter_,
         const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& df_
-    ) : tag_name_strings(tag_name_strings_), fe(fe_), segmenter(segmenter_), df(df_)
+    ) : tag_name_strings(tag_name_strings_), segmenter(segmenter_), df(df_)
     {
         // make sure the requirements are not violated.
         DLIB_CASSERT(df.number_of_classes() >= tag_name_strings.size(),"invalid inputs"); 
-        DLIB_CASSERT(segmenter.get_feature_extractor().num_features() == fe.get_num_dimensions(),"invalid inputs");
+        //DLIB_CASSERT(segmenter.get_feature_extractor().num_features() == fe.get_num_dimensions(),"invalid inputs");
         std::set<unsigned long> df_tags(df.get_labels().begin(), df.get_labels().end());
         for (unsigned long i = 0; i < tag_name_strings.size(); ++i)
         {
@@ -31,30 +27,10 @@ namespace mitie
         compute_fingerprint();
     }
 
-    named_entity_extractor::
-    named_entity_extractor(const std::string& pureModelName,
-                           const std::string& extractorName
-    ) {
-        std::string classname;
-        dlib::deserialize(pureModelName) >> classname;
-        if (classname != "mitie::named_entity_extractor_pure_model")
-            throw dlib::error(
-                    "This file does not contain a mitie::named_entity_extractor_pure_model. Contained: " + classname);
+// ----------------------------------------------------------------------------------------
 
-        dlib::deserialize(pureModelName) >> classname >> df >> segmenter >> tag_name_strings;
-
-        dlib::deserialize(extractorName) >> classname;
-        if (classname != "mitie::total_word_feature_extractor")
-            throw dlib::error(
-                    "This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
-
-        dlib::deserialize(extractorName) >> classname >> fe;
-    }
-
-    named_entity_extractor::
-    named_entity_extractor(const std::string& pureModelName,
-                           const total_word_feature_extractor fe_
-    ) : fe(fe_)
+    micro_ner::
+    micro_ner(const std::string& pureModelName)
     {
         std::string classname;
         dlib::deserialize(pureModelName) >> classname;
@@ -66,17 +42,19 @@ namespace mitie
     }
 // ----------------------------------------------------------------------------------------
 
-    void named_entity_extractor::
+    void micro_ner::
     predict (
+        const total_word_feature_extractor& fe,
         const std::vector<std::string>& sentence,
         std::vector<std::pair<unsigned long, unsigned long> >& chunks,
         std::vector<unsigned long>& chunk_tags,
         std::vector<double>& chunk_scores
     ) const
     {
+
+
         const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
         segmenter.segment_sequence(sent, chunks);
-
 
         std::vector<std::pair<unsigned long, unsigned long> > final_chunks;
         final_chunks.reserve(chunks.size());
@@ -105,8 +83,9 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void named_entity_extractor::
+    void micro_ner::
     operator() (
+        const total_word_feature_extractor& fe,
         const std::vector<std::string>& sentence,
         std::vector<std::pair<unsigned long, unsigned long> >& chunks,
         std::vector<unsigned long>& chunk_tags

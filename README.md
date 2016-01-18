@@ -1,4 +1,4 @@
-MITIE: MIT Information Extraction
+MITIE: MIT Information Extraction [![Build Status](https://travis-ci.org/wihoho/MITIE.svg?branch=master)](https://travis-ci.org/wihoho/MITIE)
 =====
 
 This project provides free (even for commercial use)

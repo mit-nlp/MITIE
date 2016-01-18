@@ -1,14 +1,14 @@
 // Copyright (C) 2014 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis@dlib.net)
-#ifndef MIT_LL_MITIE_NER_TRAINER_H_
-#define MIT_LL_MITIE_NER_TRAINER_H_
+#ifndef MIT_LL_MITIE_MiCRO_NER_TRAINER_H_
+#define MIT_LL_MITIE_MiCRO_NER_TRAINER_H_
 
 #include <vector>
 #include <string>
 #include <utility>
 #include <mitie/total_word_feature_extractor.h>
-#include <mitie/named_entity_extractor.h>
+#include <mitie/micro_ner.h>
 #include <dlib/svm.h>
 #include <map>
 
@@ -17,7 +17,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    class ner_training_instance
+    class ner_micro_training_instance
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
@@ -28,7 +28,7 @@ namespace mitie
         !*/
 
     public:
-        explicit ner_training_instance (
+        explicit ner_micro_training_instance (
             const std::vector<std::string>& tokens
         );
         /*!
@@ -100,7 +100,7 @@ namespace mitie
         !*/
 
     private:
-        friend class ner_trainer;
+        friend class micro_trainer;
         const std::vector<std::string> tokens;
         std::vector<std::pair<unsigned long, unsigned long> > chunks;
         std::vector<std::string> chunk_labels;
@@ -108,7 +108,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    class ner_trainer
+    class micro_trainer
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
@@ -116,9 +116,9 @@ namespace mitie
                 set of annotated training data.
         !*/
     public:
-        explicit ner_trainer (
-            const std::string& filename
-        );
+        // explicit micro_trainer (
+        //     const std::string& filename
+        // );
         /*!
             ensures
                 - #get_beta() == 0.5
@@ -128,8 +128,8 @@ namespace mitie
                   NER training process.  
         !*/
 
-        explicit ner_trainer (
-                const total_word_feature_extractor& fe
+        explicit micro_trainer (
+                //const total_word_feature_extractor& fe
         );
 
         unsigned long size(
@@ -140,7 +140,7 @@ namespace mitie
         !*/
 
         void add (
-            const ner_training_instance& item
+            const ner_micro_training_instance& item
         );
         /*!
             ensures
@@ -225,7 +225,7 @@ namespace mitie
                 - #get_beta() == new_beta
         !*/
 
-        named_entity_extractor train (
+        micro_ner train ( const total_word_feature_extractor& tfe
         ) const;
         /*!
             requires
@@ -248,12 +248,14 @@ namespace mitie
         ) const;
 
         void extract_ner_segment_feats (
+            const total_word_feature_extractor& tfe,
             const dlib::sequence_segmenter<ner_feature_extractor>& segmenter,
             std::vector<ner_sample_type>& samples,
             std::vector<unsigned long>& labels
         ) const;
 
         void train_segmenter (
+            const total_word_feature_extractor& tfe,
             dlib::sequence_segmenter<ner_feature_extractor>& segmenter
         ) const;
 
@@ -265,7 +267,7 @@ namespace mitie
         ) const;
 
 
-        total_word_feature_extractor tfe;
+        //total_word_feature_extractor tfe;
         double beta;
         unsigned long num_threads;
         std::map<std::string,unsigned long> label_to_id;
@@ -278,37 +280,37 @@ namespace mitie
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-    struct ner_eval_metrics
-    {
-        /*!
-            WHAT THIS OBJECT REPRESENTS
-                This is a simple container for the outputs of the
-                evaluate_named_entity_recognizer() routine defined below.
-        !*/
-        struct metrics
-        {
-            std::string label;
-            double precision;
-            double recall;
-        };
+    // struct ner_eval_metrics
+    // {
+    //     /*!
+    //         WHAT THIS OBJECT REPRESENTS
+    //             This is a simple container for the outputs of the
+    //             evaluate_named_entity_recognizer() routine defined below.
+    //     !*/
+    //     struct metrics
+    //     {
+    //         std::string label;
+    //         double precision;
+    //         double recall;
+    //     };
 
-        std::vector<metrics> per_label_metrics;
-        double overall_precision;
-        double overall_recall;
-    };
+    //     std::vector<metrics> per_label_metrics;
+    //     double overall_precision;
+    //     double overall_recall;
+    // };
 
-    std::ostream& operator<< (std::ostream& out_, const ner_eval_metrics& item);
+    // std::ostream& operator<< (std::ostream& out_, const ner_eval_metrics& item);
     /*!
         ensures
             - print the contents of item to the output stream in a nice format.
     !*/
 
-    ner_eval_metrics evaluate_named_entity_recognizer (
-        const named_entity_extractor& ner,
-        const std::vector<std::vector<std::string> >& sentences,
-        const std::vector<std::vector<std::pair<unsigned long, unsigned long> > >& chunks,
-        const std::vector<std::vector<std::string> >& text_chunk_labels
-    );
+    // ner_eval_metrics evaluate_named_entity_recognizer (
+    //     const named_entity_extractor& ner,
+    //     const std::vector<std::vector<std::string> >& sentences,
+    //     const std::vector<std::vector<std::pair<unsigned long, unsigned long> > >& chunks,
+    //     const std::vector<std::vector<std::string> >& text_chunk_labels
+    // );
     /*!
         requires
             - sentences.size() == chunks.size() == text_chunk_labels.size()

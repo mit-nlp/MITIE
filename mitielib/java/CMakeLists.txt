@@ -12,6 +12,8 @@ set(source_files
    ../src/ner_trainer.cpp
    ../src/stem.c
    ../src/stemmer.cpp
+   ../src/micro_ner.cpp
+   ../src/micro_trainer.cpp
    )
 
 include_directories(

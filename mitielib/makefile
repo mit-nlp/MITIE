@@ -21,6 +21,7 @@ SRC += src/stem.c
 SRC += src/stemmer.cpp
 SRC += src/conll_parser.cpp
 SRC += src/ner_trainer.cpp
+SRC += src/micro_ner.cpp
 SRC += ../dlib/dlib/threads/multithreaded_object_extension.cpp
 SRC += ../dlib/dlib/threads/threaded_object_extension.cpp
 SRC += ../dlib/dlib/threads/threads_kernel_1.cpp

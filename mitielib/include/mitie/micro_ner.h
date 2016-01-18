@@ -1,8 +1,8 @@
 // Copyright (C) 2014 Massachusetts Institute of Technology, Lincoln Laboratory
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis@dlib.net)
-#ifndef MIT_LL_MITIE_NaMED_ENTITY_EXTRACTOR_H_
-#define MIT_LL_MITIE_NaMED_ENTITY_EXTRACTOR_H_
+#ifndef MIT_LL_MITIE_MiCRO_NER_H_
+#define MIT_LL_MITIE_MiCRO_NER_H_
 
 #include <mitie/total_word_feature_extractor.h>
 #include <mitie/ner_feature_extraction.h>
@@ -12,7 +12,7 @@
 
 namespace mitie
 {
-    class named_entity_extractor
+    class micro_ner
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
@@ -28,7 +28,6 @@ namespace mitie
         !*/
     public:
 
-        named_entity_extractor():fingerprint(0){}
         /*!
             ensures
                 - When used this object won't output any entities.   You need to either use
@@ -36,20 +35,16 @@ namespace mitie
                   get something that is useful.
         !*/
 
-        named_entity_extractor(
+        micro_ner():fingerprint(0){}
+
+        micro_ner(
             const std::vector<std::string>& tag_name_strings,
-            const total_word_feature_extractor& fe,
+            //const total_word_feature_extractor& fe,
             const dlib::sequence_segmenter<ner_feature_extractor>& segmenter,
             const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& df
         );
 
-        named_entity_extractor(const std::string& pureModelName,
-                               const std::string& extractorName
-        );
-
-        named_entity_extractor(const std::string& pureModelName,
-                               const total_word_feature_extractor fe
-        );
+        micro_ner(const std::string& pureModelName);
 
         /*!
             requires
@@ -85,6 +80,7 @@ namespace mitie
         !*/
 
         void predict(
+            const total_word_feature_extractor& fe,
             const std::vector<std::string>& sentence,
             std::vector<std::pair<unsigned long, unsigned long> >& chunks,
             std::vector<unsigned long>& chunk_tags,
@@ -114,6 +110,7 @@ namespace mitie
         !*/
 
         void operator() (
+            const total_word_feature_extractor& fe,
             const std::vector<std::string>& sentence,
             std::vector<std::pair<unsigned long, unsigned long> >& chunks,
             std::vector<unsigned long>& chunk_tags
@@ -143,18 +140,18 @@ namespace mitie
                 - Returns a vector that maps entity numeric ID tags into their string labels.  
         !*/
 
-        friend void serialize(const named_entity_extractor& item, std::ostream& out)
+        friend void serialize(const micro_ner& item, std::ostream& out)
         {
             int version = 2;
             dlib::serialize(version, out);
             dlib::serialize(item.fingerprint, out);
             dlib::serialize(item.tag_name_strings, out);
-            serialize(item.fe, out);
+            //serialize(item.fe, out);
             serialize(item.segmenter, out);
             serialize(item.df, out);
         }
 
-        friend void deserialize(named_entity_extractor& item, std::istream& in)
+        friend void deserialize(micro_ner& item, std::istream& in)
         {
             int version = 0;
             dlib::deserialize(version, in);
@@ -162,13 +159,10 @@ namespace mitie
                 throw dlib::serialization_error("Unexpected version found while deserializing mitie::named_entity_extractor.");
             dlib::deserialize(item.fingerprint, in);
             dlib::deserialize(item.tag_name_strings, in);
-            deserialize(item.fe, in);
+            //deserialize(item.fe, in);
             deserialize(item.segmenter, in);
             deserialize(item.df, in);
         }
-
-        const total_word_feature_extractor& get_total_word_feature_extractor(
-        ) const { return fe; }
 
         const dlib::sequence_segmenter<ner_feature_extractor>& get_segmenter() const {
             return segmenter;
@@ -186,7 +180,7 @@ namespace mitie
             dlib::vectorstream sout(buf);
             sout << "fingerprint";
             dlib::serialize(tag_name_strings, sout);
-            serialize(fe.get_fingerprint(), sout);
+            //serialize(fe.get_fingerprint(), sout);
             serialize(segmenter, sout);
             serialize(df, sout);
 
@@ -195,7 +189,7 @@ namespace mitie
 
         dlib::uint64 fingerprint;
         std::vector<std::string> tag_name_strings;
-        total_word_feature_extractor fe;
+        // total_word_feature_extractor fe;
         dlib::sequence_segmenter<ner_feature_extractor> segmenter;
         dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
     };

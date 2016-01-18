@@ -2,7 +2,8 @@
 // License: Boost Software License   See LICENSE.txt for the full license.
 // Authors: Davis E. King (davis@dlib.net)
 
-#include <mitie/ner_trainer.h>
+#include <mitie/micro_trainer.h>
+#include <mitie/micro_ner.h>
 #include <dlib/svm_threaded.h>
 #include <dlib/optimization.h>
 #include <dlib/misc_api.h>
@@ -37,8 +38,8 @@ namespace mitie
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-    ner_training_instance::
-    ner_training_instance (
+    ner_micro_training_instance::
+    ner_micro_training_instance (
         const std::vector<std::string>& tokens_
     ) : tokens(tokens_)
     {
@@ -46,7 +47,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    unsigned long ner_training_instance::
+    unsigned long ner_micro_training_instance::
     num_tokens(
     ) const 
     { 
@@ -55,7 +56,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    unsigned long ner_training_instance::
+    unsigned long ner_micro_training_instance::
     num_entities(
     ) const 
     { 
@@ -64,7 +65,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    bool ner_training_instance::
+    bool ner_micro_training_instance::
     overlaps_any_entity (
         unsigned long start,
         unsigned long length
@@ -81,7 +82,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void ner_training_instance::
+    void ner_micro_training_instance::
     add_entity (
         const std::pair<unsigned long,unsigned long>& range,
         const std::string& label
@@ -97,7 +98,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void ner_training_instance::
+    void ner_micro_training_instance::
     add_entity (
         unsigned long start,
         unsigned long length,
@@ -116,26 +117,24 @@ namespace mitie
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-    ner_trainer::
-    ner_trainer (
-        const std::string& filename
-    ) : beta(0.5), num_threads(4)
-    {
-        string classname;
-        dlib::deserialize(filename) >> classname >> tfe;
-    }
+    // micro_trainer::
+    // micro_trainer (
+    //     const std::string& filename
+    // ) : beta(0.5), num_threads(4)
+    // {
+    //     string classname;
+    //     dlib::deserialize(filename) >> classname >> tfe;
+    // }
 
-    ner_trainer::
-    ner_trainer (
-            const total_word_feature_extractor& fe_
-    ) : beta(0.5), num_threads(4), tfe(fe_)
+    micro_trainer::
+    micro_trainer () : beta(0.5), num_threads(4)
     {
 
     }
 
 // ----------------------------------------------------------------------------------------
 
-    unsigned long ner_trainer::
+    unsigned long micro_trainer::
     size() const 
     {
         return sentences.size();
@@ -143,9 +142,9 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void ner_trainer::
+    void micro_trainer::
     add (
-        const ner_training_instance& item
+        const ner_micro_training_instance& item
     )
     {
         sentences.push_back(item.tokens);
@@ -158,7 +157,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void ner_trainer::
+    void micro_trainer::
     add (
         const std::vector<std::string>& tokens,
         const std::vector<std::pair<unsigned long,unsigned long> >& ranges,
@@ -178,7 +177,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void ner_trainer::
+    void micro_trainer::
     add (
         const std::vector<std::vector<std::string> >& tokens,
         const std::vector<std::vector<std::pair<unsigned long,unsigned long> > >& ranges,
@@ -199,26 +198,26 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    unsigned long ner_trainer::
+    unsigned long micro_trainer::
     get_num_threads (
     ) const { return num_threads; }
 
 // ----------------------------------------------------------------------------------------
 
-    void ner_trainer::
+    void micro_trainer::
     set_num_threads (
         unsigned long num
     ) { num_threads = num; }
 
 // ----------------------------------------------------------------------------------------
 
-    double ner_trainer::
+    double micro_trainer::
     get_beta (
     ) const { return beta; }
 
 // ----------------------------------------------------------------------------------------
 
-    void ner_trainer::
+    void micro_trainer::
     set_beta (
         double new_beta
     )
@@ -229,8 +228,8 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    named_entity_extractor ner_trainer::
-    train (
+    micro_ner micro_trainer::
+    train ( const total_word_feature_extractor& tfe
     ) const
     /*!
         requires
@@ -258,7 +257,7 @@ namespace mitie
 	dlib::uint64 start = ts.get_timestamp();
 
         sequence_segmenter<ner_feature_extractor> segmenter;
-        train_segmenter(segmenter);
+        train_segmenter(tfe, segmenter);
 
 	dlib::uint64 stop = ts.get_timestamp();
 
@@ -266,7 +265,7 @@ namespace mitie
 
         std::vector<ner_sample_type> samples;
         std::vector<unsigned long> labels;
-        extract_ner_segment_feats(segmenter, samples, labels);
+        extract_ner_segment_feats(tfe, segmenter, samples, labels);
 
         cout << "Part II: train segment classifier" << endl;
 
@@ -280,7 +279,7 @@ namespace mitie
 
         cout << "df.number_of_classes(): "<< df.number_of_classes() << endl;
 
-        return named_entity_extractor(get_all_labels(), tfe, segmenter, df);
+        return micro_ner(get_all_labels(), segmenter, df);
     }
 
 // ----------------------------------------------------------------------------------------
@@ -345,7 +344,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    unsigned long ner_trainer::
+    unsigned long micro_trainer::
     count_of_least_common_label (
         const std::vector<unsigned long>& labels
     ) const
@@ -365,7 +364,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    ner_trainer::classifier_type ner_trainer::
+    micro_trainer::classifier_type micro_trainer::
     train_ner_segment_classifier (
         const std::vector<ner_sample_type>& samples,
         const std::vector<unsigned long>& labels
@@ -431,8 +430,9 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void ner_trainer::
+    void micro_trainer::
     extract_ner_segment_feats (
+        const total_word_feature_extractor& tfe,
         const sequence_segmenter<ner_feature_extractor>& segmenter,
         std::vector<ner_sample_type>& samples,
         std::vector<unsigned long>& labels
@@ -503,8 +503,9 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void ner_trainer::
+    void micro_trainer::
     train_segmenter (
+        const total_word_feature_extractor& tfe,
         sequence_segmenter<ner_feature_extractor>& segmenter
     ) const
     {
@@ -581,7 +582,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    unsigned long ner_trainer::
+    unsigned long micro_trainer::
     get_label_id (
         const std::string& str
     )
@@ -602,7 +603,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    std::vector<std::string> ner_trainer::
+    std::vector<std::string> micro_trainer::
     get_all_labels(
     ) const
     {
@@ -619,111 +620,111 @@ namespace mitie
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-    ner_eval_metrics evaluate_named_entity_recognizer (
-        const named_entity_extractor& ner,
-        const std::vector<std::vector<std::string> >& sentences,
-        const std::vector<std::vector<std::pair<unsigned long, unsigned long> > >& chunks,
-        const std::vector<std::vector<std::string> >& text_chunk_labels
-    )
-    {
-        // Make sure the requires clause is not broken.
-        DLIB_CASSERT(sentences.size() == chunks.size() && chunks.size() == text_chunk_labels.size(), "Invalid inputs");
-        for (unsigned long i = 0; i < chunks.size(); ++i)
-        {
-            DLIB_CASSERT(chunks[i].size() == text_chunk_labels[i].size(), "Invalid Inputs");
-        }
+    // ner_eval_metrics evaluate_named_entity_recognizer (
+    //     const named_entity_extractor& ner,
+    //     const std::vector<std::vector<std::string> >& sentences,
+    //     const std::vector<std::vector<std::pair<unsigned long, unsigned long> > >& chunks,
+    //     const std::vector<std::vector<std::string> >& text_chunk_labels
+    // )
+    // {
+    //     // Make sure the requires clause is not broken.
+    //     DLIB_CASSERT(sentences.size() == chunks.size() && chunks.size() == text_chunk_labels.size(), "Invalid inputs");
+    //     for (unsigned long i = 0; i < chunks.size(); ++i)
+    //     {
+    //         DLIB_CASSERT(chunks[i].size() == text_chunk_labels[i].size(), "Invalid Inputs");
+    //     }
 
-        const std::vector<std::string> tags = ner.get_tag_name_strings();
+    //     const std::vector<std::string> tags = ner.get_tag_name_strings();
 
-        // convert text_chunk_labels into integer labels.
-        std::vector<std::vector<unsigned long> > chunk_labels(text_chunk_labels.size());
-        std::map<std::string,unsigned long> str_to_id;
-        for (unsigned long i = 0; i < tags.size(); ++i)
-            str_to_id[tags[i]]=i;
-        for (unsigned long i = 0; i < chunk_labels.size(); ++i)
-        {
-            chunk_labels[i].resize(text_chunk_labels[i].size());
-            for (unsigned long j = 0; j < chunk_labels[i].size(); ++j)
-            {
-                if (str_to_id.count(text_chunk_labels[i][j]) == 0)
-                    throw dlib::error("NER object does not support the tag "+text_chunk_labels[i][j]+" found in testing dataset.");
-                chunk_labels[i][j] = str_to_id[text_chunk_labels[i][j]];
-            }
-        }
+    //     // convert text_chunk_labels into integer labels.
+    //     std::vector<std::vector<unsigned long> > chunk_labels(text_chunk_labels.size());
+    //     std::map<std::string,unsigned long> str_to_id;
+    //     for (unsigned long i = 0; i < tags.size(); ++i)
+    //         str_to_id[tags[i]]=i;
+    //     for (unsigned long i = 0; i < chunk_labels.size(); ++i)
+    //     {
+    //         chunk_labels[i].resize(text_chunk_labels[i].size());
+    //         for (unsigned long j = 0; j < chunk_labels[i].size(); ++j)
+    //         {
+    //             if (str_to_id.count(text_chunk_labels[i][j]) == 0)
+    //                 throw dlib::error("NER object does not support the tag "+text_chunk_labels[i][j]+" found in testing dataset.");
+    //             chunk_labels[i][j] = str_to_id[text_chunk_labels[i][j]];
+    //         }
+    //     }
 
-        const unsigned long num_labels = tags.size();
-        std::vector<double> num_targets(num_labels);
-        std::vector<double> num_dets(num_labels);
-        std::vector<double> num_true_dets(num_labels);
+    //     const unsigned long num_labels = tags.size();
+    //     std::vector<double> num_targets(num_labels);
+    //     std::vector<double> num_dets(num_labels);
+    //     std::vector<double> num_true_dets(num_labels);
 
-        // Now run the ner object over all the sentences and compare it to the truth data.
-        for (unsigned long i = 0; i < sentences.size(); ++i)
-        {
-            std::vector<std::pair<unsigned long, unsigned long> > ranges;
-            std::vector<unsigned long> predicted_labels;
-            ner(sentences[i], ranges, predicted_labels);
+    //     // Now run the ner object over all the sentences and compare it to the truth data.
+    //     for (unsigned long i = 0; i < sentences.size(); ++i)
+    //     {
+    //         std::vector<std::pair<unsigned long, unsigned long> > ranges;
+    //         std::vector<unsigned long> predicted_labels;
+    //         ner(sentences[i], ranges, predicted_labels);
 
-            for (unsigned long j = 0; j < ranges.size(); ++j)
-            {
-                const unsigned long predicted_label = predicted_labels[j];
-                const unsigned long true_label = get_label(chunks[i], chunk_labels[i], ranges[j], num_labels);
+    //         for (unsigned long j = 0; j < ranges.size(); ++j)
+    //         {
+    //             const unsigned long predicted_label = predicted_labels[j];
+    //             const unsigned long true_label = get_label(chunks[i], chunk_labels[i], ranges[j], num_labels);
 
-                num_dets[predicted_label]++;
-                if (predicted_label == true_label)
-                {
-                    num_true_dets[true_label]++;
-                }
-            }
-            for (unsigned long j = 0; j < chunk_labels[i].size(); ++j)
-            {
-                num_targets[chunk_labels[i][j]]++;
-            }
-        }
+    //             num_dets[predicted_label]++;
+    //             if (predicted_label == true_label)
+    //             {
+    //                 num_true_dets[true_label]++;
+    //             }
+    //         }
+    //         for (unsigned long j = 0; j < chunk_labels[i].size(); ++j)
+    //         {
+    //             num_targets[chunk_labels[i][j]]++;
+    //         }
+    //     }
 
 
-        ner_eval_metrics mets;
-        mets.per_label_metrics.resize(num_targets.size());
-        for (unsigned long i = 0; i < num_targets.size(); ++i)
-        {
-            mets.per_label_metrics[i].precision = num_true_dets[i]/num_dets[i];
-            mets.per_label_metrics[i].recall = num_true_dets[i]/num_targets[i];
-            mets.per_label_metrics[i].label = tags[i];
-        }
+    //     ner_eval_metrics mets;
+    //     mets.per_label_metrics.resize(num_targets.size());
+    //     for (unsigned long i = 0; i < num_targets.size(); ++i)
+    //     {
+    //         mets.per_label_metrics[i].precision = num_true_dets[i]/num_dets[i];
+    //         mets.per_label_metrics[i].recall = num_true_dets[i]/num_targets[i];
+    //         mets.per_label_metrics[i].label = tags[i];
+    //     }
 
-        mets.overall_precision = sum(mat(num_true_dets))/sum(mat(num_dets));
-        mets.overall_recall = sum(mat(num_true_dets))/sum(mat(num_targets));
-        return mets;
-    }
+    //     mets.overall_precision = sum(mat(num_true_dets))/sum(mat(num_dets));
+    //     mets.overall_recall = sum(mat(num_true_dets))/sum(mat(num_targets));
+    //     return mets;
+    // }
 
 // ----------------------------------------------------------------------------------------
 
-    std::ostream& operator<< (std::ostream& out_, const ner_eval_metrics& item)
-    {
-        unsigned long max_tag_length = 5;
-        for (unsigned long i = 0; i < item.per_label_metrics.size(); ++i)
-            max_tag_length = std::max<unsigned long>(max_tag_length, item.per_label_metrics[i].label.size());
+    // std::ostream& operator<< (std::ostream& out_, const ner_eval_metrics& item)
+    // {
+    //     unsigned long max_tag_length = 5;
+    //     for (unsigned long i = 0; i < item.per_label_metrics.size(); ++i)
+    //         max_tag_length = std::max<unsigned long>(max_tag_length, item.per_label_metrics[i].label.size());
 
-        std::ostream out(out_.rdbuf());
-        out.setf(std::ios_base::fixed, std::ios_base::floatfield);
-        for (unsigned long i = 0; i < item.per_label_metrics.size(); ++i)
-        {
-            out << "label: "<< setw(max_tag_length) << item.per_label_metrics[i].label;
-            double prec = item.per_label_metrics[i].precision;
-            double recall = item.per_label_metrics[i].recall;
-            out << " precision: "<<  setprecision(4) << prec << ",";
-            out << " recall: "<<  setprecision(4) <<recall << ",";
-            out << " F1: "<< setprecision(4) << 2*prec*recall/(prec+recall) << endl;
-        }
+    //     std::ostream out(out_.rdbuf());
+    //     out.setf(std::ios_base::fixed, std::ios_base::floatfield);
+    //     for (unsigned long i = 0; i < item.per_label_metrics.size(); ++i)
+    //     {
+    //         out << "label: "<< setw(max_tag_length) << item.per_label_metrics[i].label;
+    //         double prec = item.per_label_metrics[i].precision;
+    //         double recall = item.per_label_metrics[i].recall;
+    //         out << " precision: "<<  setprecision(4) << prec << ",";
+    //         out << " recall: "<<  setprecision(4) <<recall << ",";
+    //         out << " F1: "<< setprecision(4) << 2*prec*recall/(prec+recall) << endl;
+    //     }
 
-        out << "all labels: " << string(max_tag_length-5,' ');
-        double prec = item.overall_precision;
-        double recall = item.overall_recall;
-        out << " precision: "<<  setprecision(4) << prec << ",";
-        out << " recall: "<<  setprecision(4) <<recall << ",";
-        out << " F1: "<< setprecision(4) << 2*prec*recall/(prec+recall) << endl;
+    //     out << "all labels: " << string(max_tag_length-5,' ');
+    //     double prec = item.overall_precision;
+    //     double recall = item.overall_recall;
+    //     out << " precision: "<<  setprecision(4) << prec << ",";
+    //     out << " recall: "<<  setprecision(4) <<recall << ",";
+    //     out << " F1: "<< setprecision(4) << 2*prec*recall/(prec+recall) << endl;
 
-        return out_;
-    }
+    //     return out_;
+    // }
 
 // ----------------------------------------------------------------------------------------
 
