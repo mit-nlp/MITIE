@@ -109,11 +109,12 @@ namespace mitie
                     - The textual label for the i-th entity is get_tag_name_strings()[#chunk_tags[i]].
         !*/
 
-        // void operator() (
-        //     const std::vector<std::string>& sentence,
-        //     std::vector<std::pair<unsigned long, unsigned long> >& chunks,
-        //     std::vector<unsigned long>& chunk_tags
-        // ) const;
+        void operator() (
+            const total_word_feature_extractor& fe,
+            const std::vector<std::string>& sentence,
+            std::vector<std::pair<unsigned long, unsigned long> >& chunks,
+            std::vector<unsigned long>& chunk_tags
+        ) const;
         /*!
             ensures
                 - Runs the named entity recognizer on the sequence of tokenized words

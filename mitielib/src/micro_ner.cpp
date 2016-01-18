@@ -51,9 +51,10 @@ namespace mitie
         std::vector<double>& chunk_scores
     ) const
     {
+
+
         const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
         segmenter.segment_sequence(sent, chunks);
-
 
         std::vector<std::pair<unsigned long, unsigned long> > final_chunks;
         final_chunks.reserve(chunks.size());
@@ -82,37 +83,38 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    // void named_entity_extractor::
-    // operator() (
-    //     const std::vector<std::string>& sentence,
-    //     std::vector<std::pair<unsigned long, unsigned long> >& chunks,
-    //     std::vector<unsigned long>& chunk_tags
-    // ) const
-    // {
-    //     const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
-    //     segmenter.segment_sequence(sent, chunks);
+    void micro_ner::
+    operator() (
+        const total_word_feature_extractor& fe,
+        const std::vector<std::string>& sentence,
+        std::vector<std::pair<unsigned long, unsigned long> >& chunks,
+        std::vector<unsigned long>& chunk_tags
+    ) const
+    {
+        const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
+        segmenter.segment_sequence(sent, chunks);
 
 
-    //     std::vector<std::pair<unsigned long, unsigned long> > final_chunks;
-    //     final_chunks.reserve(chunks.size());
-    //     chunk_tags.clear();
-    //     // now label each chunk
-    //     for (unsigned long j = 0; j < chunks.size(); ++j)
-    //     {
-    //         const unsigned long tag = df(extract_ner_chunk_features(sentence, sent, chunks[j]));
+        std::vector<std::pair<unsigned long, unsigned long> > final_chunks;
+        final_chunks.reserve(chunks.size());
+        chunk_tags.clear();
+        // now label each chunk
+        for (unsigned long j = 0; j < chunks.size(); ++j)
+        {
+            const unsigned long tag = df(extract_ner_chunk_features(sentence, sent, chunks[j]));
 
-    //         // Only output this chunk if it is predicted to be an entity.  Recall that if
-    //         // the classifier outputs a ID outside the range of our labels then it's
-    //         // predicting "this isn't an entity at all". 
-    //         if (tag < tag_name_strings.size())
-    //         {
-    //             final_chunks.push_back(chunks[j]);
-    //             chunk_tags.push_back(tag);
-    //         }
-    //     }
+            // Only output this chunk if it is predicted to be an entity.  Recall that if
+            // the classifier outputs a ID outside the range of our labels then it's
+            // predicting "this isn't an entity at all". 
+            if (tag < tag_name_strings.size())
+            {
+                final_chunks.push_back(chunks[j]);
+                chunk_tags.push_back(tag);
+            }
+        }
 
-    //     final_chunks.swap(chunks);
-    // }
+        final_chunks.swap(chunks);
+    }
 
 // ----------------------------------------------------------------------------------------
 
