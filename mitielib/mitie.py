@@ -6,6 +6,10 @@ def _last_modified_time(filename):
     else:
         return 0
 
+try:
+    xrange
+except NameError:  # Py3
+    xrange = range
 
 # Load the mitie shared library.  We will look in a few places to see if we can find it.
 # What we do depends on our platform
