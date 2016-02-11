@@ -1,0 +1,6 @@
+include makefile
+include mitielib/makefile
+recursive-include mitielib/src *
+recursive-include mitielib/include *
+recursive-include dlib/dlib *
+recursive-exclude * *.py[co]
