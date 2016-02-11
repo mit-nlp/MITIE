@@ -103,6 +103,9 @@ MITIE: [named entity recognition and relation extraction](examples/python/ner.py
 [training a custom NER tool](examples/python/train_ner.py), or 
 [training a custom relation extractor](examples/python/train_relation_extraction.py).
 
+You can also install ``mitie`` package direcly from github:
+``pip install git+https://github.com/mit-nlp/MITIE.git``.
+
 ### Using MITIE from R
 
 MITIE can be installed as an R package. See the [README](tools/R-binding) for more details.
