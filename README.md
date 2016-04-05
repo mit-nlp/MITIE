@@ -13,7 +13,7 @@ trained based on data from the English Gigaword news corpus, the CoNLL 2003 name
 and ACE data.  The Spanish model is based on the Spanish Gigaword corpus and CoNLL 2002 named entity 
 recognition task.  There are also 21 English binary relation extraction models provided which
 were trained on a 
-[combination of Wikipedia and Freebase data](https://sourceforge.net/projects/mitie/files/freebase_wikipedia_binary_relation_training_data_v1.0.tar.bz2/download).
+[combination of Wikipedia and Freebase data](https://github.com/mit-nlp/MITIE/releases/download/v0.4/freebase_wikipedia_binary_relation_training_data_v1.0.tar.bz2).
 
 Additionally, the core library provides APIs in C, C++, Java, R, and Python 2.7.  Outside
 projects have created bindings for [OCaml](https://github.com/travisbrady/omitie) and 
@@ -33,9 +33,9 @@ model files which you can do by running:
 ```
 make MITIE-models
 ```
-or by simply downloading the [MITIE-models-v0.2.tar.bz2](http://sourceforge.net/projects/mitie/files/binaries/MITIE-models-v0.2.tar.bz2)
+or by simply downloading the [MITIE-models-v0.2.tar.bz2](https://github.com/mit-nlp/MITIE/releases/download/v0.4/MITIE-models-v0.2.tar.bz2)
 file and extracting it in your MITIE folder.  Note that the Spanish models are supplied in 
-a separate download.  So if you want to use the Spanish NER model then download [MITIE-models-v0.2-Spanish.zip](http://sourceforge.net/projects/mitie/files/binaries/MITIE-models-v0.2-Spanish.zip) and
+a separate download.  So if you want to use the Spanish NER model then download [MITIE-models-v0.2-Spanish.zip](https://github.com/mit-nlp/MITIE/releases/download/v0.4/MITIE-models-v0.2-Spanish.zip) and
 extract it into your MITIE folder.
 
 ### Using MITIE from the command line
@@ -171,12 +171,12 @@ example models.  If you require a non-standard C++ compiler, change
 
 # Precompiled Python 2.7 binaries
 
-We have built Python 2.7 binaries packaged with sample models for 64bit Linux and Windows (both 32 and 64 bit version of Python).  You can download the precompiled package here: [Precompiled MITIE 0.2](http://sourceforge.net/projects/mitie/files/binaries/mitie-v0.2-python-2.7-windows-or-linux64.zip)
+We have built Python 2.7 binaries packaged with sample models for 64bit Linux and Windows (both 32 and 64 bit version of Python).  You can download the precompiled package here: [Precompiled MITIE 0.2](https://github.com/mit-nlp/MITIE/releases/download/v0.4/mitie-v0.2-python-2.7-windows-or-linux64.zip)
 
 
 # Precompiled Java 64bit binaries
 
-We have built Java binaries for the 64bit JVM which work on Linux and Windows.  You can download the precompiled package here: [Precompiled Java MITIE 0.3](http://sourceforge.net/projects/mitie/files/binaries/mitie-java-v0.3-windows64-or-linux64.zip).  In the file is an examples/java folder.  You can run the example by executing the provided .bat or .sh file.
+We have built Java binaries for the 64bit JVM which work on Linux and Windows.  You can download the precompiled package here: [Precompiled Java MITIE 0.3](https://github.com/mit-nlp/MITIE/releases/download/v0.4/mitie-java-v0.3-windows64-or-linux64.zip).  In the file is an examples/java folder.  You can run the example by executing the provided .bat or .sh file.
 
 # License
 

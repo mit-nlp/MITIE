@@ -9,7 +9,7 @@ examples: tools/ner_stream examples/C/ner examples/C/relation_extraction
 	cp tools/ner_stream/ner_stream .
 
 MITIE-models-v0.2.tar.bz2:
-	curl -LO http://sourceforge.net/projects/mitie/files/binaries/MITIE-models-v0.2.tar.bz2
+	curl -LO https://github.com/mit-nlp/MITIE/releases/download/v0.4/MITIE-models-v0.2.tar.bz2
 
 MITIE-models: MITIE-models-v0.2.tar.bz2
 	tar -xjf MITIE-models-v0.2.tar.bz2
