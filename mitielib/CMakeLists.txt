@@ -35,6 +35,7 @@ if (NOT TARGET mitie)
          src/ner_trainer.cpp
          src/text_categorizer_trainer.cpp
          src/text_categorizer_extractor.cpp
+         src/text_feature_extraction.cpp
            )
 
    add_library(mitie ${source_files})

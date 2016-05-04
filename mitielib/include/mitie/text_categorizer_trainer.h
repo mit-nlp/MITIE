@@ -6,6 +6,7 @@
 #include <utility>
 #include <mitie/total_word_feature_extractor.h>
 #include <mitie/text_categorizer_extractor.h>
+#include <mitie/text_feature_extraction.h>
 #include <dlib/svm.h>
 #include <map>
 
@@ -122,7 +123,7 @@ namespace mitie
                 const std::vector<unsigned long>& labels
         ) const;
 
-        typedef dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> classifier_type;
+        typedef dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<text_sample_type>,unsigned long> classifier_type;
         classifier_type train_text_categorizer_classifier (
         ) const;
 

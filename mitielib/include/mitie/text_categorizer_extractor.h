@@ -79,18 +79,15 @@ namespace mitie
 
         void predict(
                 const std::vector<std::string>& sentence,
-                std::vector<std::pair<unsigned long, unsigned long> >& chunks,
-                std::vector<unsigned long>& chunk_tags,
-                std::vector<double>& chunk_scores
+                unsigned long& text_tag,
+                double& text_score
         ) const;
         /*!
             ensures
                 - Runs the named entity recognizer on the sequence of tokenized words
                   inside sentence.  The detected named entities are stored into chunks.
-                - #chunks == the locations of the named entities.
                 - The identified named entities are listed inside chunks in the order in
                   which they appeared in the input sentence.
-                - #chunks.size() == #chunk_tags.size()
                 - for all valid i:
                     - #chunk_tags[i] == the label for the entity at location #chunks[i].  Moreover,
                       chunk tag ID numbers are contiguous and start at 0.  Therefore we have:
@@ -108,8 +105,7 @@ namespace mitie
 
         void operator() (
                 const std::vector<std::string>& sentence,
-                std::vector<std::pair<unsigned long, unsigned long> >& chunks,
-                std::vector<unsigned long>& chunk_tags
+                unsigned long& text_tag
         ) const;
         /*!
             ensures
@@ -148,10 +144,7 @@ namespace mitie
 
         friend void deserialize(text_categorizer_extractor& item, std::istream& in)
         {
-            int version = 0;
-            dlib::deserialize(version, in);
-            if (version != 2)
-                throw dlib::serialization_error("Unexpected version found while deserializing mitie::text_categorizer_extractor.");
+            int version = 2;
             dlib::deserialize(item.fingerprint, in);
             dlib::deserialize(item.tag_name_strings, in);
             deserialize(item.fe, in);

@@ -142,7 +142,7 @@ namespace mitie
     {
     public:
         train_text_classifier_objective (
-            const std::vector<ner_sample_type>& samples_,
+            const std::vector<text_sample_type>& samples_,
             const std::vector<unsigned long>& labels_,
             unsigned long num_threads_,
             double beta_,
@@ -155,7 +155,7 @@ namespace mitie
             const double C 
         ) const
         {
-            svm_multiclass_linear_trainer<sparse_linear_kernel<ner_sample_type>,unsigned long> trainer;
+            svm_multiclass_linear_trainer<sparse_linear_kernel<text_sample_type>,unsigned long> trainer;
 
             trainer.set_c(C);
             trainer.set_num_threads(num_threads);
@@ -186,7 +186,7 @@ namespace mitie
         }
 
     private:
-        const std::vector<ner_sample_type>& samples;
+        const std::vector<text_sample_type>& samples;
         const std::vector<unsigned long>& labels;
         const unsigned long num_threads;
         const double beta;
@@ -222,13 +222,13 @@ namespace mitie
     {
         cout << "extracting text features" << endl;
         // do the feature extraction for all the texts
-        std::vector<ner_sample_type> samples;
+        std::vector<text_sample_type> samples;
         std::vector<unsigned long> labels;
         samples.reserve(contents.size());
         labels.reserve(text_labels.size());
         for (unsigned long i = 0; i < contents.size(); ++i) {
-            //TODO change into feature vectors here
-//            samples.push_back( sentence_to_feats(tfe, contents[i]) );
+            const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(tfe, contents[i]);
+            samples.push_back( extract_text_features(contents[i], sent) );
             labels.push_back( text_labels[i] );
         }
         randomize_samples(samples, labels);
@@ -236,7 +236,7 @@ namespace mitie
         cout << "now do training" << endl;
         cout << "num training samples: " << samples.size() << endl;
 
-        svm_multiclass_linear_trainer<sparse_linear_kernel<ner_sample_type>,unsigned long> trainer;
+        svm_multiclass_linear_trainer<sparse_linear_kernel<text_sample_type>,unsigned long> trainer;
 
         trainer.set_c(300);
         trainer.set_num_threads(num_threads);
