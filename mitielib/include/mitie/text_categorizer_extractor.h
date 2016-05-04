@@ -1,9 +1,6 @@
-//
-// Created by yichao on 4/29/16.
-//
 
-#ifndef MITIE_TEXT_CATEGORIZER_EXTRACTOR_H
-#define MITIE_TEXT_CATEGORIZER_EXTRACTOR_H
+#ifndef MITIE_TexT_CATEGORIZER_EXTRACTOR_H
+#define MITIE_TexT_CATEGORIZER_EXTRACTOR_H
 
 #include <mitie/total_word_feature_extractor.h>
 #include <mitie/ner_feature_extraction.h>
@@ -48,7 +45,7 @@ namespace mitie
         /*!
             requires
                 - df must be designed to work with fe (i.e. it must have been trained with
-                  features from fe and extract_ner_chunk_features()).
+                  features from fe and extract_text_features()).
                 - df.number_of_classes() => tag_name_strings.size()
                   (i.e. the classifier needs to predict all the possible tags and also
                   optionally a "not seen" tag which it does by predicting a value >=
@@ -79,57 +76,46 @@ namespace mitie
 
         void predict(
                 const std::vector<std::string>& sentence,
-                unsigned long& text_tag,
+                string& text_tag,
                 double& text_score
         ) const;
         /*!
             ensures
-                - Runs the named entity recognizer on the sequence of tokenized words
-                  inside sentence.  The detected named entities are stored into chunks.
-                - The identified named entities are listed inside chunks in the order in
-                  which they appeared in the input sentence.
-                - for all valid i:
-                    - #chunk_tags[i] == the label for the entity at location #chunks[i].  Moreover,
-                      chunk tag ID numbers are contiguous and start at 0.  Therefore we have:
-                        - 0 <= #chunk_tags[i] < get_tag_name_strings().size()
-                    - #chuck_score[i] == the score for the entity at location #chunks[i]. The value
+                - Runs the text categorizer on the sequence of tokenized words
+                  inside sentence.  The detected tag and score are stored into
+                  text_tag and text_score repectively.
+                - #text_tag == the detected label for the text. Note, such tag
+                  is in the range of get_tag_name_strings(), plus an optional "Unseen" label.
+                - #text_score == the score for the detected label. The value
                       represents a confidence score, but does not represent a probability. Accordingly,
                       the value may range outside of the closed interval of 0 to 1. A larger value
                       represents a higher confidence. A value < 0 indicates that the label is likely
                       incorrect. That is, the canonical decision threshold is at 0.
-                    - #chunks[i] == a half open range indicating where the entity is within
-                      sentence.  In particular, the entity is composed of the tokens
-                      sentence[#chunks[i].first] through sentence[#chunks[i].second-1].
-                    - The textual label for the i-th entity is get_tag_name_strings()[#chunk_tags[i]].
         !*/
 
         void operator() (
                 const std::vector<std::string>& sentence,
-                unsigned long& text_tag
+                string& text_tag
         ) const;
         /*!
             ensures
-                - Runs the named entity recognizer on the sequence of tokenized words
-                  inside sentence.  The detected named entities are stored into chunks.
-                - #chunks == the locations of the named entities.
-                - The identified named entities are listed inside chunks in the order in
-                  which they appeared in the input sentence.
-                - #chunks.size() == #chunk_tags.size()
-                - for all valid i:
-                    - #chunk_tags[i] == the label for the entity at location #chunks[i].  Moreover,
-                      chunk tag ID numbers are contiguous and start at 0.  Therefore we have:
-                        - 0 <= #chunk_tags[i] < get_tag_name_strings().size()
-                    - #chunks[i] == a half open range indicating where the entity is within
-                      sentence.  In particular, the entity is composed of the tokens
-                      sentence[#chunks[i].first] through sentence[#chunks[i].second-1].
-                    - The textual label for the i-th entity is get_tag_name_strings()[#chunk_tags[i]].
+                - Runs the text categorizer on the sequence of tokenized words
+                  inside sentence.  The detected tag and score are stored into
+                  text_tag and text_score repectively.
+                - #text_tag == the detected label for the text. Note, such tag
+                  is in the range of get_tag_name_strings(), plus an optional "Unseen" label.
+                - #text_score == the score for the detected label. The value
+                      represents a confidence score, but does not represent a probability. Accordingly,
+                      the value may range outside of the closed interval of 0 to 1. A larger value
+                      represents a higher confidence. A value < 0 indicates that the label is likely
+                      incorrect. That is, the canonical decision threshold is at 0.
         !*/
 
         const std::vector<std::string>& get_tag_name_strings (
         ) const { return tag_name_strings; }
         /*!
             ensures
-                - Returns a vector that maps entity numeric ID tags into their string labels.
+                - Returns a vector that maps text numeric ID tags into their string labels.
         !*/
 
         friend void serialize(const text_categorizer_extractor& item, std::ostream& out)
@@ -179,4 +165,4 @@ namespace mitie
     };
 }
 
-#endif //MITIE_TEXT_CATEGORIZER_EXTRACTOR_H
+#endif //MITIE_TexT_CATEGORIZER_EXTRACTOR_H

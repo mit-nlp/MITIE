@@ -1,6 +1,3 @@
-// Copyright (C) 2014 Massachusetts Institute of Technology, Lincoln Laboratory
-// License: Boost Software License   See LICENSE.txt for the full license.
-// Authors: Davis E. King (davis@dlib.net)
 
 #include <mitie/text_categorizer_extractor.h>
 #include <mitie/text_feature_extraction.h>
@@ -55,14 +52,16 @@ namespace mitie
     void text_categorizer_extractor::
     predict (
         const std::vector<std::string>& sentence,
-        unsigned long& text_tag,
+        string& text_tag,
         double& text_score
     ) const {
         const std::vector<matrix<float, 0, 1> > &sent = sentence_to_feats(fe, sentence);
 
         // now label the document
         const std::pair<unsigned long, double> temp = df.predict(extract_text_features(sentence, sent));
-        text_tag = temp.first;
+        unsigned long text_tag_id = temp.first;
+        if(text_tag_id < tag_name_strings.size()) text_tag = tag_name_strings[text_tag_id];
+        else text_tag = "Unseen";
         text_score = temp.second;
     }
 
@@ -71,14 +70,16 @@ namespace mitie
     void text_categorizer_extractor::
     operator() (
         const std::vector<std::string>& sentence,
-        unsigned long& text_tag
+        string& text_tag
     ) const
     {
         const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
 
         // now label the document
         const std::pair<unsigned long, double> temp = df.predict(extract_text_features(sentence, sent));
-        text_tag = temp.first;
+        unsigned long text_tag_id = temp.first;
+        if(text_tag_id < tag_name_strings.size()) text_tag = tag_name_strings[text_tag_id];
+        else text_tag = "Unseen";
     }
 
 // ----------------------------------------------------------------------------------------

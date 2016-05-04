@@ -14,15 +14,15 @@ using namespace mitie;
 
 int main(int argc, char** argv) {
     /*
-        When you train a named_entity_extractor you need to get a dataset of sentences (or
-        sentence or paragraph length chunks of text) where each sentence is annotated with
-        the entities you want to find.  For example, if we wanted to find all the names of
-        people and organizations then we would need to get a bunch of sentences with
-        examples of person names and organizations in them.  Here is an example:
-            My name is Davis King and I work for MIT.
-        "Davis King" is a person name and "MIT" is an organization.  
+        When you train a text_categorizer_extractor you need to get a dataset of documents (or
+        sentence or paragraph length chunks of text) where each document is annotated with
+        the label you want to find.  For example, if we wanted to detect the sentiment
+        (positive or negative) of a sentence, then we would need to get a bunch of sentences
+        with examples of both positive and negative ones.  Here is an example:
+            Positive expression: It is so happy and exciting to know you
+            Negative expression: What a black and bad day
 
-        You then give MITIE these example sentences with their entity annotations and it will
+        You then give MITIE these example sentences with their labels and it will
         learn to detect them.  That is what we do below.  
     */
 
@@ -34,19 +34,22 @@ int main(int argc, char** argv) {
     sentence.push_back("am");
     sentence.push_back("so");
     sentence.push_back("happy");
-    sentence.push_back("today");
-    sentence.push_back("!");
+    sentence.push_back("and");
+    sentence.push_back("exciting");
+    sentence.push_back("to");
+    sentence.push_back("make");
+    sentence.push_back("this");
 
     std::vector<std::string> sentence2;
     sentence2.push_back("What");
     sentence2.push_back("a");
-    sentence2.push_back("damn");
+    sentence2.push_back("black");
+    sentence2.push_back("and");
     sentence2.push_back("bad");
     sentence2.push_back("day");
-    sentence2.push_back(".");
 
     // Now that we have some annotated example sentences we can create the object that does
-    // the actual training, the ner_trainer.  The constructor for this object takes a string 
+    // the actual training, the text_categorizer_trainer.  The constructor for this object takes a string
     // that should contain the file name for a saved mitie::total_word_feature_extractor.
     // The total_word_feature_extractor is MITIE's primary method for analyzing words and
     // is created by the tool in the MITIE/tools/wordrep folder.  The wordrep tool analyzes
@@ -78,14 +81,14 @@ int main(int argc, char** argv) {
     // when using larger training datasets.  So be patient.
     text_categorizer_extractor categorizer = trainer.train();
 
-    // Now that training is done we can save the ner object to disk like so.  This will
-    // allow you to load the model back in using mitie_load_named_entity_extractor("new_ner_model.dat").
+    // Now that training is done we can save the categorizer object to disk like so.  This will
+    // allow you to load the model back in using mitie_load_text_categorizer_extractor("new_categorizer_model.dat").
     serialize("new_categorizer_model.dat") << "mitie::text_categorizer_extractor" << categorizer;
 
 
-    // But now let's try out the ner object.  It was only trained on a small dataset but it
+    // But now let's try out the categorizer.  It was only trained on a small dataset but it
     // has still learned a little.  So let's give it a whirl.  But first, print a list of
-    // possible tags.  In this case, it is just "person" and "org".
+    // possible labels.  In this case, it is just "positive" and "negative".
     const std::vector<string> tagstr = categorizer.get_tag_name_strings();
     cout << "The tagger supports " << tagstr.size() << " tags:" << endl;
     for (unsigned int i = 0; i < tagstr.size(); ++i)
@@ -93,20 +96,18 @@ int main(int argc, char** argv) {
 
     // Now let's make up a test sentence
     std::vector<std::string> sentence3;
-    sentence3.push_back("This");
+    sentence3.push_back("It");
     sentence3.push_back("is");
-    sentence3.push_back("a");
-    sentence3.push_back("sunshine");
-    sentence3.push_back("day");
-    sentence3.push_back("!");
+    sentence3.push_back("really");
+    sentence3.push_back("exciting");
 
-    unsigned long text_tag;
+    string text_tag;
     double text_score;
     categorizer.predict(sentence3, text_tag, text_score);
-    // Happily, it found the correct answers, "John Becker" and "HBU" in this case which we
+    // Happily, it found the correct answers, "Positive", in this case which we
     // print out below.
 
-    cout << "   This is a " << tagstr[text_tag] << " text, with the score as " << text_score << endl;
+    cout << "This is a " << text_tag << " text, with score as " << text_score << endl;
 }
 
 // ----------------------------------------------------------------------------------------
