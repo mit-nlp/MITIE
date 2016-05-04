@@ -131,6 +131,7 @@ namespace mitie
         friend void deserialize(text_categorizer_extractor& item, std::istream& in)
         {
             int version = 2;
+            dlib::deserialize(version, in);
             dlib::deserialize(item.fingerprint, in);
             dlib::deserialize(item.tag_name_strings, in);
             deserialize(item.fe, in);

@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
 
     // Now that training is done we can save the categorizer object to disk like so.  This will
     // allow you to load the model back in using mitie_load_text_categorizer_extractor("new_categorizer_model.dat").
-    serialize("new_categorizer_model.dat") << "mitie::text_categorizer_extractor" << categorizer;
+    serialize("new_categorizer_model.dat") << "mitie::text_categorizer" << categorizer;
 
 
     // But now let's try out the categorizer.  It was only trained on a small dataset but it
