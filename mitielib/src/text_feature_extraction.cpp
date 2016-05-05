@@ -5,20 +5,6 @@ using namespace dlib;
 
 namespace mitie
 {
-    std::vector<matrix<float,0,1> > sentence_to_feats (
-            const total_word_feature_extractor& fe,
-            const std::vector<std::string>& sentence
-    )
-    {
-        std::vector<matrix<float,0,1> > temp;
-        temp.resize(sentence.size());
-        for (unsigned long i = 0; i < sentence.size(); ++i)
-            fe.get_feature_vector(sentence[i], temp[i]);
-        return temp;
-    }
-
-// ----------------------------------------------------------------------------------------
-
     const unsigned long max_feat = 500000;
     inline std::pair<dlib::uint32,double> make_feat (
             const std::pair<uint64,uint64>& hash

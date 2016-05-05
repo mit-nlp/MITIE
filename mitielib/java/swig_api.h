@@ -9,9 +9,11 @@
 #ifdef SWIG
 %include "std_string.i"
 %include "std_vector.i"
+%include "std_pair.i"
 %template(StringVector)         std::vector<std::string>;
 %template(TokenIndexVector)     std::vector<TokenIndexPair>;
 %template(EntityMentionVector)  std::vector<EntityMention>;
+%template(SDPair)               std::pair<std::string, double>;
 #endif
 
 
@@ -23,6 +25,8 @@
 #include <mitie/binary_relation_detector.h>
 #include <mitie/named_entity_extractor.h>
 #include <mitie/ner_trainer.h>
+#include <mitie/text_categorizer_extractor.h>
+#include <mitie/text_categorizer_trainer.h>
 
 
 // ----------------------------------------------------------------------------------------
@@ -298,7 +302,91 @@ private:
 };
 
 // ----------------------------------------------------------------------------------------
+
+class TextCategorizer
+{
+public:
+    TextCategorizer (
+            const std::string& filename
+    )
+    {
+        std::string classname;
+        dlib::deserialize(filename) >> classname;
+        if (classname != "mitie::text_categorizer")
+            throw dlib::error("This file does not contain a mitie::text_categorizer. Contained: " + classname);
+        dlib::deserialize(filename) >> classname >> impl;
+    }
+
+    TextCategorizer (const std::string& pureModelName,
+                         const std::string& extractorName
+    ) :impl(pureModelName, extractorName)
+    {
+
+    }
+
+    std::vector<std::string> getPossibleNerTags (
+    ) const
+    {
+        return impl.get_tag_name_strings();
+    }
+
+    void saveToDisk (
+            const std::string& filename
+    ) const
+    {
+        dlib::serialize(filename) << "mitie::text_categorizer" << impl;
+    }
+
+    std::pair<std::string, double> categorizeDoc (
+            const std::vector<std::string>& words
+    ) const
+    {
+        std::string predicted_label;
+        double predicted_score;
+        impl.predict(words, predicted_label, predicted_score);
+        return std::make_pair(predicted_label, predicted_score);
+    }
+
+private:
+    mitie::text_categorizer_extractor impl;
+};
 // ----------------------------------------------------------------------------------------
+
+class TextCategorizerTrainer
+{
+public:
+    TextCategorizerTrainer(const std::string& filename) : impl(filename)
+    {
+    }
+
+    void add(const std::vector<std::string>& words,
+             const std::string& label)
+    {
+        impl.add(words, label);
+    }
+
+    void setThreadNum(unsigned long num)
+    {
+        impl.set_num_threads(num);
+    }
+
+    void train(const std::string& filename) const
+    {
+        mitie::text_categorizer_extractor obj = impl.train();
+        dlib::serialize(filename) << "mitie::text_categorizer" << obj;
+    }
+
+    void trainSeparateModels(const std::string& filename) const
+    {
+        mitie::text_categorizer_extractor obj = impl.train();
+        dlib::serialize(filename)
+        << "mitie::text_categorizer_pure_model"
+        << obj.get_df()
+        << obj.get_tag_name_strings();
+    }
+private:
+    mitie::text_categorizer_trainer impl;
+};
 // ----------------------------------------------------------------------------------------
 
 
