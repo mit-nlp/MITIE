@@ -45,10 +45,7 @@ namespace mitie
         result.reserve(1000);
 
         /*
-         * TODO: add CBOW or other schemes to better represent the document vector by reserving
-         * the sequence, word occurrence, and/or other useful information
-         *
-         * Currently, we simply use the average word vector to represent the doc vector
+         * Here, we use the average word vector to represent the doc vector
          */
         matrix<float,0,1> all_sum;
         for (unsigned long i = 0L; i < words.size(); ++i)
@@ -64,6 +61,43 @@ namespace mitie
         for (long i = 0; i < all_sum.size(); ++i)
             result.push_back(make_pair(i+max_feat, all_sum(i)));
 
+        return result;
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    text_sample_type extract_BoW_features (
+            const std::vector<std::string>& words
+    )
+    {
+        DLIB_CASSERT(words.size() > 0, "words can't be empty");
+
+        text_sample_type result;
+        result.reserve(1000);
+
+        /*
+         * Here, we use the bag-of-words hashing vectorizer to represent the doc vector
+         */
+
+        std::vector<double> hash_vectorizer(1000, 0);
+
+        for (unsigned long i = 0L; i < words.size(); ++i)
+        {
+            std::pair<uint64,uint64> hash = shash(words[i], 0);
+            const double rand_sign = (hash.first&1) ? 1 : -1;
+            unsigned long idx = hash.second % 1000;
+            if (rand_sign == 1)
+                hash_vectorizer[idx] += 1;
+            else
+                hash_vectorizer[idx] -= 1;
+        }
+
+        make_sparse_vector_inplace(result);
+        // append on the dense part of the feature space
+        for (long i = 0; i < hash_vectorizer.size(); ++i)
+            result.push_back(make_pair(i+max_feat, hash_vectorizer[i]));
+
+        hash_vectorizer.clear();
         return result;
     }
 }

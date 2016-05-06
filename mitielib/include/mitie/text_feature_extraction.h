@@ -75,7 +75,18 @@ namespace mitie
     !*/
 
 // ----------------------------------------------------------------------------------------
+    text_sample_type extract_BoW_features (
+            const std::vector<std::string>& words
+    );
+    /*!
+        ensures
+            - returns a sparse feature vector using bag-of-words to describes
+              the property of the range of words starting with first word and
+              ending just before the last words.
+              The feature vector will be suitable for predicting the type of document.
+    !*/
 
+// ----------------------------------------------------------------------------------------
 }
 
 #endif // MIT_LL_MITIE_TexT_FEATURE_EXTRACTION_H_
