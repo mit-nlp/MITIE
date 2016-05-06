@@ -58,7 +58,7 @@ namespace mitie
         const std::vector<matrix<float, 0, 1> > &sent = sentence_to_feats(fe, sentence);
 
         // now label the document
-        const std::pair<unsigned long, double> temp = df.predict(extract_text_features(sentence, sent));
+        const std::pair<unsigned long, double> temp = df.predict( extract_combined_features(sentence, sent) );
         unsigned long text_tag_id = temp.first;
         if(text_tag_id < tag_name_strings.size()) text_tag = tag_name_strings[text_tag_id];
         else text_tag = "Unseen";
@@ -76,7 +76,7 @@ namespace mitie
         const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
 
         // now label the document
-        const std::pair<unsigned long, double> temp = df.predict(extract_text_features(sentence, sent));
+        const std::pair<unsigned long, double> temp = df.predict( extract_combined_features(sentence, sent) );
         unsigned long text_tag_id = temp.first;
         if(text_tag_id < tag_name_strings.size()) text_tag = tag_name_strings[text_tag_id];
         else text_tag = "Unseen";

@@ -11,6 +11,8 @@
 #include <dlib/matrix.h>
 #include <mitie/total_word_feature_extractor.h>
 
+using namespace dlib;
+
 namespace mitie
 {
 
@@ -75,6 +77,20 @@ namespace mitie
                 - for all valid i:
                     V[i] == the word feature vector for the word sentence[i]
     !*/
+
+// ----------------------------------------------------------------------------------------
+
+    std::pair<dlib::uint32,double> make_feat (
+            const std::pair<uint64,uint64>& hash
+    );
+
+
+// ----------------------------------------------------------------------------------------
+
+    std::pair<uint64,uint64> shash(
+            const std::string& word,
+            const uint32 seed
+    );
 
 // ----------------------------------------------------------------------------------------
 

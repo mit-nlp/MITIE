@@ -4,8 +4,6 @@
 
 #include <mitie/text_categorizer_trainer.h>
 #include <dlib/svm_threaded.h>
-#include <dlib/optimization.h>
-#include <dlib/misc_api.h>
 
 using namespace std;
 using namespace dlib;
@@ -228,8 +226,7 @@ namespace mitie
         labels.reserve(text_labels.size());
         for (unsigned long i = 0; i < contents.size(); ++i) {
             const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(tfe, contents[i]);
-            // use extract_combined_features(contents[i], sent) to combine the word features and BoW features
-            samples.push_back( extract_text_features(contents[i], sent) );
+            samples.push_back( extract_combined_features(contents[i], sent) );
             labels.push_back( text_labels[i] );
         }
         randomize_samples(samples, labels);

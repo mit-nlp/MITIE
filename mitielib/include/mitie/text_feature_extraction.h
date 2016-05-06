@@ -7,6 +7,7 @@
 #include <dlib/uintn.h>
 #include <dlib/matrix.h>
 #include <mitie/total_word_feature_extractor.h>
+#include <mitie/ner_feature_extraction.h>
 
 namespace mitie
 {
