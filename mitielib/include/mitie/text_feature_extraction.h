@@ -87,6 +87,19 @@ namespace mitie
     !*/
 
 // ----------------------------------------------------------------------------------------
+    text_sample_type extract_combined_features (
+            const std::vector<std::string>& words,
+            const std::vector<dlib::matrix<float,0,1> >& feats
+    );
+    /*!
+        ensures
+            - returns a feature vector that append bag-of-words hashing vector with
+              total words feature vectors together, to represent the doc.
+              The feature vector is expected to be more suitable for predicting the
+              type of document.
+    !*/
+
+// ----------------------------------------------------------------------------------------
 }
 
 #endif // MIT_LL_MITIE_TexT_FEATURE_EXTRACTION_H_

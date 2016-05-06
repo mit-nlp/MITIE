@@ -79,13 +79,13 @@ namespace mitie
          * Here, we use the bag-of-words hashing vectorizer to represent the doc vector
          */
 
-        std::vector<double> hash_vectorizer(1000, 0);
+        std::vector<double> hash_vectorizer(10000, 0);
 
         for (unsigned long i = 0L; i < words.size(); ++i)
         {
             std::pair<uint64,uint64> hash = shash(words[i], 0);
             const double rand_sign = (hash.first&1) ? 1 : -1;
-            unsigned long idx = hash.second % 1000;
+            unsigned long idx = hash.second % 10000;
             if (rand_sign == 1)
                 hash_vectorizer[idx] += 1;
             else
@@ -98,6 +98,18 @@ namespace mitie
             result.push_back(make_pair(i+max_feat, hash_vectorizer[i]));
 
         hash_vectorizer.clear();
+        return result;
+    }
+
+    // ----------------------------------------------------------------------------------------
+    text_sample_type extract_combined_features (
+            const std::vector<std::string>& words,
+            const std::vector<matrix<float,0,1> >& feats
+    )
+    {
+        text_sample_type result = extract_text_features(words, feats);
+        text_sample_type result_BoW = extract_BoW_features(words);
+        result.insert(result.end(), result_BoW.begin(), result_BoW.end());
         return result;
     }
 }
