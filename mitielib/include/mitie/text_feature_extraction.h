@@ -7,7 +7,6 @@
 #include <dlib/uintn.h>
 #include <dlib/matrix.h>
 #include <mitie/total_word_feature_extractor.h>
-#include <mitie/text_feature_extraction.h>
 
 namespace mitie
 {
@@ -57,20 +56,6 @@ namespace mitie
     {
         dlib::deserialize(item.num_feats, in);
     }
-
-// ----------------------------------------------------------------------------------------
-
-    std::vector<dlib::matrix<float,0,1> > sentence_to_feats (
-        const total_word_feature_extractor& fe,
-        const std::vector<std::string>& sentence
-    );
-    /*!
-        ensures
-            - returns an array of vectors V such that:
-                - V.size() == sentence.size()
-                - for all valid i:
-                    V[i] == the word feature vector for the word sentence[i]
-    !*/
 
 // ----------------------------------------------------------------------------------------
 
