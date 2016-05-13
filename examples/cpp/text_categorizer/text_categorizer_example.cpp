@@ -51,7 +51,7 @@ int main(int argc, char** argv)
 
         // Load MITIE's text categorizer from disk.  Each file in the MITIE-models
         // folder begins with a string containing the name of the serialized class.  In
-        // this case classname contains "mitie::text_categorizer_extractor".  It can be used to
+        // this case classname contains "mitie::text_categorizer".  It can be used to
         // attribute any particular file into pre-defined types.  However, in this example we don't need
         // it so it is just ignored.
         string classname;

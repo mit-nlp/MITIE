@@ -25,7 +25,7 @@
 #include <mitie/binary_relation_detector.h>
 #include <mitie/named_entity_extractor.h>
 #include <mitie/ner_trainer.h>
-#include <mitie/text_categorizer_extractor.h>
+#include "text_categorizer.h"
 #include <mitie/text_categorizer_trainer.h>
 
 

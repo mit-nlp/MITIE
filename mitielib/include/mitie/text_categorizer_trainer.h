@@ -5,7 +5,7 @@
 #include <string>
 #include <utility>
 #include <mitie/total_word_feature_extractor.h>
-#include <mitie/text_categorizer_extractor.h>
+#include <mitie/text_categorizer.h>
 #include <mitie/text_feature_extraction.h>
 #include <dlib/svm.h>
 #include <map>
@@ -107,13 +107,13 @@ namespace mitie
                 - #get_beta() == new_beta
         !*/
 
-        text_categorizer_extractor train (
+        text_categorizer train (
         ) const;
         /*!
             requires
                 - size() > 0
             ensures
-                - Trains a text_categorizer_extractor based on the training instances given to
+                - Trains a text_categorizer based on the training instances given to
                   this object via add() calls and returns the result.
         !*/
 

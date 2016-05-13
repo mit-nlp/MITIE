@@ -34,7 +34,7 @@ if (NOT TARGET mitie)
          src/conll_parser.cpp
          src/ner_trainer.cpp
          src/text_categorizer_trainer.cpp
-         src/text_categorizer_extractor.cpp
+           src/text_categorizer.cpp
          src/text_feature_extraction.cpp
            )
 

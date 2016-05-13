@@ -95,7 +95,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    text_categorizer_extractor text_categorizer_trainer::
+    text_categorizer text_categorizer_trainer::
     train (
     ) const
     /*!
@@ -103,7 +103,7 @@ namespace mitie
             - size() > 0
     !*/
     {
-        DLIB_CASSERT(size() > 0, "You can't train a text_categorizer_extractor if you don't give any training data.");
+        DLIB_CASSERT(size() > 0, "You can't train a text_categorizer if you don't give any training data.");
 
         // timestaper used for printouts
         dlib::timestamper ts;
@@ -121,16 +121,13 @@ namespace mitie
 
         cout << "Train classifier" << endl;
 
-	    dlib::uint64 start = ts.get_timestamp();
-
+        dlib::uint64 start = ts.get_timestamp();
         classifier_type df = train_text_categorizer_classifier();
-
-	    dlib::uint64 stop = ts.get_timestamp();
-
-	    cout << "Training time: " << (stop - start)/1000/1000 << " seconds." << endl;
+        dlib::uint64 stop = ts.get_timestamp();
+        cout << "Training time: " << (stop - start)/1000/1000 << " seconds." << endl;
         cout << "df.number_of_classes(): "<< df.number_of_classes() << endl << endl;
 
-        return text_categorizer_extractor(get_all_labels(), tfe, df);
+        return text_categorizer(get_all_labels(), tfe, df);
     }
 
 // ----------------------------------------------------------------------------------------

@@ -10,7 +10,7 @@ set(source_files
    ../src/named_entity_extractor.cpp
    ../src/ner_feature_extraction.cpp
    ../src/ner_trainer.cpp
-   ../src/text_categorizer_extractor.cpp
+        ../src/text_categorizer.cpp
    ../src/text_feature_extraction.cpp
    ../src/text_categorizer_trainer.cpp
    ../src/stem.c

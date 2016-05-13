@@ -10,7 +10,7 @@
 
 namespace mitie
 {
-    class text_categorizer_extractor
+    class text_categorizer
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
@@ -24,31 +24,27 @@ namespace mitie
         !*/
     public:
 
-        text_categorizer_extractor():fingerprint(0){}
+        text_categorizer():fingerprint(0){}
         /*!
             ensures
                 - When used this object won't output any entities.   You need to either use
-                  the other constructor or deserialize a saved text_categorizer_extractor to
+                  the other constructor or deserialize a saved text_categorizer to
                   get something that is useful.
         !*/
 
-        text_categorizer_extractor(
+        text_categorizer(
                 const std::vector<std::string>& tag_name_strings,
                 const total_word_feature_extractor& fe,
                 const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& df
         );
 
-        text_categorizer_extractor(const std::string& pureModelName,
-                               const std::string& extractorName
-        );
-
         /*!
             requires
-                - df must be designed to work with fe (i.e. it must have been trained with
-                  features from fe and extract_text_features()).
+                - df can be designed to work with fe (i.e. it should have been trained with
+                  features from fe and text_categorizer::train()).
                 - df.number_of_classes() => tag_name_strings.size()
                   (i.e. the classifier needs to predict all the possible tags and also
-                  optionally a "not seen" tag which it does by predicting a value >=
+                  optionally a "Unseen" tag which it does by predicting a value >=
                   tag_name_strings.size())
                 - for all i where 0 <= i < tag_name_strings.size():
                     - df.get_labels() contains an element equal to i.
@@ -58,7 +54,30 @@ namespace mitie
             ensures
                 - Just loads the given objects into *this.
                 - The interpretation of tag_name_strings is that it maps the output of df
-                  into a meaningful type name for the text.
+                  into a meaningful text name for the NER tag.
+        !*/
+
+        text_categorizer(const std::string& pureModelName,
+                               const std::string& extractorName
+        );
+
+        /*!
+            requires
+                - pureModelName must be the right path to the serialized df in the disk
+                - extractorName must be the right path to the serialized fe in the disk
+            ensures
+                - Loads the given objects into *this.
+                - This is necessary, if the combined "word feature" and "Bag-of-Words" will be used
+        !*/
+
+        text_categorizer(const std::string& pureModelName);
+
+        /*!
+            requires
+                - pureModelName must be the right path to the serialized df in the disk
+            ensures
+                - Just loads the given objects into *this.
+                - Call this constructor, if only "Bag-of-Words" will be used.
         !*/
 
         dlib::uint64 get_fingerprint(
@@ -118,7 +137,7 @@ namespace mitie
                 - Returns a vector that maps text numeric ID tags into their string labels.
         !*/
 
-        friend void serialize(const text_categorizer_extractor& item, std::ostream& out)
+        friend void serialize(const text_categorizer& item, std::ostream& out)
         {
             int version = 2;
             dlib::serialize(version, out);
@@ -128,7 +147,7 @@ namespace mitie
             serialize(item.df, out);
         }
 
-        friend void deserialize(text_categorizer_extractor& item, std::istream& in)
+        friend void deserialize(text_categorizer& item, std::istream& in)
         {
             int version = 2;
             dlib::deserialize(version, in);

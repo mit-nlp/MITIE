@@ -1,6 +1,6 @@
 
-#include <mitie/text_categorizer_extractor.h>
 #include <mitie/text_feature_extraction.h>
+#include <mitie/text_categorizer.h>
 
 using namespace dlib;
 
@@ -9,8 +9,8 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    text_categorizer_extractor::
-    text_categorizer_extractor(
+    text_categorizer::
+    text_categorizer(
         const std::vector<std::string>& tag_name_strings_,
         const total_word_feature_extractor& fe_,
         const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<text_sample_type>,unsigned long>& df_
@@ -28,9 +28,9 @@ namespace mitie
         compute_fingerprint();
     }
 
-    text_categorizer_extractor::
-    text_categorizer_extractor(const std::string& pureModelName,
-                           const std::string& extractorName
+    text_categorizer::
+    text_categorizer(const std::string& pureModelName,
+                     const std::string& extractorName
     ) {
         std::string classname;
         dlib::deserialize(pureModelName) >> classname;
@@ -49,7 +49,7 @@ namespace mitie
     }
 // ----------------------------------------------------------------------------------------
 
-    void text_categorizer_extractor::
+    void text_categorizer::
     predict (
         const std::vector<std::string>& sentence,
         string& text_tag,
@@ -58,7 +58,7 @@ namespace mitie
         const std::vector<matrix<float, 0, 1> > &sent = sentence_to_feats(fe, sentence);
 
         // now label the document
-        const std::pair<unsigned long, double> temp = df.predict( extract_combined_features(sentence, sent) );
+        const std::pair<unsigned long, double> temp = df.predict( extract_BoW_features(sentence) );
         unsigned long text_tag_id = temp.first;
         if(text_tag_id < tag_name_strings.size()) text_tag = tag_name_strings[text_tag_id];
         else text_tag = "Unseen";
@@ -67,7 +67,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void text_categorizer_extractor::
+    void text_categorizer::
     operator() (
         const std::vector<std::string>& sentence,
         string& text_tag
@@ -76,7 +76,7 @@ namespace mitie
         const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
 
         // now label the document
-        const std::pair<unsigned long, double> temp = df.predict( extract_combined_features(sentence, sent) );
+        const std::pair<unsigned long, double> temp = df.predict( extract_BoW_features(sentence) );
         unsigned long text_tag_id = temp.first;
         if(text_tag_id < tag_name_strings.size()) text_tag = tag_name_strings[text_tag_id];
         else text_tag = "Unseen";

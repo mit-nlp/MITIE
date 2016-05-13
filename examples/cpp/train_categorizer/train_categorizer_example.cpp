@@ -14,7 +14,7 @@ using namespace mitie;
 
 int main(int argc, char** argv) {
     /*
-        When you train a text_categorizer_extractor you need to get a dataset of documents (or
+        When you train a text_categorizer you need to get a dataset of documents (or
         sentence or paragraph length chunks of text) where each document is annotated with
         the label you want to find.  For example, if we wanted to detect the sentiment
         (positive or negative) of a sentence, then we would need to get a bunch of sentences
@@ -79,10 +79,13 @@ int main(int argc, char** argv) {
     trainer.set_num_threads(4);
     // This function does the work of training.  Note that it can take a long time to run
     // when using larger training datasets.  So be patient.
-    text_categorizer_extractor categorizer = trainer.train();
+    text_categorizer categorizer = trainer.train();
 
     // Now that training is done we can save the categorizer object to disk like so.  This will
-    // allow you to load the model back in using mitie_load_text_categorizer_extractor("new_categorizer_model.dat").
+    // allow you to load the model back in using the following codes
+    // string classname;
+    // text_categorizer_extractor categorizer;
+    // dlib::deserialize("new_categorizer_model.dat") >> classname >> categorizer;
     serialize("new_categorizer_model.dat") << "mitie::text_categorizer" << categorizer;
 
 
