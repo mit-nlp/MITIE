@@ -1,19 +1,23 @@
 /*
-    This example shows how to use the MITIE C++ API to train a text_categorizer_extractor.
+    This example shows how to use the MITIE C++ API to perform text categorizer by only using bag-of-words feature.
 */
 
-#include <mitie/ner_trainer.h>
-#include <mitie/text_categorizer_trainer.h>
+#include <mitie/conll_tokenizer.h>
 #include <iostream>
+#include <iomanip>
+#include <fstream>
+#include <cstdlib>
+#include <mitie/text_categorizer.h>
+#include <mitie/text_categorizer_trainer.h>
 
-using namespace dlib;
 using namespace std;
 using namespace mitie;
 
 // ----------------------------------------------------------------------------------------
 
-int main(int argc, char** argv) {
-    /*
+int main(int argc, char** argv)
+{
+/*
         When you train a text_categorizer you need to get a dataset of documents (or
         sentence or paragraph length chunks of text) where each document is annotated with
         the label you want to find.  For example, if we wanted to detect the sentiment
@@ -23,12 +27,12 @@ int main(int argc, char** argv) {
             Negative expression: What a black and bad day
 
         You then give MITIE these example sentences with their labels and it will
-        learn to detect them.  That is what we do below.  
+        learn to detect them.  That is what we do below.
     */
 
     // So let's make the first training example.  We use the sentence above.  Note that the
     // training API takes tokenized sentences.  It is up to you how you tokenize them, you
-    // can use the default conll_tokenizer that comes with MITIE or any other method you like.  
+    // can use the default conll_tokenizer that comes with MITIE or any other method you like.
     std::vector<std::string> sentence;
     sentence.push_back("I");
     sentence.push_back("am");
@@ -49,28 +53,13 @@ int main(int argc, char** argv) {
     sentence2.push_back("day");
 
     // Now that we have some annotated example sentences we can create the object that does
-    // the actual training, the text_categorizer_trainer.  The constructor for this object takes a string
-    // that should contain the file name for a saved mitie::total_word_feature_extractor.
-    // The total_word_feature_extractor is MITIE's primary method for analyzing words and
-    // is created by the tool in the MITIE/tools/wordrep folder.  The wordrep tool analyzes
-    // a large document corpus, learns important word statistics, and then outputs a
-    // total_word_feature_extractor that is knowledgeable about a particular language (e.g.
-    // English).  MITIE comes with a total_word_feature_extractor for English so that is
-    // what we use here.  But if you need to make your own you do so using a command line 
-    // statement like:
-    //    wordrep -e a_folder_containing_only_text_files
-    // and wordrep will create a total_word_feature_extractor.dat based on the supplied
-    // text files.  Note that wordrep can take a long time to run or require a lot of RAM
-    // if a large text dataset is given.  So use a powerful machine and be patient.
-    if (argc != 2) {
-        cout << "You must give the path to the MITIE English total_word_feature_extractor.dat file." << endl;
-        cout << "So run this program with a command like: " << endl;
-        cout << "./train_categorizer_example ../../../MITIE-models/english/total_word_feature_extractor.dat" << endl;
-        return 1;
-    }
-    text_categorizer_trainer trainer(argv[1]);
+    // the actual training, the text_categorizer_trainer.
+    // The constructor can take no parameter, only valid for the training of text categorizer
+    // with Bag-of-Words feature.
+
+    text_categorizer_trainer trainer;
     // Don't forget to add the training data.  Here we have only two examples, but for real
-    // uses you need to have thousands.  
+    // uses you need to have thousands.
     trainer.add(sentence, "positive");
     trainer.add(sentence2, "negative");
 
@@ -90,8 +79,8 @@ int main(int argc, char** argv) {
 
 
     // But now let's try out the categorizer.  It was only trained on a small dataset but it
-    // has still learned a little.  So let's give it a whirl.  But first, print a list of
-    // possible labels.  In this case, it is just "positive" and "negative".
+    // has still learned a little. First, print a list of possible labels.
+    // In this case, it is just "positive" and "negative".
     const std::vector<string> tagstr = categorizer.get_tag_name_strings();
     cout << "The tagger supports " << tagstr.size() << " tags:" << endl;
     for (unsigned int i = 0; i < tagstr.size(); ++i)

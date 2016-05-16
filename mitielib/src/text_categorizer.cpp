@@ -28,6 +28,8 @@ namespace mitie
         compute_fingerprint();
     }
 
+// ----------------------------------------------------------------------------------------
+
     text_categorizer::
     text_categorizer(const std::string& pureModelName,
                      const std::string& extractorName
@@ -49,16 +51,37 @@ namespace mitie
     }
 // ----------------------------------------------------------------------------------------
 
+    text_categorizer::
+    text_categorizer(const std::string& pureModelName)
+    {
+        std::string classname;
+        dlib::deserialize(pureModelName) >> classname;
+        if (classname != "mitie::text_categorizer_pure_model")
+            throw dlib::error(
+                    "This file does not contain a mitie::text_categorizer_extractor_pure_model. Contained: " + classname);
+
+        dlib::deserialize(pureModelName) >> classname >> df >> tag_name_strings;
+    }
+
+// ----------------------------------------------------------------------------------------
+
     void text_categorizer::
     predict (
         const std::vector<std::string>& sentence,
         string& text_tag,
         double& text_score
     ) const {
-        const std::vector<matrix<float, 0, 1> > &sent = sentence_to_feats(fe, sentence);
+
+        std::pair<unsigned long, double> temp;
+
+        if (fe.get_num_dimensions() == 0) {
+            temp = df.predict(extract_BoW_features(sentence));
+        } else {
+            const std::vector<matrix<float, 0, 1> > &sent = sentence_to_feats(fe, sentence);
+            temp = df.predict(extract_combined_features(sentence, sent));
+        }
 
         // now label the document
-        const std::pair<unsigned long, double> temp = df.predict( extract_BoW_features(sentence) );
         unsigned long text_tag_id = temp.first;
         if(text_tag_id < tag_name_strings.size()) text_tag = tag_name_strings[text_tag_id];
         else text_tag = "Unseen";
@@ -73,10 +96,16 @@ namespace mitie
         string& text_tag
     ) const
     {
-        const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
+        std::pair<unsigned long, double> temp;
+
+        if (fe.get_num_dimensions() == 0) {
+            temp = df.predict(extract_BoW_features(sentence));
+        } else {
+            const std::vector<matrix<float, 0, 1> > &sent = sentence_to_feats(fe, sentence);
+            temp = df.predict(extract_combined_features(sentence, sent));
+        }
 
         // now label the document
-        const std::pair<unsigned long, double> temp = df.predict( extract_BoW_features(sentence) );
         unsigned long text_tag_id = temp.first;
         if(text_tag_id < tag_name_strings.size()) text_tag = tag_name_strings[text_tag_id];
         else text_tag = "Unseen";

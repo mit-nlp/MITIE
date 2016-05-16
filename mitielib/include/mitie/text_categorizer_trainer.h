@@ -19,6 +19,17 @@ namespace mitie
                 This is a tool for training mitie::text_categorizer_extractor objects from a
                 set of annotated training data.
         !*/
+
+    public:
+        explicit text_categorizer_trainer (
+        );
+        /*!
+            ensures
+                - #get_beta() == 0.5
+                - #num_threads() == 4
+                - This function attempts to initialize a trainer for BoW based text classification.
+        !*/
+
     public:
         explicit text_categorizer_trainer (
                 const std::string& filename

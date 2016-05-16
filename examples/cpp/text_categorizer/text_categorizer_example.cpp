@@ -7,14 +7,14 @@
 #include <iomanip>
 #include <fstream>
 #include <cstdlib>
-#include <mitie/text_categorizer_extractor.h>
+#include <mitie/text_categorizer.h>
 
 using namespace std;
 using namespace mitie;
 
 // ----------------------------------------------------------------------------------------
 
-vector<string> tokenize_file (
+std::vector<string> tokenize_file (
         const string& filename
 )
 {
@@ -27,7 +27,7 @@ vector<string> tokenize_file (
     // The conll_tokenizer splits the contents of an istream into a bunch of words and is
     // MITIE's default tokenization method.
     conll_tokenizer tok(fin);
-    vector<string> tokens;
+    std::vector<string> tokens;
     string token;
     // Read the tokens out of the file one at a time and store into tokens.
     while(tok(token))
@@ -55,18 +55,18 @@ int main(int argc, char** argv)
         // attribute any particular file into pre-defined types.  However, in this example we don't need
         // it so it is just ignored.
         string classname;
-        text_categorizer_extractor categorizer;
+        text_categorizer categorizer;
         dlib::deserialize(argv[1]) >> classname >> categorizer;
 
         // Print out what kind of tags this categorizer can predict.
-        const vector<string> tagstr = categorizer.get_tag_name_strings();
+        const std::vector<string> tagstr = categorizer.get_tag_name_strings();
         cout << "The tagger supports "<< tagstr.size() <<" tags:" << endl;
         for (unsigned int i = 0; i < tagstr.size(); ++i)
             cout << "   " << tagstr[i] << endl;
 
 
         // Before we can try out the categorizer, we need to load some testing data.
-        vector<string> tokens = tokenize_file(argv[2]);
+        std::vector<string> tokens = tokenize_file(argv[2]);
 
         string text_tag;
         double text_score;

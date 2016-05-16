@@ -10,6 +10,14 @@ using namespace dlib;
 
 namespace mitie
 {
+
+// ----------------------------------------------------------------------------------------
+    text_categorizer_trainer::
+    text_categorizer_trainer ( ) : beta(0.5), num_threads(4)
+    {
+
+    }
+
 // ----------------------------------------------------------------------------------------
 
     text_categorizer_trainer::

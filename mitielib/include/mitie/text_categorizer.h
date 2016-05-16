@@ -45,7 +45,8 @@ namespace mitie
                 - df.number_of_classes() => tag_name_strings.size()
                   (i.e. the classifier needs to predict all the possible tags and also
                   optionally a "Unseen" tag which it does by predicting a value >=
-                  tag_name_strings.size())
+                  tag_name_strings.size(). If every sample data are properly labelled,
+                  such "Unseen" is not expected to appear though.)
                 - for all i where 0 <= i < tag_name_strings.size():
                     - df.get_labels() contains an element equal to i.
                       (All we are saying there is that the labels need to be contiguous
@@ -160,10 +161,8 @@ namespace mitie
         const total_word_feature_extractor& get_total_word_feature_extractor(
         ) const { return fe; }
 
-        const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& get_df() const {
-            return df;
-        };
-
+        const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& get_df(
+        ) const { return df; }
 
     private:
         void compute_fingerprint()
