@@ -8,17 +8,10 @@ extraction](http://blog.dlib.net/2014/04/mitie-completely-free-and-state-of-art.
 and [binary relation detection](http://blog.dlib.net/2014/07/mitie-v02-released-now-includes-python.html) 
 as well as tools for training custom extractors and relation detectors.  
 
-MITIE comes with trained models for English and Spanish.  The English named entity recognition model is 
-trained based on data from the English Gigaword news corpus, the CoNLL 2003 named entity recognition task,
-and ACE data.  The Spanish model is based on the Spanish Gigaword corpus and CoNLL 2002 named entity 
-recognition task.  There are also 21 English binary relation extraction models provided which
-were trained on a 
-[combination of Wikipedia and Freebase data](https://github.com/mit-nlp/MITIE/releases/download/v0.4/freebase_wikipedia_binary_relation_training_data_v1.0.tar.bz2).
+MITIE is built on top of [dlib](http://dlib.net), a high-performance machine-learning library[1], MITIE makes use of several state-of-the-art techniques including the use of distributional word embeddings[2] and Structural Support Vector Machines[3].  MITIE offers several pre-trained models providing varying levels of support for both English and Spanish, trained using a variety of linguistic resources (e.g., CoNLL 2003, ACE, [Wikipedia, Freebase](https://github.com/mit-nlp/MITIE/releases/download/v0.4/freebase_wikipedia_binary_relation_training_data_v1.0.tar.bz2), and Gigaword). The core MITIE software is written in C++, but bindings for several other software languages including Python, R, Java, C, and MATLAB allow a user to quickly integrate MITIE into his/her own applications.
 
-Additionally, the core library provides APIs in C, C++, Java, R, and Python 2.7.  Outside
-projects have created bindings for [OCaml](https://github.com/travisbrady/omitie) and 
-[.NET](https://github.com/BayardRock/MITIE-Dot-Net).  Future releases will 
-add bindings in Java, R, and possibly other languages.
+Outside projects have created API bindings for [OCaml](https://github.com/travisbrady/omitie) and 
+[.NET](https://github.com/BayardRock/MITIE-Dot-Net).  There is also an [interactive tool](https://github.com/Sotera/mitie-trainer) for labeling data and training MITIE.
 
 # Using MITIE
 
@@ -203,3 +196,11 @@ SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
 FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
+
+# References
+
+[1] Davis E. King. Dlib-ml: A Machine Learning Toolkit. Journal of Machine Learning Research 10, pp. 1755-1758, 2009.
+
+[2] Paramveer Dhillon, Dean Foster and Lyle Ungar, Eigenwords: Spectral Word Embeddings, Journal of Machine Learning Research (JMLR), 16, 2015.
+
+[3] T. Joachims, T. Finley, Chun-Nam Yu, Cutting-Plane Training of Structural SVMs, Machine Learning, 77(1):27-59, 2009.
