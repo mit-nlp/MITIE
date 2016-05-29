@@ -15,7 +15,7 @@ using namespace mitie;
 
 // ----------------------------------------------------------------------------------------
 
-int main(int argc, char** argv)
+int main()
 {
 /*
         When you train a text_categorizer you need to get a dataset of documents (or
