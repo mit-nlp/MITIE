@@ -4,7 +4,7 @@ SUBDIRS = tools/ner_stream examples/C/ner examples/C/relation_extraction example
 	  examples/cpp/train_relation_extraction examples/cpp/relation_extraction examples/cpp/text_categorizer \
 	  examples/cpp/train_categorizer examples/cpp/text_categorizer_BoW
 
-examples: tools/ner_stream examples/C/ner examples/C/relation_extraction
+examples: tools/ner_stream examples/C/ner examples/C/relation_extraction examples/cpp/text_categorizer_BoW
 	cp examples/C/ner/ner_example .
 	cp examples/C/relation_extraction/relation_extraction_example .
 	cp tools/ner_stream/ner_stream .
