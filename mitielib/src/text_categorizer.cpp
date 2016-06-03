@@ -90,13 +90,13 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void text_categorizer::
+    string text_categorizer::
     operator() (
-        const std::vector<std::string>& sentence,
-        string& text_tag
+        const std::vector<std::string>& sentence
     ) const
     {
         std::pair<unsigned long, double> temp;
+        string text_tag;
 
         if (fe.get_num_dimensions() == 0) {
             temp = df.predict(extract_BoW_features(sentence));
@@ -109,6 +109,8 @@ namespace mitie
         unsigned long text_tag_id = temp.first;
         if(text_tag_id < tag_name_strings.size()) text_tag = tag_name_strings[text_tag_id];
         else text_tag = "Unseen";
+        
+        return text_tag;
     }
 
 // ----------------------------------------------------------------------------------------

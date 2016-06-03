@@ -1,6 +1,6 @@
 
-SRC = text_categorizer_BoW_example.cpp
-TARGET = text_categorizer_BoW_example
+SRC = train_text_categorizer_BoW_example.cpp
+TARGET = train_text_categorizer_BoW_example
 
 MITIEDIR = ../../../mitielib
 

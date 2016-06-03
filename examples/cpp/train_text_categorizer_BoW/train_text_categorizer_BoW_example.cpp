@@ -75,7 +75,7 @@ int main()
     // string classname;
     // text_categorizer_extractor categorizer;
     // dlib::deserialize("new_categorizer_model.dat") >> classname >> categorizer;
-    serialize("new_categorizer_model.dat") << "mitie::text_categorizer" << categorizer;
+    dlib::serialize("new_categorizer_model.dat") << "mitie::text_categorizer" << categorizer;
 
 
     // But now let's try out the categorizer.  It was only trained on a small dataset but it

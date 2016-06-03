@@ -25,7 +25,7 @@
 #include <mitie/binary_relation_detector.h>
 #include <mitie/named_entity_extractor.h>
 #include <mitie/ner_trainer.h>
-#include "text_categorizer.h"
+#include <mitie/text_categorizer.h>
 #include <mitie/text_categorizer_trainer.h>
 
 
@@ -348,7 +348,7 @@ public:
     }
 
 private:
-    mitie::text_categorizer_extractor impl;
+    mitie::text_categorizer impl;
 };
 // ----------------------------------------------------------------------------------------
 
@@ -372,13 +372,13 @@ public:
 
     void train(const std::string& filename) const
     {
-        mitie::text_categorizer_extractor obj = impl.train();
+        mitie::text_categorizer obj = impl.train();
         dlib::serialize(filename) << "mitie::text_categorizer" << obj;
     }
 
     void trainSeparateModels(const std::string& filename) const
     {
-        mitie::text_categorizer_extractor obj = impl.train();
+        mitie::text_categorizer obj = impl.train();
         dlib::serialize(filename)
         << "mitie::text_categorizer_pure_model"
         << obj.get_df()

@@ -11,8 +11,6 @@
 #include <dlib/matrix.h>
 #include <mitie/total_word_feature_extractor.h>
 
-using namespace dlib;
-
 namespace mitie
 {
 
@@ -81,15 +79,15 @@ namespace mitie
 // ----------------------------------------------------------------------------------------
 
     std::pair<dlib::uint32,double> make_feat (
-            const std::pair<uint64,uint64>& hash
+            const std::pair<dlib::uint64,dlib::uint64>& hash
     );
 
 
 // ----------------------------------------------------------------------------------------
 
-    std::pair<uint64,uint64> shash(
+    std::pair<dlib::uint64,dlib::uint64> shash(
             const std::string& word,
-            const uint32 seed
+            const dlib::uint32 seed
     );
 
 // ----------------------------------------------------------------------------------------

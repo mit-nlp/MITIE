@@ -80,8 +80,9 @@ int main(int argc, char** argv)
 
         // If a confidence score is not necessary for your application you can detect entities
         // using the operator() method as shown in the following line.
-        //ner(tokens, text_tag);
-
+        // text_tag = categorizer(tokens);
+        // cout << "The label is " << text_tag << endl;
+        
         cout << "The label is " << text_tag << ", with the confidence score as " << text_score << endl;
 
         return EXIT_SUCCESS;

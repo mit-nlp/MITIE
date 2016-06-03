@@ -55,7 +55,7 @@ namespace mitie
             ensures
                 - Just loads the given objects into *this.
                 - The interpretation of tag_name_strings is that it maps the output of df
-                  into a meaningful text name for the NER tag.
+                  into a meaningful text name for the document tag.
         !*/
 
         text_categorizer(const std::string& pureModelName,
@@ -113,22 +113,14 @@ namespace mitie
                       incorrect. That is, the canonical decision threshold is at 0.
         !*/
 
-        void operator() (
-                const std::vector<std::string>& sentence,
-                string& text_tag
+        string operator() (
+                const std::vector<std::string>& sentence
         ) const;
         /*!
             ensures
                 - Runs the text categorizer on the sequence of tokenized words
-                  inside sentence.  The detected tag and score are stored into
-                  text_tag and text_score repectively.
-                - #text_tag == the detected label for the text. Note, such tag
-                  is in the range of get_tag_name_strings(), plus an optional "Unseen" label.
-                - #text_score == the score for the detected label. The value
-                      represents a confidence score, but does not represent a probability. Accordingly,
-                      the value may range outside of the closed interval of 0 to 1. A larger value
-                      represents a higher confidence. A value < 0 indicates that the label is likely
-                      incorrect. That is, the canonical decision threshold is at 0.
+                  inside sentence.
+		- Returns the document tag as the label            
         !*/
 
         const std::vector<std::string>& get_tag_name_strings (
