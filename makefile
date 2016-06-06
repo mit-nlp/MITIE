@@ -2,7 +2,7 @@
 # A list of all the folders that have makefiles in them.  Running make all builds all these things
 SUBDIRS = tools/ner_stream examples/C/ner examples/C/relation_extraction examples/cpp/ner examples/cpp/train_ner \
 	  examples/cpp/train_relation_extraction examples/cpp/relation_extraction examples/cpp/text_categorizer \
-	  examples/cpp/train_categorizer examples/cpp/train_text_categorizer_BoW
+	  examples/cpp/train_text_categorizer examples/cpp/train_text_categorizer_BoW
 
 examples: tools/ner_stream examples/C/ner examples/C/relation_extraction examples/cpp/train_text_categorizer_BoW
 	cp examples/C/ner/ner_example .

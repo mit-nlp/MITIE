@@ -1,6 +1,6 @@
 
-#ifndef MITIE_TexT_CATEGORIZER_EXTRACTOR_H
-#define MITIE_TexT_CATEGORIZER_EXTRACTOR_H
+#ifndef MITIE_TexT_CATEGORIZER_H
+#define MITIE_TexT_CATEGORIZER_H
 
 #include <mitie/total_word_feature_extractor.h>
 #include <mitie/ner_feature_extraction.h>
@@ -89,9 +89,9 @@ namespace mitie
                   The ID is computed based on the state of this object, so any copy of it
                   that has the same state will have the same fingerprint ID number.  This
                   is useful since down stream models that have been trained to use a
-                  specific text_categorizer_extractor instance can record the fingerprint of
-                  the text_categorizer_extractor they used and use that fingerprint ID to
-                  verify that the text_categorizer_extractor is being used later on.
+                  specific text_categorizer instance can record the fingerprint of
+                  the text_categorizer they used and use that fingerprint ID to
+                  verify that the text_categorizer is being used later on.
         !*/
 
         void predict(
@@ -176,4 +176,4 @@ namespace mitie
     };
 }
 
-#endif //MITIE_TexT_CATEGORIZER_EXTRACTOR_H
+#endif //MITIE_TexT_CATEGORIZER_H

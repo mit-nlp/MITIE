@@ -7,9 +7,9 @@ cmake_minimum_required(VERSION 2.6)
 
 
 
-set(project_name train_categorizer_example)
+set(project_name train_text_categorizer_example)
 set(source
-   train_categorizer_example.cpp
+   train_text_categorizer_example.cpp
    )
 
 

@@ -38,7 +38,7 @@ namespace mitie
         dlib::deserialize(pureModelName) >> classname;
         if (classname != "mitie::text_categorizer_pure_model")
             throw dlib::error(
-                    "This file does not contain a mitie::text_categorizer_extractor_pure_model. Contained: " + classname);
+                    "This file does not contain a mitie::text_categorizer_pure_model. Contained: " + classname);
 
         dlib::deserialize(pureModelName) >> classname >> df >> tag_name_strings;
 
@@ -58,7 +58,7 @@ namespace mitie
         dlib::deserialize(pureModelName) >> classname;
         if (classname != "mitie::text_categorizer_pure_model")
             throw dlib::error(
-                    "This file does not contain a mitie::text_categorizer_extractor_pure_model. Contained: " + classname);
+                    "This file does not contain a mitie::text_categorizer_pure_model. Contained: " + classname);
 
         dlib::deserialize(pureModelName) >> classname >> df >> tag_name_strings;
     }

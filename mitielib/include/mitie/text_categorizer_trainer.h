@@ -16,7 +16,7 @@ namespace mitie
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
-                This is a tool for training mitie::text_categorizer_extractor objects from a
+                This is a tool for training mitie::text_categorizer objects from a
                 set of annotated training data.
         !*/
 

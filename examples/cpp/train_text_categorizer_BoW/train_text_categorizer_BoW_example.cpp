@@ -73,7 +73,7 @@ int main()
     // Now that training is done we can save the categorizer object to disk like so.  This will
     // allow you to load the model back in using the following codes
     // string classname;
-    // text_categorizer_extractor categorizer;
+    // text_categorizer categorizer;
     // dlib::deserialize("new_categorizer_model.dat") >> classname >> categorizer;
     dlib::serialize("new_categorizer_model.dat") << "mitie::text_categorizer" << categorizer;
 
