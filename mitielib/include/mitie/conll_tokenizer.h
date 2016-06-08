@@ -27,7 +27,7 @@ namespace mitie
         typedef std::string token_type;
 
         conll_tokenizer (
-        ) : in(0), current_stream_offset(0) {}
+        ) : in(0), current_stream_offset(0),next_token_front_padding(0) {}
         /*!
             ensures
                 - any attempts to get a token will return false.  I.e. this will look like a 
@@ -36,7 +36,7 @@ namespace mitie
 
         conll_tokenizer (
             std::istream& in_
-        ) : in(&in_), current_stream_offset(0) { }
+        ) : in(&in_), current_stream_offset(0),next_token_front_padding(0) { }
         /*!
             ensures
                 - This object will read tokens from the supplied input stream.  Note that it holds a
@@ -81,7 +81,12 @@ namespace mitie
                 {
                     // Save the second half of the string as the next token and return the
                     // first half.
-                    next_token_offset = token_offset + i;
+                    next_token_offset = token_offset + i + next_token_front_padding;
+                    // we drop 2 bytes off the front of this next token, if there are
+                    // subsequent UTF-8 ’ characters here we split again and need to keep
+                    // track that we dropped these two bytes so we can output the correct
+                    // token_offset.
+                    next_token_front_padding = 2;
                     next_token = token.substr(i+2);
                     next_token[0] = '\'';
                     token.resize(i);
@@ -89,6 +94,7 @@ namespace mitie
                 }
             }
 
+            next_token_front_padding = 0;
             return result;
         }
 
@@ -203,6 +209,7 @@ namespace mitie
         std::string next_token;
         unsigned long current_stream_offset;
         unsigned long next_token_offset;
+        unsigned long next_token_front_padding;
 
         /*!
             CONVENTION
