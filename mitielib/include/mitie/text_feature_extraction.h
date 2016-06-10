@@ -54,8 +54,8 @@ namespace mitie
             - words.size() == feats.size()
         ensures
             - returns a sparse feature vector that describes the property of the range of
-              words starting with first word and ending just before the last words.
-              The feature vector will be suitable for predicting the type of document.
+              words starting with first word and ending just at the last word.
+              The feature vector can be suitable for predicting the type of document.
     !*/
 
 // ----------------------------------------------------------------------------------------
@@ -66,8 +66,8 @@ namespace mitie
         ensures
             - returns a sparse feature vector using bag-of-words to describes
               the property of the range of words starting with first word and
-              ending just before the last words.
-              The feature vector will be suitable for predicting the type of document.
+              ending just at the last word.
+              The feature vector can be suitable for predicting the type of document.
     !*/
 
 // ----------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ namespace mitie
     /*!
         ensures
             - returns a feature vector that append bag-of-words hashing vector with
-              total words feature vectors together, to represent the doc.
+              total words feature vectors together, to represent the document.
               The feature vector is expected to be more suitable for predicting the
               type of document.
     !*/

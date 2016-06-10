@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
     if (argc != 2) {
         cout << "You must give the path to the MITIE English total_word_feature_extractor.dat file." << endl;
         cout << "So run this program with a command like: " << endl;
-        cout << "./train_categorizer_example ../../../MITIE-models/english/total_word_feature_extractor.dat" << endl;
+        cout << "./train_text_categorizer_example ../../../MITIE-models/english/total_word_feature_extractor.dat" << endl;
         return 1;
     }
     text_categorizer_trainer trainer(argv[1]);
@@ -85,9 +85,8 @@ int main(int argc, char** argv) {
     // allow you to load the model back in using the following codes
     // string classname;
     // text_categorizer categorizer;
-    // dlib::deserialize("new_categorizer_model.dat") >> classname >> categorizer;
-    serialize("new_categorizer_model.dat") << "mitie::text_categorizer" << categorizer;
-
+    // dlib::deserialize("new_text_categorizer_model.dat") >> classname >> categorizer;
+    serialize("new_text_categorizer_model.dat") << "mitie::text_categorizer" << categorizer;
 
     // But now let's try out the categorizer.  It was only trained on a small dataset but it
     // has still learned a little.  So let's give it a whirl.  But first, print a list of

@@ -52,18 +52,17 @@ int main(int argc, char** argv)
         // Load MITIE's text categorizer from disk.  Each file in the MITIE-models
         // folder begins with a string containing the name of the serialized class.  In
         // this case classname contains "mitie::text_categorizer".  It can be used to
-        // attribute any particular file into pre-defined types.  However, in this example we don't need
+        // identify what is in any particular file.  However, in this example we don't need
         // it so it is just ignored.
         string classname;
         text_categorizer categorizer;
         dlib::deserialize(argv[1]) >> classname >> categorizer;
 
-        // Print out what kind of tags this categorizer can predict.
+        // Print out what kind of labels this categorizer can predict.
         const std::vector<string> tagstr = categorizer.get_tag_name_strings();
-        cout << "The tagger supports "<< tagstr.size() <<" tags:" << endl;
+        cout << "The categorizer supports "<< tagstr.size() <<" labels:" << endl;
         for (unsigned int i = 0; i < tagstr.size(); ++i)
             cout << "   " << tagstr[i] << endl;
-
 
         // Before we can try out the categorizer, we need to load some testing data.
         std::vector<string> tokens = tokenize_file(argv[2]);
@@ -72,18 +71,17 @@ int main(int argc, char** argv)
         double text_score;
 
         // Now detect the label of the text file we loaded and print them to the screen.
-        // The output of this function is the label as a string.
+        // The output of this function is the detected label.
         // Additionally, if it is useful for your application a confidence score for this label,
         // is available by using the predict() method.  The larger the score the more
-        // confident MITIE is in the tag.
+        // confident MITIE is in the label.
         categorizer.predict(tokens, text_tag, text_score);
+        cout << "The label is " << text_tag << ", with the confidence score as " << text_score << endl;
 
-        // If a confidence score is not necessary for your application you can detect entities
+        // If a confidence score is not necessary for your application you can detect document type
         // using the operator() method as shown in the following line.
         // text_tag = categorizer(tokens);
         // cout << "The label is " << text_tag << endl;
-        
-        cout << "The label is " << text_tag << ", with the confidence score as " << text_score << endl;
 
         return EXIT_SUCCESS;
     }

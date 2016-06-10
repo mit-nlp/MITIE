@@ -27,7 +27,7 @@ namespace mitie
             ensures
                 - #get_beta() == 0.5
                 - #num_threads() == 4
-                - This function attempts to initialize a trainer for BoW based text classification.
+                - This function attempts to initialize a trainer for BoW based text categorizer.
         !*/
 
     public:
@@ -39,8 +39,8 @@ namespace mitie
                 - #get_beta() == 0.5
                 - #num_threads() == 4
                 - This function attempts to load a mitie::total_word_feature_extractor from the
-                  file with the given filename.  This feature extractor is used during the
-                  training process.
+                  file with the given filename.  This feature extractor can be used during the
+                  training process to improve the accuracy of text categorizer.
         !*/
 
         unsigned long size(

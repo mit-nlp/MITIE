@@ -50,11 +50,11 @@ public class TrainSeparateDocCategorizerExample {
         trainer.setThreadNum(4);
         // This function does the work of training.  Note that it can take a long time to run
         // when using larger training datasets.  So be patient.
-        trainer.trainSeparateModels("pure_categorizer_model.dat");
+        trainer.trainSeparateModels("pure_text_categorizer_model.dat");
 
         // restore the model using the pure model and extractor
         TextCategorizer categorizer = new TextCategorizer(
-                "pure_categorizer_model.dat",
+                "pure_text_categorizer_model.dat",
                 "../../MITIE-models/english/total_word_feature_extractor.dat"
         );
 
@@ -70,8 +70,8 @@ public class TrainSeparateDocCategorizerExample {
         for (int i = 0; i < possibleTags.size(); ++i)
             System.out.println(possibleTags.get(i));
 
-	// Now ask MITIE to detect the type of the text we just loaded.
-	SDPair result = categorizer.categorizeDoc(testSentence);
+        // Now ask MITIE to detect the type of the text we just loaded.
+        SDPair result = categorizer.categorizeDoc(testSentence);
         System.out.println("The type of this text is: " + result.getFirst() + ", with confidence score as " + result.getSecond());
     }
 }

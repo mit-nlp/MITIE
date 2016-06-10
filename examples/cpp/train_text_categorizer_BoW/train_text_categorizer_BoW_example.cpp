@@ -74,8 +74,8 @@ int main()
     // allow you to load the model back in using the following codes
     // string classname;
     // text_categorizer categorizer;
-    // dlib::deserialize("new_categorizer_model.dat") >> classname >> categorizer;
-    dlib::serialize("new_categorizer_model.dat") << "mitie::text_categorizer" << categorizer;
+    // dlib::deserialize("new_text_categorizer_BoW_model.dat") >> classname >> categorizer;
+    dlib::serialize("new_text_categorizer_BoW_model.dat") << "mitie::text_categorizer_BoW" << categorizer;
 
 
     // But now let's try out the categorizer.  It was only trained on a small dataset but it

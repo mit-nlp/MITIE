@@ -14,7 +14,7 @@ namespace mitie
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
-                This object is a simple tool for categorizing the text in
+                This object is a simple tool for categorizing the text into
                 pre-defined types.
 
             THREAD SAFETY
@@ -27,8 +27,8 @@ namespace mitie
         text_categorizer():fingerprint(0){}
         /*!
             ensures
-                - When used this object won't output any entities.   You need to either use
-                  the other constructor or deserialize a saved text_categorizer to
+                - When used this object won't output any results.   You need to either use
+                  another constructor or deserialize a saved text_categorizer to
                   get something that is useful.
         !*/
 
