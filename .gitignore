@@ -33,6 +33,11 @@ examples/cpp/train_relation_extraction/train_relation_extraction_example
 examples/C/relation_extraction/relation_extraction_example
 examples/python/new_ner_model.dat
 examples/python/rel_classifier.svm
+examples/cpp/text_categorizer/text_categorizer_example
+examples/cpp/train_text_categorizer/train_text_categorizer_example
+examples/cpp/train_text_categorizer_BoW/train_text_categorizer_BoW_example
+/new_text_categorizer_BoW_model.dat
+/train_text_categorizer_BoW_example
 
 # R package
 tools/R-binding/MITIE_*.tar.gz
