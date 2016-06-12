@@ -78,17 +78,26 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    std::pair<dlib::uint32,double> make_feat (
-            const std::pair<dlib::uint64,dlib::uint64>& hash
-    );
+    const unsigned long MAX_FEAT = 500000;
 
+    inline std::pair<dlib::uint32,double> make_feat (
+        const std::pair<dlib::uint64,dlib::uint64>& hash
+    )
+    {
+        const double feat_weight = 1.5;
+        const double rand_sign = (hash.first&1) ? 1 : -1;
+        return std::make_pair((dlib::uint32)(hash.second%MAX_FEAT), rand_sign*feat_weight);
+    }
 
-// ----------------------------------------------------------------------------------------
-
-    std::pair<dlib::uint64,dlib::uint64> shash(
-            const std::string& word,
-            const dlib::uint32 seed
-    );
+    inline std::pair<dlib::uint64,dlib::uint64> shash (
+        const std::string& word,
+        const dlib::uint32 seed 
+    )
+    {
+        if (word.size() == 0)
+            return std::make_pair(0,0);
+        return dlib::murmur_hash3_128bit(&word[0], word.size(), seed);
+    }
 
 // ----------------------------------------------------------------------------------------
 

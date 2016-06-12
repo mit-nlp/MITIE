@@ -5,7 +5,8 @@ using namespace dlib;
 
 namespace mitie
 {
-    const unsigned long max_feat = 500000;
+
+// ----------------------------------------------------------------------------------------
 
     text_sample_type extract_text_features (
             const std::vector<std::string>& words,
@@ -28,7 +29,7 @@ namespace mitie
         all_sum /= words.size();
 
         for (long i = 0; i < all_sum.size(); ++i)
-            result.push_back(make_pair(i+max_feat, all_sum(i)));
+            result.push_back(make_pair(i+MAX_FEAT, all_sum(i)));
 
         return result;
     }

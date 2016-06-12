@@ -24,26 +24,6 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    const unsigned long max_feat = 500000;
-    std::pair<dlib::uint32,double> make_feat (
-        const std::pair<uint64,uint64>& hash
-    )
-    {
-        const double feat_weight = 1.5;
-        const double rand_sign = (hash.first&1) ? 1 : -1;
-        return std::make_pair((dlib::uint32)(hash.second%max_feat), rand_sign*feat_weight);
-    }
-
-    std::pair<uint64,uint64> shash (
-        const std::string& word,
-        const uint32 seed 
-    )
-    {
-        if (word.size() == 0)
-            return make_pair(0,0);
-        return murmur_hash3_128bit(&word[0], word.size(), seed);
-    }
-
     inline std::pair<uint64,uint64> prefix ( 
         const std::string& word,
         const uint32 seed 
@@ -402,7 +382,7 @@ namespace mitie
         make_sparse_vector_inplace(result);
         // append on the dense part of the feature space
         for (long i = 0; i < temp.size(); ++i)
-            result.push_back(make_pair(i+max_feat, temp(i)));
+            result.push_back(make_pair(i+MAX_FEAT, temp(i)));
 
         return result;
     }
