@@ -279,23 +279,6 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    static unsigned long get_label (
-        const std::vector<std::pair<unsigned long, unsigned long> >& chunks,
-        const std::vector<unsigned long>& chunk_labels,
-        const std::pair<unsigned long, unsigned long>& range,
-        const unsigned long not_entity
-    ) 
-    {
-        for (unsigned long i = 0; i < chunks.size(); ++i)
-        {
-            if (range == chunks[i])
-                return chunk_labels[i];
-        }
-        return not_entity;
-    }
-
-// ----------------------------------------------------------------------------------------
-
     unsigned long text_categorizer_trainer::
     get_label_id (
         const std::string& str

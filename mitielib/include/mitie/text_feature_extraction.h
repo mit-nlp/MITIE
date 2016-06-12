@@ -14,35 +14,6 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    class text_feature_extractor
-    {
-
-    public:
-        text_feature_extractor() :num_feats(1) {}
-
-        text_feature_extractor (
-            unsigned long num_feats_
-        ) :
-            num_feats(num_feats_)
-        {}
-
-        unsigned long num_feats;
-
-        unsigned long num_features() const { return num_feats; }
-
-    };
-
-    inline void serialize(const text_feature_extractor& item, std::ostream& out)
-    {
-        dlib::serialize(item.num_feats, out);
-    }
-    inline void deserialize(text_feature_extractor& item, std::istream& in)
-    {
-        dlib::deserialize(item.num_feats, in);
-    }
-
-// ----------------------------------------------------------------------------------------
-
     typedef std::vector<std::pair<dlib::uint32, double> > text_sample_type;
 
     text_sample_type extract_text_features (
