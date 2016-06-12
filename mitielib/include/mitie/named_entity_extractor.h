@@ -43,10 +43,6 @@ namespace mitie
             const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& df
         );
 
-        named_entity_extractor(const std::string& pureModelName,
-                               const std::string& extractorName
-        );
-
         /*!
             requires
                 - segmenter.get_feature_extractor().num_features() == fe.get_num_dimensions() 
@@ -66,6 +62,10 @@ namespace mitie
                 - The interpretation of tag_name_strings is that it maps the output of df
                   into a meaningful text name for the NER tag.  
         !*/
+
+        named_entity_extractor(const std::string& pureModelName,
+                               const std::string& extractorName
+        );
 
         dlib::uint64 get_fingerprint(
         ) const { return fingerprint; }

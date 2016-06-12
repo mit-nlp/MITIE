@@ -78,6 +78,20 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
+    std::pair<dlib::uint32,double> make_feat (
+            const std::pair<dlib::uint64,dlib::uint64>& hash
+    );
+
+
+// ----------------------------------------------------------------------------------------
+
+    std::pair<dlib::uint64,dlib::uint64> shash(
+            const std::string& word,
+            const dlib::uint32 seed
+    );
+
+// ----------------------------------------------------------------------------------------
+
     typedef std::vector<std::pair<dlib::uint32,double> > ner_sample_type;
 
     ner_sample_type extract_ner_chunk_features (
