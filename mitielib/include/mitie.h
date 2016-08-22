@@ -36,7 +36,7 @@ extern "C"
     typedef struct mitie_named_entity_detections mitie_named_entity_detections;
 
     MITIE_EXPORT void mitie_free (
-        void* object
+        void* object 
     );
     /*!
         requires
@@ -70,9 +70,9 @@ extern "C"
         requires
             - text == a valid pointer to a NULL terminated C string
         ensures
-            - returns an array that contains a tokenized copy of the input text.
+            - returns an array that contains a tokenized copy of the input text.  
             - The returned array is an array of pointers to NULL terminated C strings.  The
-              array itself is terminated with a NULL.  So for example, if text was "some text"
+              array itself is terminated with a NULL.  So for example, if text was "some text" 
               then the returned array, TOK, would contain:
                 - TOK[0] == "some"
                 - TOK[1] == "text"
@@ -110,7 +110,7 @@ extern "C"
               data.  To say this precisely, let TOKENS refer to the returned char**.  Then
               we will have:
                 - (*token_offsets)[i] == the character offset into text for the first
-                  character in TOKENS[i].  That is, it will be the case that
+                  character in TOKENS[i].  That is, it will be the case that 
                   text[(*token_offsets)[i]+j]==tokens[i][j] for all valid i and j.
             - It is the responsibility of the caller to free the returned arrays.  This
               includes the *token_offsets array and also the returned char**.  You free
@@ -143,7 +143,7 @@ extern "C"
               the number of different tags which can be produced by the given named entity
               extractor.  Moreover, each tag is uniquely identified by a numeric ID which
               is just the index of the tag.  For example, if there are 4 possible tags then
-              the numeric IDs are just 0, 1, 2, and 3.
+              the numeric IDs are just 0, 1, 2, and 3.  
     !*/
 
     MITIE_EXPORT const char* mitie_get_named_entity_tagstr (
@@ -157,7 +157,7 @@ extern "C"
         ensures
             - Each named entity tag, in addition to having a numeric ID which uniquely
               identifies it, has a text string name.  For example, if a named entity tag
-              logically identifies a person then the tag string might be "PERSON".
+              logically identifies a person then the tag string might be "PERSON". 
             - This function takes a tag ID number and returns the tag string for that tag.
             - The returned pointer is valid until mitie_free(ner) is called.
     !*/
@@ -166,14 +166,14 @@ extern "C"
 
     MITIE_EXPORT mitie_named_entity_detections* mitie_extract_entities (
         const mitie_named_entity_extractor* ner,
-        char** tokens
+        char** tokens 
     );
     /*!
         requires
             - ner != NULL
             - tokens == An array of NULL terminated C strings.  The end of the array must
               be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
-              array of tokens).
+              array of tokens).  
         ensures
             - The returned object MUST BE FREED by a call to mitie_free().
             - Runs the supplied named entity extractor on the tokenized text and returns a
@@ -223,7 +223,7 @@ extern "C"
         ensures
             - returns the length of the idx-th named entity.  That is, this function
               returns the number of tokens from the input text which comprise the idx-th
-              named entity detection.
+              named entity detection.  
     !*/
 
     MITIE_EXPORT unsigned long mitie_ner_get_detection_tag (
@@ -248,7 +248,7 @@ extern "C"
             - idx < mitie_ner_get_num_detections(dets)
         ensures
             - returns a NULL terminated C string that identifies the type of the idx-th
-              named entity.
+              named entity. 
             - The returned pointer is valid until mitie_free(dets) is called.
     !*/
 
@@ -327,7 +327,7 @@ extern "C"
             - ner != NULL
             - tokens == An array of NULL terminated C strings.  The end of the array must
               be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
-              array of tokens).
+              array of tokens).  
             - arg1_length > 0
             - arg2_length > 0
             - The arg indices reference valid elements of the tokens array.  That is,
@@ -378,24 +378,25 @@ extern "C"
                   confident it is that the relation is a valid relation.
     !*/
 
-
+    
     // ----------------------------------------------------------------------------------------
 
-        typedef struct mitie_text_categorizer  mitie_text_categorizer;
-        typedef struct mitie_text_categorizer_trainer  mitie_text_categorizer_trainer;
+    typedef struct mitie_text_categorizer  mitie_text_categorizer;
+    typedef struct mitie_text_categorizer_trainer  mitie_text_categorizer_trainer;
 
-        MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer (
-            const char* filename
-        );
-        /*!
-            requires
-                - filename == a valid pointer to a NULL terminated C string
-            ensures
-                - Reads a saved MITIE text categorizer object from disk and returns a
-                  pointer to the relation detector.
-                - The returned object MUST BE FREED by a call to mitie_free().
-                - If the object can't be created then this function returns NULL.
-        !*/
+    MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer (
+        const char* filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads a saved MITIE text categorizer object from disk and returns a
+              pointer to the relation detector.
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - If the object can't be created then this function returns NULL.
+    !*/
+
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 //                                      TRAINING ROUTINES
@@ -421,7 +422,7 @@ extern "C"
 
     MITIE_EXPORT int mitie_save_binary_relation_detector (
         const char* filename,
-        const mitie_binary_relation_detector* detector
+        const mitie_binary_relation_detector* detector 
     );
     /*!
         requires
@@ -450,7 +451,6 @@ extern "C"
             - returns 0 upon success and a non-zero value on failure.  Failure happens if
               there is some error that prevents us from writing to the given file.
     !*/
-
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
@@ -464,7 +464,7 @@ extern "C"
         requires
             - tokens == An array of NULL terminated C strings.  The end of the array must
               be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
-              array of tokens).
+              array of tokens).  
         ensures
             - Creates and returns a NER training instance object.  You use it by calling
               mitie_add_ner_training_entity() to annotate which tokens participate in
@@ -529,10 +529,10 @@ extern "C"
             - label == a valid pointer to a NULL terminated C string
             - mitie_overlaps_any_entity(instance, start, length) == 0
         ensures
-            - Annotates the entity of length tokens at the given starting token with the
-              given NER label.
+            - Annotates the entity of length tokens at the given starting token with the 
+              given NER label.  
             - mitie_ner_training_instance_num_entities(instance) is increased by 1.
-            - returns 0 on success and a non-zero value on failure.  Failure might be
+            - returns 0 on success and a non-zero value on failure.  Failure might be 
               caused by running out of memory.
     !*/
 
@@ -543,11 +543,11 @@ extern "C"
         requires
             - filename == a valid pointer to a NULL terminated C string
         ensures
-            - Creates a NER trainer object and returns a pointer to it.
+            - Creates a NER trainer object and returns a pointer to it.  
             - filename should contain the name of a saved total_word_feature_extractor, as
               created by the wordrep tool's -e option (see the MITIE/tools/wordrep folder).
             - The returned object MUST BE FREED by a call to mitie_free().
-            - returns NULL if the object could not be created.
+            - returns NULL if the object could not be created. 
             - calling mitie_ner_trainer_get_beta() on the returned pointer returns 0.5.
               That is, the default beta value is 0.5.
             - calling mitie_ner_trainer_get_num_threads() on the returned pointer returns
@@ -577,7 +577,7 @@ extern "C"
         ensures
             - Adds the given training instance to the trainer object.
             - mitie_ner_trainer_size(trainer) is incremented by 1.
-            - returns 0 on success and a non-zero value on failure.  Failure might be
+            - returns 0 on success and a non-zero value on failure.  Failure might be 
               caused by running out of memory.
     !*/
 
@@ -590,7 +590,7 @@ extern "C"
             - trainer != NULL
             - beta >= 0
         ensures
-            - mitie_ner_trainer_get_beta(trainer) == beta
+            - mitie_ner_trainer_get_beta(trainer) == beta 
     !*/
 
     MITIE_EXPORT double mitie_ner_trainer_get_beta (
@@ -615,7 +615,7 @@ extern "C"
 
     MITIE_EXPORT void mitie_ner_trainer_set_num_threads (
         mitie_ner_trainer* trainer,
-        unsigned long num_threads
+        unsigned long num_threads 
     );
     /*!
         requires
@@ -650,7 +650,7 @@ extern "C"
             - The returned object MUST BE FREED by a call to mitie_free().
             - returns NULL if the object could not be created.
     !*/
-
+    
 // ----------------------------------------------------------------------------------------
 
     typedef struct mitie_binary_relation_trainer mitie_binary_relation_trainer;
@@ -664,7 +664,7 @@ extern "C"
             - relation_name == a valid NULL terminated C string
             - ner != NULL
         ensures
-            - Creates a binary relation trainer object and returns a pointer to it.
+            - Creates a binary relation trainer object and returns a pointer to it.  
             - The returned object MUST BE FREED by a call to mitie_free().
             - returns NULL if the object could not be created.
             - calling mitie_binary_relation_trainer_get_beta() on the returned pointer
@@ -673,10 +673,10 @@ extern "C"
               pointer returns 4.  That is, the default number of threads to use is 4.
             - calling mitie_binary_relation_trainer_num_positive_examples() on the returned
               pointer returns 0.  That is, initially the trainer has no positive training
-              instances in it.
+              instances in it. 
             - calling mitie_binary_relation_trainer_num_negative_examples() on the returned
               pointer returns 0.  That is, initially the trainer has no negative training
-              instances in it.
+              instances in it. 
     !*/
 
     MITIE_EXPORT unsigned long mitie_binary_relation_trainer_num_positive_examples (
@@ -712,7 +712,7 @@ extern "C"
             - trainer != NULL
             - tokens == An array of NULL terminated C strings.  The end of the array must
               be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
-              array of tokens).
+              array of tokens).  
             - arg1_length > 0
             - arg2_length > 0
             - The arg indices reference valid elements of the tokens array.  That is,
@@ -747,7 +747,7 @@ extern "C"
             - trainer != NULL
             - tokens == An array of NULL terminated C strings.  The end of the array must
               be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
-              array of tokens).
+              array of tokens).  
             - arg1_length > 0
             - arg2_length > 0
             - The arg indices reference valid elements of the tokens array.  That is,
@@ -762,7 +762,7 @@ extern "C"
               this function tells the trainer that the given tokens and argument
               combination is not a binary relation we are trying to learn.  The argument
               indices have the same interpretation as they do for
-              mitie_add_positive_binary_relation().
+              mitie_add_positive_binary_relation(). 
             - mitie_binary_relation_trainer_num_negative_examples(trainer) is incremented by 1.
             - returns 0 on success and a non-zero value on failure.  Failure might
               happen if we run out of memory.
@@ -777,7 +777,7 @@ extern "C"
             - trainer != NULL
             - beta >= 0
         ensures
-            - mitie_binary_relation_trainer_get_beta(trainer) == beta
+            - mitie_binary_relation_trainer_get_beta(trainer) == beta 
     !*/
 
     MITIE_EXPORT double mitie_binary_relation_trainer_get_beta (
@@ -802,7 +802,7 @@ extern "C"
 
     MITIE_EXPORT void mitie_binary_relation_trainer_set_num_threads (
         mitie_binary_relation_trainer* trainer,
-        unsigned long num_threads
+        unsigned long num_threads 
     );
     /*!
         requires
@@ -838,7 +838,7 @@ extern "C"
             - The returned object MUST BE FREED by a call to mitie_free().
             - returns NULL if the object could not be created.
     !*/
-// ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
 
     typedef struct mitie_text_categorizer_trainer mitie_text_categorizer_trainer;
 
@@ -963,6 +963,8 @@ extern "C"
 
 
 // ----------------------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
 #ifdef __cplusplus
@@ -970,3 +972,4 @@ extern "C"
 #endif
 
 #endif // MITLL_MITIe_H_
+
