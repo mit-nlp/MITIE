@@ -19,10 +19,9 @@
 #include <mitie/text_categorizer.h>
 #include <mitie/text_categorizer_trainer.h>
 
-
 using namespace mitie;
 
-namespace
+namespace 
 {
 
     /*
@@ -45,7 +44,7 @@ namespace
         MITIE_NER_TRAINING_INSTANCE,
         MITIE_NER_TRAINER,
         MITIE_TEXT_CATEGORIZER,
-        MITIE_TEXT_CATEGORIZER_TRAINER
+        MITIE_TEXT_CATEGORIZER_TRAINER        
     };
 
     template <typename T>
@@ -62,6 +61,7 @@ namespace
     template <> struct allocatable_types<text_categorizer>              { const static mitie_object_type type = MITIE_TEXT_CATEGORIZER; };
     template <> struct allocatable_types<text_categorizer_trainer>      { const static mitie_object_type type = MITIE_TEXT_CATEGORIZER_TRAINER; };
 
+
 // ----------------------------------------------------------------------------------------
 
     const int min_alignment = 16;
@@ -71,16 +71,15 @@ namespace
     }
 
     template <typename T>
-    T& checked_cast(void* ptr)
+    T& checked_cast(void* ptr) 
     {
         assert(ptr);
-        cout << memory_block_type(ptr) << allocatable_types<T>::type << endl;  
         assert(memory_block_type(ptr) == allocatable_types<T>::type);
         return *static_cast<T*>(ptr);
     }
 
     template <typename T>
-    const T& checked_cast(const void* ptr)
+    const T& checked_cast(const void* ptr) 
     {
         assert(ptr);
         assert(memory_block_type(ptr) == allocatable_types<T>::type);
@@ -336,7 +335,7 @@ extern "C"
 
 
     void mitie_free (
-        void* object
+        void* object 
     )
     {
         if (object == 0)
@@ -373,7 +372,7 @@ extern "C"
                 break;
             case MITIE_TEXT_CATEGORIZER:
                 destroy<text_categorizer>(object);
-                break;
+                break;                
             default:
                 std::cerr << "ERROR, mitie_free() called on non-MITIE object or called twice." << std::endl;
                 assert(false);
@@ -437,7 +436,7 @@ extern "C"
 
     mitie_named_entity_detections* mitie_extract_entities (
         const mitie_named_entity_extractor* ner_,
-        char** tokens
+        char** tokens 
     )
     {
         const named_entity_extractor& ner = checked_cast<named_entity_extractor>(ner_);
@@ -615,7 +614,7 @@ extern "C"
             unsigned long begin = std::min(arg1_start, arg2_start);
             if (begin > window_size)
                 begin -= window_size;
-            else
+            else 
                 begin = 0;
 
             const unsigned long end = std::max(arg1_start+arg1_length, arg2_start+arg2_length)+window_size;
@@ -677,45 +676,38 @@ extern "C"
             return 1;
         }
     }
-
-    // ----------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------
-    // ----------------------------------------------------------------------------------------
-
-
+    
     mitie_text_categorizer* mitie_load_text_categorizer (
-        const char* filename
-    )
-    {
-        assert(filename != NULL);
+         const char* filename
+     )
+     {
+         assert(filename != NULL);
 
-        text_categorizer* impl = 0;
-        try
-        {
-            string classname;
-            impl = allocate<text_categorizer>();
-            dlib::deserialize(filename) >> classname;
-            if (classname != "mitie::text_categorizer")
-                throw dlib::error("This file does not contain a mitie::text_categorizer. Contained: " + classname);
-            dlib::deserialize(filename) >> classname >> *impl;
-            return (mitie_text_categorizer*)impl;
-        }
-        catch(std::exception& e)
-        {
-#ifndef NDEBUG
-            cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
-#endif
-            mitie_free(impl);
-            return NULL;
-        }
-        catch(...)
-        {
-            mitie_free(impl);
-            return NULL;
-        }
-    }
-
+         text_categorizer* impl = 0;
+         try
+         {
+             string classname;
+             impl = allocate<text_categorizer>();
+             dlib::deserialize(filename) >> classname;
+             if (classname != "mitie::text_categorizer")
+                 throw dlib::error("This file does not contain a mitie::text_categorizer. Contained: " + classname);
+             dlib::deserialize(filename) >> classname >> *impl;
+             return (mitie_text_categorizer*)impl;
+         }
+         catch(std::exception& e)
+         {
+ #ifndef NDEBUG
+             cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+ #endif
+             mitie_free(impl);
+             return NULL;
+         }
+         catch(...)
+         {
+             mitie_free(impl);
+             return NULL;
+         }
+     }
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 //                                      TRAINING ROUTINES
@@ -755,7 +747,7 @@ extern "C"
 
     int mitie_save_binary_relation_detector (
         const char* filename,
-        const mitie_binary_relation_detector* detector_
+        const mitie_binary_relation_detector* detector_ 
     )
     {
         const binary_relation_detector& detector = checked_cast<binary_relation_detector>(detector_);
@@ -937,7 +929,7 @@ extern "C"
 
     void mitie_ner_trainer_set_num_threads (
         mitie_ner_trainer* trainer_,
-        unsigned long num_threads
+        unsigned long num_threads 
     )
     {
         checked_cast<ner_trainer>(trainer_).set_num_threads(num_threads);
@@ -969,7 +961,7 @@ extern "C"
             return 0;
         }
     }
-
+    
 // ----------------------------------------------------------------------------------------
 
     mitie_binary_relation_trainer* mitie_create_binary_relation_trainer (
@@ -1092,7 +1084,7 @@ extern "C"
 
     void mitie_binary_relation_trainer_set_num_threads (
         mitie_binary_relation_trainer* trainer_,
-        unsigned long num_threads
+        unsigned long num_threads 
     )
     {
         checked_cast<binary_relation_detector_trainer>(trainer_).set_num_threads(num_threads);
@@ -1125,7 +1117,6 @@ extern "C"
             return NULL;
         }
     }
-
 // ----------------------------------------------------------------------------------------
 
     mitie_text_categorizer_trainer* mitie_create_text_categorizer_trainer (
@@ -1226,4 +1217,6 @@ extern "C"
       }
   }
 
+
 }
+
