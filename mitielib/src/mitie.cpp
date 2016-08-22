@@ -16,10 +16,13 @@
 #include <mitie/binary_relation_detector.h>
 #include <mitie/ner_trainer.h>
 #include <mitie/binary_relation_detector_trainer.h>
+#include <mitie/text_categorizer.h>
+#include <mitie/text_categorizer_trainer.h>
+
 
 using namespace mitie;
 
-namespace 
+namespace
 {
 
     /*
@@ -40,7 +43,9 @@ namespace
         MITIE_BINARY_RELATION,
         MITIE_BINARY_RELATION_TRAINER,
         MITIE_NER_TRAINING_INSTANCE,
-        MITIE_NER_TRAINER
+        MITIE_NER_TRAINER,
+        MITIE_TEXT_CATEGORIZER,
+        MITIE_TEXT_CATEGORIZER_TRAINER
     };
 
     template <typename T>
@@ -54,6 +59,8 @@ namespace
     template <> struct allocatable_types<binary_relation>               { const static mitie_object_type type = MITIE_BINARY_RELATION; };
     template <> struct allocatable_types<ner_training_instance>         { const static mitie_object_type type = MITIE_NER_TRAINING_INSTANCE; };
     template <> struct allocatable_types<ner_trainer>                   { const static mitie_object_type type = MITIE_NER_TRAINER; };
+    template <> struct allocatable_types<text_categorizer>              { const static mitie_object_type type = MITIE_TEXT_CATEGORIZER; };
+    template <> struct allocatable_types<text_categorizer_trainer>      { const static mitie_object_type type = MITIE_TEXT_CATEGORIZER_TRAINER; };
 
 // ----------------------------------------------------------------------------------------
 
@@ -64,15 +71,16 @@ namespace
     }
 
     template <typename T>
-    T& checked_cast(void* ptr) 
+    T& checked_cast(void* ptr)
     {
         assert(ptr);
+        cout << memory_block_type(ptr) << allocatable_types<T>::type << endl;  
         assert(memory_block_type(ptr) == allocatable_types<T>::type);
         return *static_cast<T*>(ptr);
     }
 
     template <typename T>
-    const T& checked_cast(const void* ptr) 
+    const T& checked_cast(const void* ptr)
     {
         assert(ptr);
         assert(memory_block_type(ptr) == allocatable_types<T>::type);
@@ -328,7 +336,7 @@ extern "C"
 
 
     void mitie_free (
-        void* object 
+        void* object
     )
     {
         if (object == 0)
@@ -359,6 +367,12 @@ extern "C"
                 break;
             case MITIE_NER_TRAINER:
                 destroy<ner_trainer>(object);
+                break;
+            case MITIE_TEXT_CATEGORIZER_TRAINER:
+                destroy<text_categorizer_trainer>(object);
+                break;
+            case MITIE_TEXT_CATEGORIZER:
+                destroy<text_categorizer>(object);
                 break;
             default:
                 std::cerr << "ERROR, mitie_free() called on non-MITIE object or called twice." << std::endl;
@@ -423,7 +437,7 @@ extern "C"
 
     mitie_named_entity_detections* mitie_extract_entities (
         const mitie_named_entity_extractor* ner_,
-        char** tokens 
+        char** tokens
     )
     {
         const named_entity_extractor& ner = checked_cast<named_entity_extractor>(ner_);
@@ -601,7 +615,7 @@ extern "C"
             unsigned long begin = std::min(arg1_start, arg2_start);
             if (begin > window_size)
                 begin -= window_size;
-            else 
+            else
                 begin = 0;
 
             const unsigned long end = std::max(arg1_start+arg1_length, arg2_start+arg2_length)+window_size;
@@ -664,6 +678,44 @@ extern "C"
         }
     }
 
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
+
+
+    mitie_text_categorizer* mitie_load_text_categorizer (
+        const char* filename
+    )
+    {
+        assert(filename != NULL);
+
+        text_categorizer* impl = 0;
+        try
+        {
+            string classname;
+            impl = allocate<text_categorizer>();
+            dlib::deserialize(filename) >> classname;
+            if (classname != "mitie::text_categorizer")
+                throw dlib::error("This file does not contain a mitie::text_categorizer. Contained: " + classname);
+            dlib::deserialize(filename) >> classname >> *impl;
+            return (mitie_text_categorizer*)impl;
+        }
+        catch(std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+            mitie_free(impl);
+            return NULL;
+        }
+        catch(...)
+        {
+            mitie_free(impl);
+            return NULL;
+        }
+    }
+
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 //                                      TRAINING ROUTINES
@@ -703,7 +755,7 @@ extern "C"
 
     int mitie_save_binary_relation_detector (
         const char* filename,
-        const mitie_binary_relation_detector* detector_ 
+        const mitie_binary_relation_detector* detector_
     )
     {
         const binary_relation_detector& detector = checked_cast<binary_relation_detector>(detector_);
@@ -885,7 +937,7 @@ extern "C"
 
     void mitie_ner_trainer_set_num_threads (
         mitie_ner_trainer* trainer_,
-        unsigned long num_threads 
+        unsigned long num_threads
     )
     {
         checked_cast<ner_trainer>(trainer_).set_num_threads(num_threads);
@@ -917,7 +969,7 @@ extern "C"
             return 0;
         }
     }
-    
+
 // ----------------------------------------------------------------------------------------
 
     mitie_binary_relation_trainer* mitie_create_binary_relation_trainer (
@@ -1040,7 +1092,7 @@ extern "C"
 
     void mitie_binary_relation_trainer_set_num_threads (
         mitie_binary_relation_trainer* trainer_,
-        unsigned long num_threads 
+        unsigned long num_threads
     )
     {
         checked_cast<binary_relation_detector_trainer>(trainer_).set_num_threads(num_threads);
@@ -1076,5 +1128,102 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
-}
+    mitie_text_categorizer_trainer* mitie_create_text_categorizer_trainer (
+        const char* filename
+    )
+    {
+        assert(filename != NULL);
 
+        try
+        {
+            return (mitie_text_categorizer_trainer*)allocate<text_categorizer_trainer>(filename);
+        }
+        catch(...)
+        {
+            return NULL;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    int mitie_add_text_categorizer_labeled_text (
+      mitie_text_categorizer_trainer* trainer_,
+      char** tokens,
+      const char* label
+    )
+    {
+        //assert(tokens);
+        assert(label);
+        text_categorizer_trainer& trainer =  checked_cast<text_categorizer_trainer>(trainer_);
+        try
+        {
+          std::vector<std::string> words;
+          while(*tokens)
+              words.push_back(*tokens++);
+          trainer.add(words, label);
+          return 0;
+        }
+        catch(...)
+        {
+            return 1;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    void mitie_text_categorizer_trainer_set_beta (
+        mitie_text_categorizer_trainer* trainer_,
+        double beta
+    )
+    {
+        assert(beta >= 0);
+        checked_cast<text_categorizer_trainer>(trainer_).set_beta(beta);
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    double mitie_text_categorizer_trainer_get_beta (
+        const mitie_text_categorizer_trainer* trainer_
+    )
+    {
+        return checked_cast<text_categorizer_trainer>(trainer_).get_beta();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    void mitie_text_categorizer_trainer_set_num_threads (
+        mitie_text_categorizer_trainer* trainer_,
+        unsigned long num_threads
+    )
+    {
+        checked_cast<text_categorizer_trainer>(trainer_).set_num_threads(num_threads);
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_text_categorizer_trainer_get_num_threads (
+        const mitie_text_categorizer_trainer* trainer_
+    )
+    {
+        return checked_cast<text_categorizer_trainer>(trainer_).get_num_threads();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+  mitie_text_categorizer* mitie_train_text_categorizer (
+      const mitie_text_categorizer_trainer* trainer_
+  )
+  {
+      //assert(mitie_binary_relation_trainer_num_positive_examples(trainer_) > 0);
+      const text_categorizer_trainer& trainer =  checked_cast<text_categorizer_trainer>(trainer_);
+      try
+      {
+          return (mitie_text_categorizer*)allocate<text_categorizer>(trainer.train());
+      }
+      catch(...)
+      {
+          return NULL;
+      }
+  }
+
+}
