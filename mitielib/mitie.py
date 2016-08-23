@@ -575,8 +575,8 @@ _f.mitie_text_categorizer_trainer_set_beta.argtypes = ctypes.c_void_p, ctypes.c_
 _f.mitie_text_categorizer_trainer_set_num_threads.restype = None
 _f.mitie_text_categorizer_trainer_set_num_threads.argtypes = ctypes.c_void_p, ctypes.c_ulong
 
-#_f.mitie_text_categorizer_trainer_size.restype = ctypes.c_ulong
-#_f.mitie_text_categorizer_trainer_size.argtypes = ctypes.c_void_p,
+_f.mitie_text_categorizer_trainer_size.restype = ctypes.c_ulong
+_f.mitie_text_categorizer_trainer_size.argtypes = ctypes.c_void_p,
 
 _f.mitie_train_text_categorizer.restype = ctypes.c_void_p
 _f.mitie_train_text_categorizer.argtypes = ctypes.c_void_p,
@@ -592,18 +592,9 @@ class text_categorizer_trainer(object):
     def __del__(self):
         self.__mitie_free(self.__obj)
 
-    #@property
-    #def size(self):
-    #    return _f.mitie_text_categorizer_trainer_size(self.__obj)
-
-    #def count_of_least_common_label(self):
-    #    return _f.mitie_text_categorizer_trainer_count_of_least_common_label(self.__obj)
-
-    #def get_all_labels(self):
-    #    return _f.mitie_text_categorizer_trainer_get_all_labels(self.__obj)
-
-    #def get_label_id(self,str):
-    #    return _f.mitie_text_categorizer_trainer_get_label_id(str)
+    @property
+    def size(self):
+        return _f.mitie_text_categorizer_trainer_size(self.__obj)
 
     def add_labeled_text(self, tokens, label):
         ctokens = python_to_mitie_str_array(tokens)

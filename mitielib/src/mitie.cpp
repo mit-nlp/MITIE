@@ -1143,7 +1143,7 @@ extern "C"
       const char* label
     )
     {
-        //assert(tokens);
+        assert(tokens);
         assert(label);
         text_categorizer_trainer& trainer =  checked_cast<text_categorizer_trainer>(trainer_);
         try
@@ -1158,6 +1158,15 @@ extern "C"
         {
             return 1;
         }
+    }
+    
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_text_categorizer_trainer_size (
+        const mitie_text_categorizer_trainer* trainer_
+    )
+    {
+        return checked_cast<text_categorizer_trainer>(trainer_).size();
     }
 
 // ----------------------------------------------------------------------------------------
