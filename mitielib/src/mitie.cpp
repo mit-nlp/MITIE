@@ -708,6 +708,28 @@ extern "C"
              return NULL;
          }
      }
+     
+     int mitie_categorize_text (
+         const mitie_text_categorizer* tcat_,
+         const char** tokens,
+         char* text_tag,
+         double* text_score
+     )
+     {
+         assert(text_tag);
+         assert(text_score);
+         string tag;
+         double score;
+         std::vector<std::string> words;
+         while(*tokens)
+             words.push_back(*tokens++);
+         checked_cast<text_categorizer>(tcat_).predict(words,tag,score);
+         *text_tag = *tag.c_str();
+         *text_score = score;
+         
+         return 0; //TODO try/catch block
+     }
+     
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 //                                      TRAINING ROUTINES
@@ -774,6 +796,34 @@ extern "C"
         }
     }
 
+    int mitie_save_text_categorizer (
+        const char* filename,
+        const mitie_text_categorizer* tcat_
+    )
+    {
+        const text_categorizer& tcat = checked_cast<text_categorizer>(tcat_);
+        assert(filename);
+
+        try
+        {
+            dlib::serialize(filename) << "mitie::text_categorizer" << tcat;
+            return 0;
+        }
+        catch (std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error saving MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+            return 1;
+        }
+        catch (...)
+        {
+#ifndef NDEBUG
+            cerr << "Error saving MITIE model file: " << filename << endl;
+#endif
+            return 1;
+        }
+    }
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 

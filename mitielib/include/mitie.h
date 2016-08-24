@@ -396,6 +396,17 @@ extern "C"
             - The returned object MUST BE FREED by a call to mitie_free().
             - If the object can't be created then this function returns NULL.
     !*/
+    
+    MITIE_EXPORT int mitie_categorize_text (
+        const mitie_text_categorizer* tcat_,
+        const char** tokens,
+        char* text_tag,
+        double* text_score      
+    );
+    /*!
+        requires
+    !*/
+
 
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
@@ -438,7 +449,7 @@ extern "C"
 
     MITIE_EXPORT int mitie_save_text_categorizer (
         const char* filename,
-        const mitie_text_categorizer* ner
+        const mitie_text_categorizer* tcat
     );
     /*!
         requires

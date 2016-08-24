@@ -557,11 +557,17 @@ class binary_relation_detector_trainer(object):
 
 ##############################################################################
 
+_f.mitie_create_text_categorizer_trainer.restype = ctypes.c_void_p
+_f.mitie_create_text_categorizer_trainer.argtypes = ctypes.c_char_p,
+
 _f.mitie_add_text_categorizer_labeled_text.restype = ctypes.c_int
 _f.mitie_add_text_categorizer_labeled_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.c_char_p
 
 _f.mitie_load_text_categorizer.restype = ctypes.c_void_p
 _f.mitie_load_text_categorizer.argtypes = ctypes.c_char_p,
+
+_f.mitie_save_text_categorizer.restype = ctypes.c_int
+_f.mitie_save_text_categorizer.argtypes = ctypes.c_void_p,
 
 _f.mitie_text_categorizer_trainer_get_beta.restype = ctypes.c_double
 _f.mitie_text_categorizer_trainer_get_beta.argtypes = ctypes.c_void_p,
@@ -581,6 +587,49 @@ _f.mitie_text_categorizer_trainer_size.argtypes = ctypes.c_void_p,
 _f.mitie_train_text_categorizer.restype = ctypes.c_void_p
 _f.mitie_train_text_categorizer.argtypes = ctypes.c_void_p,
 
+_f.mitie_categorize_text.restype = ctypes.c_ulong
+_f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(ctypes.c_char_p), ctypes.POINTER(ctypes.c_double) 
+
+class text_categorizer:
+    def __init__(self, filename):
+        self.__mitie_free = _f.mitie_free
+        if (isinstance(filename, ctypes.c_void_p)):
+            # If we get here then it means we are using the "private" constructor used by
+            # the training tools to create a binary_relation_detector.  In this case,
+            # filename is a pointer to a ner object.
+            self.__obj = filename
+        else:
+            self.__obj = _f.mitie_load_text_categorizer(filename)
+        if (self.__obj == None):
+            raise Exception("Unable to load text_categorizer detector from " + filename)
+
+    def __del__(self):
+        self.__mitie_free(self.__obj)
+
+    def save_to_disk(self, filename):
+        """Save this object to disk.  You recall it from disk with the following Python
+        code: 
+            tcat = text_categorizer(filename)"""
+        if (_f.mitie_save_text_categorizer(filename, self.__obj) != 0):
+            raise Exception("Unable to save text_categorizer to the file " + filename);
+
+    
+    def __call__(self, tokens):
+        """Classify a relation object.  The input should have been produced by 
+        named_entity_extractor.extract_binary_relation().  This function returns a classification score
+        and if this number is > 0 then the relation detector is indicating that the input relation
+        is a true instance of the type of relation this object detects."""
+        score = ctypes.c_double()
+        label = ctypes.c_char_p() 
+        #label1 = ctypes.cast(ctypes.create_string_buffer(50),ctypes.c_char_p)
+        ctokens = python_to_mitie_str_array(tokens)
+        if (_f.mitie_categorize_text(self.__obj, ctokens, ctypes.byref(label), ctypes.byref(score)) != 0):
+            raise Exception("Unable to classify text.")
+        
+        print(score)
+        print(label)
+
+        return label, score 
 
 class text_categorizer_trainer(object):
     def __init__(self, filename):
