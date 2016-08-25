@@ -589,15 +589,12 @@ _f.mitie_train_text_categorizer.argtypes = ctypes.c_void_p,
 
 _f.mitie_categorize_text.restype = ctypes.c_ulong
 _f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(ctypes.POINTER(ctypes.c_char_p)), ctypes.POINTER(ctypes.c_double)  #ctypes.POINTER(ctypes.c_char_p)
-#types.POINTER(ctypes.c_sizeof), 
+
 
 class text_categorizer:
     def __init__(self, filename):
         self.__mitie_free = _f.mitie_free
         if (isinstance(filename, ctypes.c_void_p)):
-            # If we get here then it means we are using the "private" constructor used by
-            # the training tools to create a binary_relation_detector.  In this case,
-            # filename is a pointer to a ner object.
             self.__obj = filename
         else:
             self.__obj = _f.mitie_load_text_categorizer(filename)
@@ -616,10 +613,8 @@ class text_categorizer:
 
     
     def __call__(self, tokens):
-        """Classify a relation object.  The input should have been produced by 
-        named_entity_extractor.extract_binary_relation().  This function returns a classification score
-        and if this number is > 0 then the relation detector is indicating that the input relation
-        is a true instance of the type of relation this object detects."""
+        """Categorise a piece of text. The input should have been produced by 
+        tokenize().  This function returns a predicted label and a confidence score."""
         score = ctypes.c_double()
         label = ctypes.POINTER(ctypes.c_char_p)()
         ctokens = python_to_mitie_str_array(tokens)
@@ -646,7 +641,7 @@ class text_categorizer_trainer(object):
     def add_labeled_text(self, tokens, label):
         ctokens = python_to_mitie_str_array(tokens)
         if (_f.mitie_add_text_categorizer_labeled_text(self.__obj, ctokens, label) != 0):
-            raise Exception("Unable to add entity to training instance.  Probably ran out of RAM.");
+            raise Exception("Unable to add labeled text to training instance.  Probably ran out of RAM.");
 
     @property
     def beta(self):
@@ -667,9 +662,8 @@ class text_categorizer_trainer(object):
         _f.mitie_text_categorizer_trainer_set_num_threads(self.__obj, value)
 
     def train(self):
-        #if (self.size == 0):
-        #    raise Exception("You can't call train() on an empty trainer.")
-        # Make the type be a c_void_p so the named_entity_extractor constructor will know what to do.
+        if (self.size == 0):
+            raise Exception("You can't call train() on an empty trainer.")
         obj = ctypes.c_void_p(_f.mitie_train_text_categorizer(self.__obj))
         if (obj == None):
             raise Exception("Unable to create text_categorizer.  Probably ran out of RAM")
