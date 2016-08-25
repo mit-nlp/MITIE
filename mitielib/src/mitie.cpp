@@ -730,7 +730,7 @@ extern "C"
               
              checked_cast<text_categorizer>(tcat_).predict(words,tag,score);
 
-             char * writable = new char[tag.size() + 1];
+             char * writable = (char*)allocate_bytes(tag.size()+1);
              std::copy(tag.begin(), tag.end(), writable);
              writable[tag.size()] = '\0';
              
@@ -1207,7 +1207,7 @@ extern "C"
 
     int mitie_add_text_categorizer_labeled_text (
       mitie_text_categorizer_trainer* trainer_,
-      char** tokens,
+      const char** tokens,
       const char* label
     )
     {
@@ -1282,7 +1282,7 @@ extern "C"
       const mitie_text_categorizer_trainer* trainer_
   )
   {
-      //assert(mitie_binary_relation_trainer_num_positive_examples(trainer_) > 0);
+      assert(mitie_text_categorizer_trainer_size(trainer_) > 0);
       const text_categorizer_trainer& trainer =  checked_cast<text_categorizer_trainer>(trainer_);
       try
       {
