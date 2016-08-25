@@ -392,7 +392,7 @@ extern "C"
             - filename == a valid pointer to a NULL terminated C string
         ensures
             - Reads a saved MITIE text categorizer object from disk and returns a
-              pointer to the relation detector.
+              pointer to the text categorizer.
             - The returned object MUST BE FREED by a call to mitie_free().
             - If the object can't be created then this function returns NULL.
     !*/
@@ -404,7 +404,17 @@ extern "C"
         double* text_score      
     );
     /*!
-        requires
+        requires            
+            - tcat_ != NULL
+            - tokens != NULL
+            - text_tag != NULL
+            - text_score != NULL        
+        ensures
+          - returns 0 upon success and a non-zero value on failure.  
+          - if (this function returns 0) then
+              - **text_tag == the predicted category to which this text belongs 
+                 (selected from the set of categories tcat_ knows about)
+              - *score == the confidence the categorizer has about its prediction.
     !*/
 
 
@@ -454,7 +464,7 @@ extern "C"
     /*!
         requires
             - filename == a valid pointer to a NULL terminated C string
-            - ner != NULL
+            - tcat != NULL
         ensures
             - Saves the given text categorizer object to disk in a file with the given filename.  Once this function
               finishes you will be able to read the ner object from disk by calling
@@ -907,14 +917,7 @@ extern "C"
             - returns the trainer's beta parameter.  This parameter controls the trade-off
               between trying to avoid false alarms but also detecting everything.
               Different values of beta have the following interpretations:
-                - beta < 1 indicates that you care more about avoiding false alarms than
-                  missing detections.  The smaller you make beta the more the trainer will
-                  try to avoid false alarms.
-                - beta == 1 indicates that you don't have a preference between avoiding
-                  false alarms or not missing detections.  That is, you care about these
-                  two things equally.
-                - beta > 1 indicates that care more about not missing detections than
-                  avoiding false alarms.
+              // TODO write interpretations of beta parameter
     !*/
 
     MITIE_EXPORT void mitie_text_categorizer_trainer_set_num_threads (
@@ -936,19 +939,19 @@ extern "C"
             - trainer != NULL
         ensures
             - returns the number of threads the trainer will use when
-              mitie_train_named_entity_extractor() is called.  You should set this equal to
+              mitie_train_text_categorizer() is called.  You should set this equal to
               the number of available CPU cores for maximum training speed.
     !*/
 
     MITIE_EXPORT int mitie_add_text_categorizer_labeled_text (
         mitie_text_categorizer_trainer* trainer,
-        char** tokens,
+        const char** tokens,
         const char* label
     );
     /*!
         requires
-            - trainer != NULL
-            - instance != NULL
+            - tokens != NULL
+            - label != NULL
         ensures
             - Adds the given training example to the trainer object.
             - mitie_text_categorizer_trainer_size(trainer) is incremented by 1.
@@ -962,12 +965,10 @@ extern "C"
     /*!
         requires
             - trainer != NULL
-            - mitie_binary_relation_trainer_num_positive_examples(trainer) > 0
-            - mitie_binary_relation_trainer_num_negative_examples(trainer) > 0
+            - mitie_text_categorizer_trainer_size(trainer) > 0
         ensures
-            - Runs the binary relation training process based on the training data in the
-              given trainer.  Once finished, it returns the resulting binary relation
-              detector object.
+            - Runs the text categorizer training process based on the training data in the
+              given trainer.  Once finished, it returns the resulting text categorizer object.
             - The returned object MUST BE FREED by a call to mitie_free().
             - returns NULL if the object could not be created.
     !*/
