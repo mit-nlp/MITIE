@@ -588,7 +588,8 @@ _f.mitie_train_text_categorizer.restype = ctypes.c_void_p
 _f.mitie_train_text_categorizer.argtypes = ctypes.c_void_p,
 
 _f.mitie_categorize_text.restype = ctypes.c_ulong
-_f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(ctypes.c_char_p), ctypes.POINTER(ctypes.c_double) 
+_f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(ctypes.POINTER(ctypes.c_char_p)), ctypes.POINTER(ctypes.c_double)  #ctypes.POINTER(ctypes.c_char_p)
+#types.POINTER(ctypes.c_sizeof), 
 
 class text_categorizer:
     def __init__(self, filename):
@@ -620,16 +621,13 @@ class text_categorizer:
         and if this number is > 0 then the relation detector is indicating that the input relation
         is a true instance of the type of relation this object detects."""
         score = ctypes.c_double()
-        label = ctypes.c_char_p() 
-        #label1 = ctypes.cast(ctypes.create_string_buffer(50),ctypes.c_char_p)
+        label = ctypes.POINTER(ctypes.c_char_p)()
         ctokens = python_to_mitie_str_array(tokens)
         if (_f.mitie_categorize_text(self.__obj, ctokens, ctypes.byref(label), ctypes.byref(score)) != 0):
             raise Exception("Unable to classify text.")
         
-        print(score)
-        print(label)
-
-        return label, score 
+        label = ctypes.cast(label,ctypes.c_char_p)
+        return label.value, score.value 
 
 class text_categorizer_trainer(object):
     def __init__(self, filename):

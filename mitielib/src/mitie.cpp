@@ -712,21 +712,29 @@ extern "C"
      int mitie_categorize_text (
          const mitie_text_categorizer* tcat_,
          const char** tokens,
-         char* text_tag,
+         char** text_tag,
          double* text_score
      )
      {
          assert(text_tag);
          assert(text_score);
+
          string tag;
          double score;
          std::vector<std::string> words;
+
          while(*tokens)
              words.push_back(*tokens++);
+          
          checked_cast<text_categorizer>(tcat_).predict(words,tag,score);
-         *text_tag = *tag.c_str();
-         *text_score = score;
+
+         char * writable = new char[tag.size() + 1];
+         std::copy(tag.begin(), tag.end(), writable);
+         writable[tag.size()] = '\0';
          
+         *text_tag = writable;               
+         *text_score = score;
+                  
          return 0; //TODO try/catch block
      }
      

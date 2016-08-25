@@ -400,7 +400,7 @@ extern "C"
     MITIE_EXPORT int mitie_categorize_text (
         const mitie_text_categorizer* tcat_,
         const char** tokens,
-        char* text_tag,
+        char** text_tag,
         double* text_score      
     );
     /*!
