@@ -14,10 +14,15 @@ import ipdb
 from mitie import *
 
 test_tokens = ["What","a","black","and","bad","day"]
+test_tokens_2 = ["I","am","so","happy"]
 
 # This function does the work of training.  Note that it can take a long time to run
 # when using larger training datasets.  So be patient.
-cat = text_categorizer("new_text_categorizer2.dat")
+cat = text_categorizer("new_text_categorizer.dat")
 
 label, score = cat(test_tokens)
+print(label,score)
+
+
+label, score = cat(test_tokens_2)
 print(label,score)

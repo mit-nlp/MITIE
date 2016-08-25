@@ -34,5 +34,5 @@ cat = trainer.train()
 # Now that training is done we can save the ner object to disk like so.  This will
 # allow you to load the model back in using a statement like:
 #   ner = named_entity_extractor("new_ner_model.dat").
-cat.save_to_disk("new_text_categorizer2.dat")
+cat.save_to_disk("new_text_categorizer.dat")
 
