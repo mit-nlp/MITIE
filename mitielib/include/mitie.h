@@ -467,7 +467,7 @@ extern "C"
             - tcat != NULL
         ensures
             - Saves the given text categorizer object to disk in a file with the given filename.  Once this function
-              finishes you will be able to read the ner object from disk by calling
+              finishes you will be able to read the text categorizer object from disk by calling
               mitie_load_text_categorizer(filename).
             - returns 0 upon success and a non-zero value on failure.  Failure happens if
               there is some error that prevents us from writing to the given file.
@@ -917,7 +917,7 @@ extern "C"
             - returns the trainer's beta parameter.  This parameter controls the trade-off
               between trying to avoid false alarms but also detecting everything.
               Different values of beta have the following interpretations:
-              // TODO write interpretations of beta parameter
+              // TODO document interpretations of beta parameter
     !*/
 
     MITIE_EXPORT void mitie_text_categorizer_trainer_set_num_threads (

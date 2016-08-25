@@ -588,7 +588,7 @@ _f.mitie_train_text_categorizer.restype = ctypes.c_void_p
 _f.mitie_train_text_categorizer.argtypes = ctypes.c_void_p,
 
 _f.mitie_categorize_text.restype = ctypes.c_ulong
-_f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(ctypes.POINTER(ctypes.c_char_p)), ctypes.POINTER(ctypes.c_double)  #ctypes.POINTER(ctypes.c_char_p)
+_f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(ctypes.POINTER(ctypes.c_char_p)), ctypes.POINTER(ctypes.c_double) 
 
 
 class text_categorizer:
