@@ -716,26 +716,36 @@ extern "C"
          double* text_score
      )
      {
-         assert(text_tag);
-         assert(text_score);
+         try
+         {       
+             assert(text_tag);
+             assert(text_score);
 
-         string tag;
-         double score;
-         std::vector<std::string> words;
+             string tag;
+             double score;
+             std::vector<std::string> words;
 
-         while(*tokens)
-             words.push_back(*tokens++);
-          
-         checked_cast<text_categorizer>(tcat_).predict(words,tag,score);
+             while(*tokens)
+                 words.push_back(*tokens++);
+              
+             checked_cast<text_categorizer>(tcat_).predict(words,tag,score);
 
-         char * writable = new char[tag.size() + 1];
-         std::copy(tag.begin(), tag.end(), writable);
-         writable[tag.size()] = '\0';
-         
-         *text_tag = writable;               
-         *text_score = score;
-                  
-         return 0; //TODO try/catch block
+             char * writable = new char[tag.size() + 1];
+             std::copy(tag.begin(), tag.end(), writable);
+             writable[tag.size()] = '\0';
+             
+             *text_tag = writable;               
+             *text_score = score;
+                      
+             return 0; 
+         }
+         catch (...)
+         {
+#ifndef NDEBUG
+             cerr << "Error categorizing text: " << endl;
+#endif
+             return 1;
+         }
      }
      
 // ----------------------------------------------------------------------------------------
