@@ -613,7 +613,7 @@ class text_categorizer:
 
     
     def __call__(self, tokens):
-        """Categorise a piece of text. The input should have been produced by 
+        """Categorise a piece of text. The input tokens should have been produced by 
         tokenize().  This function returns a predicted label and a confidence score."""
         score = ctypes.c_double()
         label = ctypes.POINTER(ctypes.c_char_p)()
@@ -622,7 +622,10 @@ class text_categorizer:
             raise Exception("Unable to classify text.")
         
         label = ctypes.cast(label,ctypes.c_char_p)
-        return label.value, score.value 
+        _label, _score = label.value, score.value
+        _f.mitie_free(label)
+        
+        return  _label, _score
 
 class text_categorizer_trainer(object):
     def __init__(self, filename):
