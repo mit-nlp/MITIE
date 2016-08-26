@@ -406,11 +406,17 @@ extern "C"
     /*!
         requires            
             - tcat_ != NULL
-            - tokens != NULL
-            - text_tag != NULL
+            - tokens == An array of NULL terminated C strings.  The end of the array must
+              be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
+              array of tokens). 
+            - text_tag != NULL  
             - text_score != NULL        
         ensures
+          - this function uses a trained text_categorizer to predict the category of a text,
+            represented by an array of tokens, where each token is one word. The category is
+            represented by its name (a string).  
           - returns 0 upon success and a non-zero value on failure.  
+          - text_tag and text_score MUST BE FREED by a call to mitie_free().
           - if (this function returns 0) then
               - **text_tag == the predicted category to which this text belongs 
                  (selected from the set of categories tcat_ knows about)
@@ -915,9 +921,9 @@ extern "C"
             - trainer != NULL
         ensures
             - returns the trainer's beta parameter.  This parameter controls the trade-off
-              between trying to avoid false alarms but also detecting everything.
-              Different values of beta have the following interpretations:
-              // TODO document interpretations of beta parameter
+              between precision and recall in measuring the accuracy of the classifier.
+              Beta has the interpretation that we attach beta times as much importance to
+              recall as precision. Set to 1 if these are equally important.               
     !*/
 
     MITIE_EXPORT void mitie_text_categorizer_trainer_set_num_threads (
@@ -950,10 +956,14 @@ extern "C"
     );
     /*!
         requires
-            - tokens != NULL
-            - label != NULL
+            - tokens == An array of NULL terminated C strings.  The end of the array must
+              be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
+              array of tokens).
+            - label == a NULL terminated C string.
         ensures
-            - Adds the given training example to the trainer object.
+            - Adds the given training example to the trainer object. The training example
+              consists of a set of tokens (the words in a text) and a label (the name of 
+              the category to which this text belongs). 
             - mitie_text_categorizer_trainer_size(trainer) is incremented by 1.
             - returns 0 on success and a non-zero value on failure.  Failure might be
               caused by running out of memory.
