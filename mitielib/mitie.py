@@ -555,4 +555,120 @@ class binary_relation_detector_trainer(object):
             raise Exception("Unable to create binary_relation_detector.  Probably ran out of RAM")
         return binary_relation_detector(obj)
 
+##############################################################################
+
+_f.mitie_create_text_categorizer_trainer.restype = ctypes.c_void_p
+_f.mitie_create_text_categorizer_trainer.argtypes = ctypes.c_char_p,
+
+_f.mitie_add_text_categorizer_labeled_text.restype = ctypes.c_int
+_f.mitie_add_text_categorizer_labeled_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.c_char_p
+
+_f.mitie_load_text_categorizer.restype = ctypes.c_void_p
+_f.mitie_load_text_categorizer.argtypes = ctypes.c_char_p,
+
+_f.mitie_save_text_categorizer.restype = ctypes.c_int
+_f.mitie_save_text_categorizer.argtypes = ctypes.c_void_p,
+
+_f.mitie_text_categorizer_trainer_get_beta.restype = ctypes.c_double
+_f.mitie_text_categorizer_trainer_get_beta.argtypes = ctypes.c_void_p,
+
+_f.mitie_text_categorizer_trainer_get_num_threads.restype = ctypes.c_ulong
+_f.mitie_text_categorizer_trainer_get_num_threads.argtypes = ctypes.c_void_p,
+
+_f.mitie_text_categorizer_trainer_set_beta.restype = None
+_f.mitie_text_categorizer_trainer_set_beta.argtypes = ctypes.c_void_p, ctypes.c_double
+
+_f.mitie_text_categorizer_trainer_set_num_threads.restype = None
+_f.mitie_text_categorizer_trainer_set_num_threads.argtypes = ctypes.c_void_p, ctypes.c_ulong
+
+_f.mitie_text_categorizer_trainer_size.restype = ctypes.c_ulong
+_f.mitie_text_categorizer_trainer_size.argtypes = ctypes.c_void_p,
+
+_f.mitie_train_text_categorizer.restype = ctypes.c_void_p
+_f.mitie_train_text_categorizer.argtypes = ctypes.c_void_p,
+
+_f.mitie_categorize_text.restype = ctypes.c_ulong
+_f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(ctypes.POINTER(ctypes.c_char_p)), ctypes.POINTER(ctypes.c_double) 
+
+
+class text_categorizer:
+    def __init__(self, filename):
+        self.__mitie_free = _f.mitie_free
+        if (isinstance(filename, ctypes.c_void_p)):
+            self.__obj = filename
+        else:
+            self.__obj = _f.mitie_load_text_categorizer(filename)
+        if (self.__obj == None):
+            raise Exception("Unable to load text_categorizer detector from " + filename)
+
+    def __del__(self):
+        self.__mitie_free(self.__obj)
+
+    def save_to_disk(self, filename):
+        """Save this object to disk.  You recall it from disk with the following Python
+        code: 
+            tcat = text_categorizer(filename)"""
+        if (_f.mitie_save_text_categorizer(filename, self.__obj) != 0):
+            raise Exception("Unable to save text_categorizer to the file " + filename);
+
+    
+    def __call__(self, tokens):
+        """Categorise a piece of text. The input tokens should have been produced by 
+        something like tokenize().  This function returns a predicted label and a confidence score."""
+        score = ctypes.c_double()
+        label = ctypes.POINTER(ctypes.c_char_p)()
+        ctokens = python_to_mitie_str_array(tokens)
+        if (_f.mitie_categorize_text(self.__obj, ctokens, ctypes.byref(label), ctypes.byref(score)) != 0):
+            raise Exception("Unable to classify text.")
+        
+        label = ctypes.cast(label,ctypes.c_char_p)
+        _label, _score = label.value, score.value
+        _f.mitie_free(label)
+        
+        return  _label, _score
+
+class text_categorizer_trainer(object):
+    def __init__(self, filename):
+        self.__obj = _f.mitie_create_text_categorizer_trainer(filename)
+        self.__mitie_free = _f.mitie_free
+        if (self.__obj == None):
+            raise Exception("Unable to create text_categorizer_trainer based on " + filename)
+
+    def __del__(self):
+        self.__mitie_free(self.__obj)
+
+    @property
+    def size(self):
+        return _f.mitie_text_categorizer_trainer_size(self.__obj)
+
+    def add_labeled_text(self, tokens, label):
+        ctokens = python_to_mitie_str_array(tokens)
+        if (_f.mitie_add_text_categorizer_labeled_text(self.__obj, ctokens, label) != 0):
+            raise Exception("Unable to add labeled text to training instance.  Probably ran out of RAM.");
+
+    @property
+    def beta(self):
+        return _f.mitie_text_categorizer_trainer_get_beta(self.__obj)
+
+    @beta.setter
+    def beta(self, value):
+        if (value < 0):
+            raise Exception("Invalid beta value given.  beta can't be negative.")
+        _f.mitie_text_categorizer_trainer_set_beta(self.__obj, value)
+
+    @property
+    def num_threads(self):
+        return _f.mitie_text_categorizer_trainer_get_num_threads(self.__obj)
+
+    @num_threads.setter
+    def num_threads(self, value):
+        _f.mitie_text_categorizer_trainer_set_num_threads(self.__obj, value)
+
+    def train(self):
+        if (self.size == 0):
+            raise Exception("You can't call train() on an empty trainer.")
+        obj = ctypes.c_void_p(_f.mitie_train_text_categorizer(self.__obj))
+        if (obj == None):
+            raise Exception("Unable to create text_categorizer.  Probably ran out of RAM")
+        return text_categorizer(obj)
 
