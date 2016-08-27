@@ -398,31 +398,31 @@ extern "C"
     !*/
     
     MITIE_EXPORT int mitie_categorize_text (
-        const mitie_text_categorizer* tcat_,
+        const mitie_text_categorizer* tcat,
         const char** tokens,
         char** text_tag,
         double* text_score      
     );
     /*!
         requires            
-            - tcat_ != NULL
+            - tcat != NULL
             - tokens == An array of NULL terminated C strings.  The end of the array must
               be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
               array of tokens). 
             - text_tag != NULL  
             - text_score != NULL        
         ensures
-          - this function uses a trained text_categorizer to predict the category of a text,
+          - This function uses a trained text_categorizer to predict the category of a text,
             represented by an array of tokens, where each token is one word. The category is
             represented by its name (a string).  
           - returns 0 upon success and a non-zero value on failure.  
-          - text_tag and text_score MUST BE FREED by a call to mitie_free().
+          - text_tag MUST BE FREED by a call to mitie_free().
           - if (this function returns 0) then
-              - **text_tag == the predicted category to which this text belongs 
-                 (selected from the set of categories tcat_ knows about)
+              - *text_tag == A NULL terminated C string containing the predicted category
+                to which this text belongs (selected from the set of categories tcat knows
+                about)
               - *score == the confidence the categorizer has about its prediction.
     !*/
-
 
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------

@@ -614,7 +614,7 @@ class text_categorizer:
     
     def __call__(self, tokens):
         """Categorise a piece of text. The input tokens should have been produced by 
-        tokenize().  This function returns a predicted label and a confidence score."""
+        something like tokenize().  This function returns a predicted label and a confidence score."""
         score = ctypes.c_double()
         label = ctypes.POINTER(ctypes.c_char_p)()
         ctokens = python_to_mitie_str_array(tokens)
