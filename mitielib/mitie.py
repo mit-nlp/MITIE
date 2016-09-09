@@ -8,8 +8,10 @@ def _last_modified_time(filename):
 
 try:
     xrange
+    PY3 = False
 except NameError:  # Py3
     xrange = range
+    PY3 = True
 
 # Load the mitie shared library.  We will look in a few places to see if we can find it.
 # What we do depends on our platform
@@ -92,6 +94,20 @@ def to_bytes(string):
         string = string.encode('utf-8')
 
     return string
+
+def to_default_str_type(string):
+    """Convert if needed the string to the default string type (encoded str in Python2
+       or decoded str in Python3."""
+    if PY3:
+        if hasattr(string, 'decode'):
+            string = string.decode('utf-8')
+
+    else:
+        if hasattr(string, 'encode'):
+            string = string.encode('utf-8')
+
+    return string
+
 
 def _get_windowed_range(tokens, arg1, arg2):
     """returns an xrange that spans a range that includes the arg1 and arg2 ranges
@@ -219,11 +235,11 @@ class named_entity_extractor:
         if (dets == None):
             raise Exception("Unable to create entity detections.")
         num = _f.mitie_ner_get_num_detections(dets)
-        temp = ([(xrange(_f.mitie_ner_get_detection_position(dets,i),
-            _f.mitie_ner_get_detection_position(dets,i)+_f.mitie_ner_get_detection_length(dets,i)),
-            tags[_f.mitie_ner_get_detection_tag(dets,i)],
-            _f.mitie_ner_get_detection_score(dets,i)
-            ) for i in xrange(num)])
+        temp = [(xrange(_f.mitie_ner_get_detection_position(dets, i),
+                        _f.mitie_ner_get_detection_position(dets, i) + _f.mitie_ner_get_detection_length(dets, i)),
+                 to_default_str_type(tags[_f.mitie_ner_get_detection_tag(dets, i)]),
+                 _f.mitie_ner_get_detection_score(dets, i)
+            ) for i in xrange(num)]
         _f.mitie_free(dets)
         return temp
 
