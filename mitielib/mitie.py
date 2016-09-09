@@ -84,6 +84,15 @@ _f.mitie_save_named_entity_extractor.argtypes = ctypes.c_char_p, ctypes.c_void_p
 _f.mitie_extract_binary_relation.restype = ctypes.c_void_p
 _f.mitie_extract_binary_relation.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong
 
+
+def to_bytes(string):
+    """Encode the string in utf-8. If the string is already encoded (bytes in Python 3
+       or str in Python 2), return the string unmodified."""
+    if hasattr(string, 'encode'):
+        string = string.encode('utf-8')
+
+    return string
+
 def _get_windowed_range(tokens, arg1, arg2):
     """returns an xrange that spans a range that includes the arg1 and arg2 ranges
     along with an additional 5 tokens on each side, subject to the constraint that
@@ -180,6 +189,7 @@ class named_entity_extractor:
             # filename is a pointer to a ner object.
             self.__obj = filename
         else:
+            filename = to_bytes(filename)
             self.__obj = _f.mitie_load_named_entity_extractor(filename)
         if (self.__obj == None):
             raise Exception("Unable to load named entity extractor from " + filename)
