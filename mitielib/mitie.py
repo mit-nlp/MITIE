@@ -109,7 +109,7 @@ def _get_windowed_range(tokens, arg1, arg2):
     return r
 
 
-def python_to_mitie_str_array(tokens, r = None):
+def python_to_mitie_str_array(tokens, r=None):
     """Convert from a Python list of strings into MITIE's NULL terminated char** array type.  
     Note that the memory returned by this object is managed by Python and doesn't need to be 
     freed by the user.
@@ -124,9 +124,9 @@ def python_to_mitie_str_array(tokens, r = None):
     i = 0
     for j in r:
         if (isinstance(tokens[j], tuple)):
-            ctokens[i] = tokens[j][0]
+            ctokens[i] = to_bytes(tokens[j][0])
         else:
-            ctokens[i] = tokens[j]
+            ctokens[i] = to_bytes(tokens[j])
         i = i + 1
     ctokens[i] = None
     return ctokens
