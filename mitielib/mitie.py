@@ -159,21 +159,24 @@ def load_entire_file(filename):
     _f.mitie_free(x)
     return res
 
-def tokenize(str):
-    """ Split str into tokens and return them as a list. """
+
+def tokenize(string):
+    """ Split string into tokens and return them as a list."""
     mitie_tokenize = _f.mitie_tokenize
     mitie_tokenize.restype = ctypes.POINTER(ctypes.c_char_p)
     mitie_tokenize.argtypes = ctypes.c_char_p,
-    tok = mitie_tokenize(str)
-    if (tok == None):
+    string = to_bytes(string)
+    tok = mitie_tokenize(string)
+    if tok is None:
         raise Exception("Unable to tokenize string.")
     i = 0
     res = []
-    while(tok[i] != None):
+    while tok[i] is not None:
         res.append(tok[i])
-        i = i + 1
+        i += 1
     _f.mitie_free(tok)
     return res
+
 
 def tokenize_with_offsets(str):
     """ Split str into tokens and return them as a list.  Also, each element of the list
