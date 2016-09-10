@@ -337,14 +337,16 @@ class binary_relation_detector:
             raise Exception("Unable to save binary_relation_detector to the file " + filename)
 
     def __str__(self):
-        return "binary_relation_detector: " + _f.mitie_binary_relation_detector_name_string(self.__obj)
+        return "binary_relation_detector: " + \
+               to_default_str_type(_f.mitie_binary_relation_detector_name_string(self.__obj))
 
     def __repr__(self):
-        return "<binary_relation_detector: " + _f.mitie_binary_relation_detector_name_string(self.__obj) + ">"
+        return "<binary_relation_detector: " + \
+               to_default_str_type(_f.mitie_binary_relation_detector_name_string(self.__obj)) + ">"
 
     @property
     def name_string(self):
-        return _f.mitie_binary_relation_detector_name_string(self.__obj)
+        return to_default_str_type(_f.mitie_binary_relation_detector_name_string(self.__obj))
     
     def __call__(self, relation):
         """Classify a relation object.  The input should have been produced by 
@@ -662,7 +664,7 @@ class text_categorizer:
             tcat = text_categorizer(filename)"""
         filename = to_bytes(filename)
         if _f.mitie_save_text_categorizer(filename, self.__obj) != 0:
-            raise Exception("Unable to save text_categorizer to the file " + filename)
+            raise Exception("Unable to save text_categorizer to the file " + to_default_str_type(filename))
 
     def __call__(self, tokens):
         """Categorise a piece of text. The input tokens should have been produced by 
@@ -677,7 +679,7 @@ class text_categorizer:
         _label, _score = label.value, score.value
         _f.mitie_free(label)
         
-        return _label, _score
+        return to_default_str_type(_label), _score
 
 
 class text_categorizer_trainer(object):
