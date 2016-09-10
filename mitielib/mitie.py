@@ -1,4 +1,8 @@
-import ctypes, os, time, platform
+import ctypes
+import os
+import time
+import platform
+
 
 def _last_modified_time(filename):
     if os.path.isfile(filename):
@@ -28,21 +32,19 @@ if os.name == 'nt':
     else:
         files.append(parent+'/win64/mitie')
 
-    times = [(_last_modified_time(f+".dll"),f) for f in files]
-    most_recent = max(times, key=lambda x:x[0])[1]
+    times = [(_last_modified_time(f+".dll"), f) for f in files]
+    most_recent = max(times, key=lambda x: x[0])[1]
     _f = ctypes.CDLL(most_recent)
 else:
     # On UNIX like platforms MITIE might be in any number of places.  Check them all and
     # pick the one with the most recent timestamp.
-    files = ([parent+'/libmitie.so', 'libmitie.so', 'libmitie.dylib',
-            parent+'/libmitie.dylib', '/usr/local/lib/libmitie.so',
-            '/usr/local/lib/libmitie.dylib'])
-    times = [(_last_modified_time(f),f) for f in files]
-    most_recent = max(times, key=lambda x:x[0])[1]
+    files = ([parent +'/libmitie.so', 'libmitie.so', 'libmitie.dylib',
+              parent +'/libmitie.dylib', '/usr/local/lib/libmitie.so',
+              '/usr/local/lib/libmitie.dylib'])
+    times = [(_last_modified_time(f), f) for f in files]
+    most_recent = max(times, key=lambda x: x[0])[1]
     _f = ctypes.CDLL(most_recent)
-    
 
-    
 
 _f.mitie_free.restype = None
 _f.mitie_free.argtypes = ctypes.c_void_p,
@@ -95,6 +97,7 @@ def to_bytes(string):
 
     return string
 
+
 def to_default_str_type(string):
     """Convert if needed the string to the default string type (encoded str in Python2
        or decoded str in Python3."""
@@ -115,7 +118,7 @@ def _get_windowed_range(tokens, arg1, arg2):
     the returned xrange does not go outside of tokens, where tokens is a list."""
     winsize = 5
     begin = min(min(arg1), min(arg2))
-    end   = max(max(arg1), max(arg2))+1
+    end = max(max(arg1), max(arg2))+1
     if (begin > winsize):
         begin -= winsize 
     else:
@@ -133,27 +136,29 @@ def python_to_mitie_str_array(tokens, r=None):
     r should be a range that indicates which part of tokens to convert.  If r is not given
     then it defaults to xrange(len(tokens)) which selects the entirety of tokens to convert.
     """
-    if (r == None):
+    if r is None:
         r = xrange(len(tokens))
 
     ctokens = (ctypes.c_char_p*(len(r)+1))()
     i = 0
     for j in r:
-        if (isinstance(tokens[j], tuple)):
+        if isinstance(tokens[j], tuple):
             ctokens[i] = to_bytes(tokens[j][0])
         else:
             ctokens[i] = to_bytes(tokens[j])
-        i = i + 1
+        i += 1
     ctokens[i] = None
     return ctokens
 
-def _range_is_valid (list, range):
+
+def _range_is_valid(list, range):
     """checks if each element of the range is a valid element of the list and returns True if this is the case."""
-    return (0 <= min(range) and max(range) < len(list))
+    return 0 <= min(range) and max(range) < len(list)
+
 
 def load_entire_file(filename):
     x = _f.mitie_load_entire_file(filename)
-    if (x == None):
+    if x is None:
         raise Exception("Unable to load file " + filename)
     res = ctypes.string_at(x) 
     _f.mitie_free(x)
@@ -203,7 +208,7 @@ def tokenize_with_offsets(string):
 class named_entity_extractor:
     def __init__(self, filename):
         self.__mitie_free = _f.mitie_free
-        if (isinstance(filename, ctypes.c_void_p)):
+        if isinstance(filename, ctypes.c_void_p):
             # If we get here then it means we are using the "private" constructor used by
             # the training tools to create a named_entity_extractor.  In this case,
             # filename is a pointer to a ner object.
@@ -211,7 +216,7 @@ class named_entity_extractor:
         else:
             filename = to_bytes(filename)
             self.__obj = _f.mitie_load_named_entity_extractor(filename)
-        if (self.__obj == None):
+        if self.__obj is None:
             raise Exception("Unable to load named entity extractor from " + filename)
 
     def __del__(self):
@@ -229,14 +234,14 @@ class named_entity_extractor:
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
             ner = named_entity_extractor(filename)"""
-        if (_f.mitie_save_named_entity_extractor(filename, self.__obj) != 0):
-            raise Exception("Unable to save named_entity_extractor to the file " + filename);
+        if _f.mitie_save_named_entity_extractor(filename, self.__obj) != 0:
+            raise Exception("Unable to save named_entity_extractor to the file " + filename)
 
     def extract_entities(self, tokens):
         tags = self.get_possible_ner_tags()
         # Now extract the entities and return the results
         dets = _f.mitie_extract_entities(self.__obj, python_to_mitie_str_array(tokens))
-        if (dets == None):
+        if dets is None:
             raise Exception("Unable to create entity detections.")
         num = _f.mitie_ner_get_num_detections(dets)
         temp = [(xrange(_f.mitie_ner_get_detection_position(dets, i),
@@ -258,11 +263,11 @@ class named_entity_extractor:
               given by the two relation argument positions arg1 and arg2.  You
               can pass the returned object to a binary_relation_detector to see
               if it is an instance of a known relation type."""
-        arg1_start  = min(arg1)
+        arg1_start = min(arg1)
         arg1_length = len(arg1)
-        arg2_start  = min(arg2)
+        arg2_start = min(arg2)
         arg2_length = len(arg2)
-        if (_f.mitie_entities_overlap(arg1_start, arg1_length, arg2_start, arg2_length) == 1):
+        if _f.mitie_entities_overlap(arg1_start, arg1_length, arg2_start, arg2_length) == 1:
             raise Exception("Error, extract_binary_relation() called with overlapping entities: " + arg1 + ", " + arg2)
 
         # we are going to crop out a window of tokens around the entities
@@ -271,10 +276,9 @@ class named_entity_extractor:
         arg2_start -= min(r)
         ctokens = python_to_mitie_str_array(tokens, r)
         rel = _f.mitie_extract_binary_relation(self.__obj, ctokens, arg1_start, arg1_length, arg2_start, arg2_length)
-        if (rel == None):
+        if rel is None:
             raise Exception("Unable to create binary relation.")
         return binary_relation(rel)
-
 
 
 ####################################################################################################
@@ -294,7 +298,7 @@ _f.mitie_save_binary_relation_detector.argtypes = ctypes.c_char_p, ctypes.c_void
 
 class binary_relation:
     def __init__(self, obj):
-        self.__obj =  obj 
+        self.__obj = obj
         self.__mitie_free = _f.mitie_free
 
     @property
@@ -308,14 +312,14 @@ class binary_relation:
 class binary_relation_detector:
     def __init__(self, filename):
         self.__mitie_free = _f.mitie_free
-        if (isinstance(filename, ctypes.c_void_p)):
+        if isinstance(filename, ctypes.c_void_p):
             # If we get here then it means we are using the "private" constructor used by
             # the training tools to create a binary_relation_detector.  In this case,
             # filename is a pointer to a ner object.
             self.__obj = filename
         else:
             self.__obj = _f.mitie_load_binary_relation_detector(filename)
-        if (self.__obj == None):
+        if self.__obj is None:
             raise Exception("Unable to load binary relation detector from " + filename)
 
     def __del__(self):
@@ -325,8 +329,8 @@ class binary_relation_detector:
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
             ner = binary_relation_detector(filename)"""
-        if (_f.mitie_save_binary_relation_detector(filename, self.__obj) != 0):
-            raise Exception("Unable to save binary_relation_detector to the file " + filename);
+        if _f.mitie_save_binary_relation_detector(filename, self.__obj) != 0:
+            raise Exception("Unable to save binary_relation_detector to the file " + filename)
 
     def __str__(self):
         return "binary_relation_detector: " + _f.mitie_binary_relation_detector_name_string(self.__obj)
@@ -344,7 +348,7 @@ class binary_relation_detector:
         and if this number is > 0 then the relation detector is indicating that the input relation
         is a true instance of the type of relation this object detects."""
         score = ctypes.c_double()
-        if (_f.mitie_classify_binary_relation(self.__obj, relation._obj, ctypes.byref(score)) != 0):
+        if _f.mitie_classify_binary_relation(self.__obj, relation._obj, ctypes.byref(score)) != 0:
             raise Exception("Unable to classify binary relation.  The detector is incompatible with the NER object used for extraction.")
         return score.value
 
@@ -391,11 +395,12 @@ _f.mitie_overlaps_any_entity.argtypes = ctypes.c_void_p, ctypes.c_ulong, ctypes.
 _f.mitie_train_named_entity_extractor.restype = ctypes.c_void_p
 _f.mitie_train_named_entity_extractor.argtypes = ctypes.c_void_p,
 
+
 class ner_training_instance:
     def __init__(self, tokens):
         self.__obj = _f.mitie_create_ner_training_instance(python_to_mitie_str_array(tokens))
         self.__mitie_free = _f.mitie_free
-        if (self.__obj == None):
+        if self.__obj is None:
             raise Exception("Unable to create ner_training_instance.  Probably ran out of RAM.")
 
     def __del__(self):
@@ -415,24 +420,24 @@ class ner_training_instance:
 
     def overlaps_any_entity(self, range):
         """Takes a xrange and reports if the range overlaps any entities already in this object."""
-        if (len(range) == 0 or max(range) >= self.num_tokens):
+        if len(range) == 0 or max(range) >= self.num_tokens:
             raise Exception("Invalid range given to ner_training_instance.overlaps_any_entity()")
         return _f.mitie_overlaps_any_entity(self.__obj, min(range), len(range)) == 1
 
     def add_entity(self, range, label):
-        if (len(range) == 0 or max(range) >= self.num_tokens or min(range) < 0):
+        if len(range) == 0 or max(range) >= self.num_tokens or min(range) < 0:
             raise Exception("Invalid range given to ner_training_instance.overlaps_any_entity()")
-        if (self.overlaps_any_entity(range)):
+        if self.overlaps_any_entity(range):
             raise Exception("Invalid range given to ner_training_instance.overlaps_any_entity().  It overlaps an entity given to a previous call to add_entity().")
-        if (_f.mitie_add_ner_training_entity(self.__obj, min(range), len(range), label) != 0):
-            raise Exception("Unable to add entity to training instance.  Probably ran out of RAM.");
+        if _f.mitie_add_ner_training_entity(self.__obj, min(range), len(range), label) != 0:
+            raise Exception("Unable to add entity to training instance.  Probably ran out of RAM.")
         
 
 class ner_trainer(object):
     def __init__(self, filename):
         self.__obj = _f.mitie_create_ner_trainer(filename)
         self.__mitie_free = _f.mitie_free
-        if (self.__obj == None):
+        if self.__obj is None:
             raise Exception("Unable to create ner_trainer based on " + filename)
 
     def __del__(self):
@@ -443,8 +448,8 @@ class ner_trainer(object):
         return _f.mitie_ner_trainer_size(self.__obj)
 
     def add(self, instance):
-        if (_f.mitie_add_ner_training_instance(self.__obj, instance._obj) != 0):
-            raise Exception("Unable to add training instance to ner_trainer.  Probably ran out of RAM.");
+        if _f.mitie_add_ner_training_instance(self.__obj, instance._obj) != 0:
+            raise Exception("Unable to add training instance to ner_trainer.  Probably ran out of RAM.")
 
     @property
     def beta(self):
@@ -452,7 +457,7 @@ class ner_trainer(object):
 
     @beta.setter
     def beta(self, value):
-        if (value < 0):
+        if value < 0:
             raise Exception("Invalid beta value given.  beta can't be negative.")
         _f.mitie_ner_trainer_set_beta(self.__obj, value)
     
@@ -465,11 +470,11 @@ class ner_trainer(object):
         _f.mitie_ner_trainer_set_num_threads(self.__obj, value)
     
     def train(self):
-        if (self.size == 0):
+        if self.size == 0:
             raise Exception("You can't call train() on an empty trainer.")
         # Make the type be a c_void_p so the named_entity_extractor constructor will know what to do.
         obj = ctypes.c_void_p(_f.mitie_train_named_entity_extractor(self.__obj))
-        if (obj == None):
+        if obj is None:
             raise Exception("Unable to create named_entity_extractor.  Probably ran out of RAM")
         return named_entity_extractor(obj)
 
@@ -507,12 +512,11 @@ _f.mitie_train_binary_relation_detector.restype = ctypes.c_void_p
 _f.mitie_train_binary_relation_detector.argtypes = ctypes.c_void_p,
 
 
-
 class binary_relation_detector_trainer(object):
     def __init__(self, relation_name, ner):
         self.__obj = _f.mitie_create_binary_relation_trainer(relation_name, ner._obj)
         self.__mitie_free = _f.mitie_free
-        if (self.__obj == None):
+        if self.__obj is None:
             raise Exception("Unable to create binary_relation_detector_trainer")
 
     def __del__(self):
@@ -527,35 +531,35 @@ class binary_relation_detector_trainer(object):
         return _f.mitie_binary_relation_trainer_num_negative_examples(self.__obj)
 
     def add_positive_binary_relation(self, tokens, arg1, arg2):
-        if (len(arg1) == 0 or len(arg2) == 0 or not _range_is_valid(tokens,arg1) or not _range_is_valid(tokens,arg2)):
+        if len(arg1) == 0 or len(arg2) == 0 or not _range_is_valid(tokens, arg1) or not _range_is_valid(tokens, arg2):
             raise Exception("One of the ranges given to this function was invalid.")
-        arg1_start  = min(arg1)
+        arg1_start = min(arg1)
         arg1_length = len(arg1)
-        arg2_start  = min(arg2)
+        arg2_start = min(arg2)
         arg2_length = len(arg2)
-        if (_f.mitie_entities_overlap(arg1_start, arg1_length, arg2_start, arg2_length) == 1):
+        if _f.mitie_entities_overlap(arg1_start, arg1_length, arg2_start, arg2_length) == 1:
             raise Exception("Error, add_positive_binary_relation() called with overlapping entities: " + arg1 + ", " + arg2)
         r = _get_windowed_range(tokens, arg1, arg2)
         arg1_start -= min(r)
         arg2_start -= min(r)
         ctokens = python_to_mitie_str_array(tokens, r)
-        if (_f.mitie_add_positive_binary_relation(self.__obj, ctokens, arg1_start, arg1_length, arg2_start, arg2_length) != 0):
+        if _f.mitie_add_positive_binary_relation(self.__obj, ctokens, arg1_start, arg1_length, arg2_start, arg2_length) != 0:
             raise Exception("Unable to add positive binary relation to binary_relation_detector_trainer.")
 
     def add_negative_binary_relation(self, tokens, arg1, arg2):
-        if (len(arg1) == 0 or len(arg2) == 0 or not _range_is_valid(tokens,arg1) or not _range_is_valid(tokens,arg2)):
+        if len(arg1) == 0 or len(arg2) == 0 or not _range_is_valid(tokens, arg1) or not _range_is_valid(tokens, arg2):
             raise Exception("One of the ranges given to this function was invalid.")
-        arg1_start  = min(arg1)
+        arg1_start = min(arg1)
         arg1_length = len(arg1)
-        arg2_start  = min(arg2)
+        arg2_start = min(arg2)
         arg2_length = len(arg2)
-        if (_f.mitie_entities_overlap(arg1_start, arg1_length, arg2_start, arg2_length) == 1):
+        if _f.mitie_entities_overlap(arg1_start, arg1_length, arg2_start, arg2_length) == 1:
             raise Exception("Error, add_negative_binary_relation() called with overlapping entities: " + arg1 + ", " + arg2)
         r = _get_windowed_range(tokens, arg1, arg2)
         arg1_start -= min(r)
         arg2_start -= min(r)
         ctokens = python_to_mitie_str_array(tokens, r)
-        if (_f.mitie_add_negative_binary_relation(self.__obj, ctokens, arg1_start, arg1_length, arg2_start, arg2_length) != 0):
+        if _f.mitie_add_negative_binary_relation(self.__obj, ctokens, arg1_start, arg1_length, arg2_start, arg2_length) != 0:
             raise Exception("Unable to add negative binary relation to binary_relation_detector_trainer.")
 
     @property
@@ -564,7 +568,7 @@ class binary_relation_detector_trainer(object):
 
     @beta.setter
     def beta(self, value):
-        if (value < 0):
+        if value < 0:
             raise Exception("Invalid beta value given.  beta can't be negative.")
         _f.mitie_binary_relation_trainer_set_beta(self.__obj, value)
     
@@ -577,11 +581,11 @@ class binary_relation_detector_trainer(object):
         _f.mitie_binary_relation_trainer_set_num_threads(self.__obj, value)
     
     def train(self):
-        if (self.num_positive_examples == 0 or self.num_negative_examples == 0):
+        if self.num_positive_examples == 0 or self.num_negative_examples == 0:
             raise Exception("You must give both positive and negative training examples before you call train().")
         # Make the type be a c_void_p so the binary_relation_detector constructor will know what to do.
         obj = ctypes.c_void_p(_f.mitie_train_binary_relation_detector(self.__obj))
-        if (obj == None):
+        if obj is None:
             raise Exception("Unable to create binary_relation_detector.  Probably ran out of RAM")
         return binary_relation_detector(obj)
 
@@ -624,11 +628,11 @@ _f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POI
 class text_categorizer:
     def __init__(self, filename):
         self.__mitie_free = _f.mitie_free
-        if (isinstance(filename, ctypes.c_void_p)):
+        if isinstance(filename, ctypes.c_void_p):
             self.__obj = filename
         else:
             self.__obj = _f.mitie_load_text_categorizer(filename)
-        if (self.__obj == None):
+        if self.__obj is None:
             raise Exception("Unable to load text_categorizer detector from " + filename)
 
     def __del__(self):
@@ -638,30 +642,30 @@ class text_categorizer:
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
             tcat = text_categorizer(filename)"""
-        if (_f.mitie_save_text_categorizer(filename, self.__obj) != 0):
-            raise Exception("Unable to save text_categorizer to the file " + filename);
+        if _f.mitie_save_text_categorizer(filename, self.__obj) != 0:
+            raise Exception("Unable to save text_categorizer to the file " + filename)
 
-    
     def __call__(self, tokens):
         """Categorise a piece of text. The input tokens should have been produced by 
         something like tokenize().  This function returns a predicted label and a confidence score."""
         score = ctypes.c_double()
         label = ctypes.POINTER(ctypes.c_char_p)()
         ctokens = python_to_mitie_str_array(tokens)
-        if (_f.mitie_categorize_text(self.__obj, ctokens, ctypes.byref(label), ctypes.byref(score)) != 0):
+        if _f.mitie_categorize_text(self.__obj, ctokens, ctypes.byref(label), ctypes.byref(score)) != 0:
             raise Exception("Unable to classify text.")
         
-        label = ctypes.cast(label,ctypes.c_char_p)
+        label = ctypes.cast(label, ctypes.c_char_p)
         _label, _score = label.value, score.value
         _f.mitie_free(label)
         
-        return  _label, _score
+        return _label, _score
+
 
 class text_categorizer_trainer(object):
     def __init__(self, filename):
         self.__obj = _f.mitie_create_text_categorizer_trainer(filename)
         self.__mitie_free = _f.mitie_free
-        if (self.__obj == None):
+        if self.__obj is None:
             raise Exception("Unable to create text_categorizer_trainer based on " + filename)
 
     def __del__(self):
@@ -673,8 +677,8 @@ class text_categorizer_trainer(object):
 
     def add_labeled_text(self, tokens, label):
         ctokens = python_to_mitie_str_array(tokens)
-        if (_f.mitie_add_text_categorizer_labeled_text(self.__obj, ctokens, label) != 0):
-            raise Exception("Unable to add labeled text to training instance.  Probably ran out of RAM.");
+        if _f.mitie_add_text_categorizer_labeled_text(self.__obj, ctokens, label) != 0:
+            raise Exception("Unable to add labeled text to training instance.  Probably ran out of RAM.")
 
     @property
     def beta(self):
@@ -682,7 +686,7 @@ class text_categorizer_trainer(object):
 
     @beta.setter
     def beta(self, value):
-        if (value < 0):
+        if value < 0:
             raise Exception("Invalid beta value given.  beta can't be negative.")
         _f.mitie_text_categorizer_trainer_set_beta(self.__obj, value)
 
@@ -695,10 +699,10 @@ class text_categorizer_trainer(object):
         _f.mitie_text_categorizer_trainer_set_num_threads(self.__obj, value)
 
     def train(self):
-        if (self.size == 0):
+        if self.size == 0:
             raise Exception("You can't call train() on an empty trainer.")
         obj = ctypes.c_void_p(_f.mitie_train_text_categorizer(self.__obj))
-        if (obj == None):
+        if obj is None:
             raise Exception("Unable to create text_categorizer.  Probably ran out of RAM")
         return text_categorizer(obj)
 
