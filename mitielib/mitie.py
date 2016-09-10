@@ -219,7 +219,7 @@ class named_entity_extractor:
 
     def get_possible_ner_tags(self):
         num = _f.mitie_get_num_possible_ner_tags(self.__obj)
-        return [_f.mitie_get_named_entity_tagstr(self.__obj, i) for i in xrange(num)]
+        return [to_default_str_type(_f.mitie_get_named_entity_tagstr(self.__obj, i)) for i in xrange(num)]
 
     def save_to_disk(self, filename):
         """Save this object to disk.  You recall it from disk with the following Python
