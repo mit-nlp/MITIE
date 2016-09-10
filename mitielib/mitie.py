@@ -178,22 +178,23 @@ def tokenize(string):
     return res
 
 
-def tokenize_with_offsets(str):
-    """ Split str into tokens and return them as a list.  Also, each element of the list
-    contains a tuple of the token text and the byte offset which indicates the position of the
-    first character in the token within the input str. """
+def tokenize_with_offsets(string):
+    """Split string into tokens and return them as a list.  Also, each element of the list
+       contains a tuple of the token text and the byte offset which indicates the position of the
+       first character in the token within the input string."""
     mitie_tokenize = _f.mitie_tokenize_with_offsets
     mitie_tokenize.restype = ctypes.POINTER(ctypes.c_char_p)
     mitie_tokenize.argtypes = ctypes.c_char_p, ctypes.POINTER(ctypes.POINTER(ctypes.c_ulong))
     token_offsets = ctypes.POINTER(ctypes.c_ulong)()
-    tok = mitie_tokenize(str, ctypes.byref(token_offsets))
-    if (tok == None):
+    string = to_bytes(string)
+    tok = mitie_tokenize(string, ctypes.byref(token_offsets))
+    if tok is None:
         raise Exception("Unable to tokenize string.")
     i = 0
     res = []
-    while(tok[i] != None):
+    while tok[i] is not None:
         res.append((tok[i], token_offsets[i]))
-        i = i + 1
+        i += 1
     _f.mitie_free(tok)
     _f.mitie_free(token_offsets)
     return res
