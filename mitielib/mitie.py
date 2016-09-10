@@ -1,6 +1,5 @@
 import ctypes
 import os
-import time
 import platform
 
 
