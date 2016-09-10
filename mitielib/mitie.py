@@ -150,9 +150,9 @@ def python_to_mitie_str_array(tokens, r=None):
     return ctokens
 
 
-def _range_is_valid(list, range):
+def _range_is_valid(l, range):
     """checks if each element of the range is a valid element of the list and returns True if this is the case."""
-    return 0 <= min(range) and max(range) < len(list)
+    return 0 <= min(range) and max(range) < len(l)
 
 
 def load_entire_file(filename):
