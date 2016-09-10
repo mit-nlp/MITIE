@@ -156,6 +156,7 @@ def _range_is_valid(l, range):
 
 
 def load_entire_file(filename):
+    filename = to_bytes(filename)
     x = _f.mitie_load_entire_file(filename)
     if x is None:
         raise Exception("Unable to load file " + filename)
@@ -233,6 +234,7 @@ class named_entity_extractor:
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
             ner = named_entity_extractor(filename)"""
+        filename = to_bytes(filename)
         if _f.mitie_save_named_entity_extractor(filename, self.__obj) != 0:
             raise Exception("Unable to save named_entity_extractor to the file " + filename)
 
@@ -317,6 +319,7 @@ class binary_relation_detector:
             # filename is a pointer to a ner object.
             self.__obj = filename
         else:
+            filename = to_bytes(filename)
             self.__obj = _f.mitie_load_binary_relation_detector(filename)
         if self.__obj is None:
             raise Exception("Unable to load binary relation detector from " + filename)
@@ -328,6 +331,7 @@ class binary_relation_detector:
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
             ner = binary_relation_detector(filename)"""
+        filename = to_bytes(filename)
         if _f.mitie_save_binary_relation_detector(filename, self.__obj) != 0:
             raise Exception("Unable to save binary_relation_detector to the file " + filename)
 
@@ -424,16 +428,19 @@ class ner_training_instance:
         return _f.mitie_overlaps_any_entity(self.__obj, min(range), len(range)) == 1
 
     def add_entity(self, range, label):
+        label = to_bytes(label)
         if len(range) == 0 or max(range) >= self.num_tokens or min(range) < 0:
             raise Exception("Invalid range given to ner_training_instance.overlaps_any_entity()")
         if self.overlaps_any_entity(range):
-            raise Exception("Invalid range given to ner_training_instance.overlaps_any_entity().  It overlaps an entity given to a previous call to add_entity().")
+            raise Exception("Invalid range given to ner_training_instance.overlaps_any_entity().  "
+                            "It overlaps an entity given to a previous call to add_entity().")
         if _f.mitie_add_ner_training_entity(self.__obj, min(range), len(range), label) != 0:
             raise Exception("Unable to add entity to training instance.  Probably ran out of RAM.")
         
 
 class ner_trainer(object):
     def __init__(self, filename):
+        filename = to_bytes(filename)
         self.__obj = _f.mitie_create_ner_trainer(filename)
         self.__mitie_free = _f.mitie_free
         if self.__obj is None:
@@ -513,6 +520,7 @@ _f.mitie_train_binary_relation_detector.argtypes = ctypes.c_void_p,
 
 class binary_relation_detector_trainer(object):
     def __init__(self, relation_name, ner):
+        relation_name = to_bytes(relation_name)
         self.__obj = _f.mitie_create_binary_relation_trainer(relation_name, ner._obj)
         self.__mitie_free = _f.mitie_free
         if self.__obj is None:
@@ -626,6 +634,7 @@ _f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POI
 
 class text_categorizer:
     def __init__(self, filename):
+        filename = to_bytes(filename)
         self.__mitie_free = _f.mitie_free
         if isinstance(filename, ctypes.c_void_p):
             self.__obj = filename
@@ -641,6 +650,7 @@ class text_categorizer:
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
             tcat = text_categorizer(filename)"""
+        filename = to_bytes(filename)
         if _f.mitie_save_text_categorizer(filename, self.__obj) != 0:
             raise Exception("Unable to save text_categorizer to the file " + filename)
 
@@ -662,6 +672,7 @@ class text_categorizer:
 
 class text_categorizer_trainer(object):
     def __init__(self, filename):
+        filename = to_bytes(filename)
         self.__obj = _f.mitie_create_text_categorizer_trainer(filename)
         self.__mitie_free = _f.mitie_free
         if self.__obj is None:
@@ -675,6 +686,7 @@ class text_categorizer_trainer(object):
         return _f.mitie_text_categorizer_trainer_size(self.__obj)
 
     def add_labeled_text(self, tokens, label):
+        label = to_bytes(label)
         ctokens = python_to_mitie_str_array(tokens)
         if _f.mitie_add_text_categorizer_labeled_text(self.__obj, ctokens, label) != 0:
             raise Exception("Unable to add labeled text to training instance.  Probably ran out of RAM.")
