@@ -20,16 +20,16 @@ except NameError:  # Py3
 # What we do depends on our platform
 parent = os.path.dirname(os.path.realpath(__file__))
 if os.name == 'nt': 
-    #if on windows just look in the same folder as the mitie.py file and also in any 
-    #subfolders that might have the appropriate 32 or 64 bit dlls, whichever is right for
-    #the version of python we are using.
+    # if on windows just look in the same folder as the mitie.py file and also in any
+    # subfolders that might have the appropriate 32 or 64 bit dlls, whichever is right for
+    # the version of python we are using.
     arch = platform.architecture()
-    files = []
-    files.append(parent+'/mitie')
-    if (arch[0] == "32bit"):
-        files.append(parent+'/win32/mitie')
+    files = [parent + '/mitie']
+
+    if arch[0] == "32bit":
+        files.append(parent + '/win32/mitie')
     else:
-        files.append(parent+'/win64/mitie')
+        files.append(parent + '/win64/mitie')
 
     times = [(_last_modified_time(f+".dll"), f) for f in files]
     most_recent = max(times, key=lambda x: x[0])[1]
@@ -37,8 +37,8 @@ if os.name == 'nt':
 else:
     # On UNIX like platforms MITIE might be in any number of places.  Check them all and
     # pick the one with the most recent timestamp.
-    files = ([parent +'/libmitie.so', 'libmitie.so', 'libmitie.dylib',
-              parent +'/libmitie.dylib', '/usr/local/lib/libmitie.so',
+    files = ([parent + '/libmitie.so', 'libmitie.so', 'libmitie.dylib',
+              parent + '/libmitie.dylib', '/usr/local/lib/libmitie.so',
               '/usr/local/lib/libmitie.dylib'])
     times = [(_last_modified_time(f), f) for f in files]
     most_recent = max(times, key=lambda x: x[0])[1]
@@ -118,11 +118,11 @@ def _get_windowed_range(tokens, arg1, arg2):
     winsize = 5
     begin = min(min(arg1), min(arg2))
     end = max(max(arg1), max(arg2))+1
-    if (begin > winsize):
+    if begin > winsize:
         begin -= winsize 
     else:
         begin = 0
-    end = min(end+winsize, len(tokens))
+    end = min(end + winsize, len(tokens))
     r = xrange(begin, end)
     return r
 
