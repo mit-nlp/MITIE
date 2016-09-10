@@ -85,7 +85,8 @@ _f.mitie_save_named_entity_extractor.restype = ctypes.c_int
 _f.mitie_save_named_entity_extractor.argtypes = ctypes.c_char_p, ctypes.c_void_p
 
 _f.mitie_extract_binary_relation.restype = ctypes.c_void_p
-_f.mitie_extract_binary_relation.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong
+_f.mitie_extract_binary_relation.argtypes = (ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong,
+                                             ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong)
 
 
 def to_bytes(string):
@@ -166,7 +167,7 @@ def load_entire_file(filename):
 
 
 def tokenize(string):
-    """ Split string into tokens and return them as a list."""
+    """Split string into tokens and return them as a list."""
     mitie_tokenize = _f.mitie_tokenize
     mitie_tokenize.restype = ctypes.POINTER(ctypes.c_char_p)
     mitie_tokenize.argtypes = ctypes.c_char_p,
@@ -249,7 +250,7 @@ class named_entity_extractor:
                         _f.mitie_ner_get_detection_position(dets, i) + _f.mitie_ner_get_detection_length(dets, i)),
                  to_default_str_type(tags[_f.mitie_ner_get_detection_tag(dets, i)]),
                  _f.mitie_ner_get_detection_score(dets, i)
-            ) for i in xrange(num)]
+                 ) for i in xrange(num)]
         _f.mitie_free(dets)
         return temp
 
@@ -352,7 +353,8 @@ class binary_relation_detector:
         is a true instance of the type of relation this object detects."""
         score = ctypes.c_double()
         if _f.mitie_classify_binary_relation(self.__obj, relation._obj, ctypes.byref(score)) != 0:
-            raise Exception("Unable to classify binary relation.  The detector is incompatible with the NER object used for extraction.")
+            raise Exception("Unable to classify binary relation.  "
+                            "The detector is incompatible with the NER object used for extraction.")
         return score.value
 
 ##############################################################################
@@ -497,10 +499,12 @@ _f.mitie_binary_relation_trainer_num_negative_examples.restype = ctypes.c_ulong
 _f.mitie_binary_relation_trainer_num_negative_examples.argtypes = ctypes.c_void_p,
 
 _f.mitie_add_positive_binary_relation.restype = ctypes.c_int
-_f.mitie_add_positive_binary_relation.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong
+_f.mitie_add_positive_binary_relation.argtypes = (ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong,
+                                                  ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong)
 
 _f.mitie_add_negative_binary_relation.restype = ctypes.c_int
-_f.mitie_add_negative_binary_relation.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong
+_f.mitie_add_negative_binary_relation.argtypes = (ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong,
+                                                  ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong)
 
 _f.mitie_binary_relation_trainer_get_beta.restype = ctypes.c_double
 _f.mitie_binary_relation_trainer_get_beta.argtypes = ctypes.c_void_p,
@@ -545,13 +549,16 @@ class binary_relation_detector_trainer(object):
         arg2_start = min(arg2)
         arg2_length = len(arg2)
         if _f.mitie_entities_overlap(arg1_start, arg1_length, arg2_start, arg2_length) == 1:
-            raise Exception("Error, add_positive_binary_relation() called with overlapping entities: " + arg1 + ", " + arg2)
+            raise Exception("Error, add_positive_binary_relation() called "
+                            "with overlapping entities: " + arg1 + ", " + arg2)
         r = _get_windowed_range(tokens, arg1, arg2)
         arg1_start -= min(r)
         arg2_start -= min(r)
         ctokens = python_to_mitie_str_array(tokens, r)
-        if _f.mitie_add_positive_binary_relation(self.__obj, ctokens, arg1_start, arg1_length, arg2_start, arg2_length) != 0:
-            raise Exception("Unable to add positive binary relation to binary_relation_detector_trainer.")
+        if _f.mitie_add_positive_binary_relation(self.__obj, ctokens, arg1_start, arg1_length,
+                                                 arg2_start, arg2_length) != 0:
+            raise Exception("Unable to add positive binary relation to "
+                            "binary_relation_detector_trainer.")
 
     def add_negative_binary_relation(self, tokens, arg1, arg2):
         if len(arg1) == 0 or len(arg2) == 0 or not _range_is_valid(tokens, arg1) or not _range_is_valid(tokens, arg2):
@@ -561,12 +568,14 @@ class binary_relation_detector_trainer(object):
         arg2_start = min(arg2)
         arg2_length = len(arg2)
         if _f.mitie_entities_overlap(arg1_start, arg1_length, arg2_start, arg2_length) == 1:
-            raise Exception("Error, add_negative_binary_relation() called with overlapping entities: " + arg1 + ", " + arg2)
+            raise Exception("Error, add_negative_binary_relation() "
+                            "called with overlapping entities: " + arg1 + ", " + arg2)
         r = _get_windowed_range(tokens, arg1, arg2)
         arg1_start -= min(r)
         arg2_start -= min(r)
         ctokens = python_to_mitie_str_array(tokens, r)
-        if _f.mitie_add_negative_binary_relation(self.__obj, ctokens, arg1_start, arg1_length, arg2_start, arg2_length) != 0:
+        if _f.mitie_add_negative_binary_relation(self.__obj, ctokens, arg1_start, arg1_length,
+                                                 arg2_start, arg2_length) != 0:
             raise Exception("Unable to add negative binary relation to binary_relation_detector_trainer.")
 
     @property
@@ -629,7 +638,8 @@ _f.mitie_train_text_categorizer.restype = ctypes.c_void_p
 _f.mitie_train_text_categorizer.argtypes = ctypes.c_void_p,
 
 _f.mitie_categorize_text.restype = ctypes.c_ulong
-_f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(ctypes.POINTER(ctypes.c_char_p)), ctypes.POINTER(ctypes.c_double) 
+_f.mitie_categorize_text.argtypes = (ctypes.c_void_p, ctypes.c_void_p,
+                                     ctypes.POINTER(ctypes.POINTER(ctypes.c_char_p)), ctypes.POINTER(ctypes.c_double))
 
 
 class text_categorizer:
