@@ -57,6 +57,9 @@ _f.mitie_extract_entities.argtypes = ctypes.c_void_p, ctypes.c_void_p
 _f.mitie_load_named_entity_extractor.restype = ctypes.c_void_p
 _f.mitie_load_named_entity_extractor.argtypes = ctypes.c_char_p,
 
+_f.mitie_load_named_entity_extractor_pure_model.restype = ctypes.c_void_p
+_f.mitie_load_named_entity_extractor_pure_model.argtypes = ctypes.c_char_p, ctypes.c_char_p
+
 _f.mitie_load_entire_file.restype = ctypes.c_void_p
 _f.mitie_load_entire_file.argtypes = ctypes.c_char_p,
 
@@ -80,6 +83,9 @@ _f.mitie_entities_overlap.argtypes = ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ul
 
 _f.mitie_save_named_entity_extractor.restype = ctypes.c_int
 _f.mitie_save_named_entity_extractor.argtypes = ctypes.c_char_p, ctypes.c_void_p
+
+_f.mitie_save_named_entity_extractor_pure_model.restype = ctypes.c_int
+_f.mitie_save_named_entity_extractor_pure_model.argtypes = ctypes.c_char_p, ctypes.c_void_p
 
 _f.mitie_extract_binary_relation.restype = ctypes.c_void_p
 _f.mitie_extract_binary_relation.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong
@@ -172,7 +178,7 @@ def tokenize_with_offsets(str):
 
 
 class named_entity_extractor:
-    def __init__(self, filename):
+    def __init__(self, filename, fe_filename=None):
         self.__mitie_free = _f.mitie_free
         if (isinstance(filename, ctypes.c_void_p)):
             # If we get here then it means we are using the "private" constructor used by
@@ -180,7 +186,10 @@ class named_entity_extractor:
             # filename is a pointer to a ner object.
             self.__obj = filename
         else:
-            self.__obj = _f.mitie_load_named_entity_extractor(filename)
+            if (fe_filename is None):
+                self.__obj = _f.mitie_load_named_entity_extractor(filename)
+            else:
+                self.__obj = _f.mitie_load_named_entity_extractor_pure_model(filename,fe_filename)
         if (self.__obj == None):
             raise Exception("Unable to load named entity extractor from " + filename)
 
@@ -195,12 +204,20 @@ class named_entity_extractor:
         num = _f.mitie_get_num_possible_ner_tags(self.__obj)
         return [_f.mitie_get_named_entity_tagstr(self.__obj, i) for i in xrange(num)]
 
-    def save_to_disk(self, filename):
+    def save_to_disk(self, filename, pure_model=False):
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
-            ner = named_entity_extractor(filename)"""
-        if (_f.mitie_save_named_entity_extractor(filename, self.__obj) != 0):
-            raise Exception("Unable to save named_entity_extractor to the file " + filename);
+            ner = named_entity_extractor(filename)
+        if object was saved with pure_model=True, then you must also pass a feature extractor
+        filename to instantiate it:
+            ner = named_entity_extractor(filename,fe_filename)
+        """
+        if (pure_model):
+            if (_f.mitie_save_named_entity_extractor_pure_model(filename, self.__obj) != 0):
+                raise Exception("Unable to save named_entity_extractor to the file " + filename);
+        else:
+            if (_f.mitie_save_named_entity_extractor(filename, self.__obj) != 0):
+                raise Exception("Unable to save named_entity_extractor to the file " + filename);
 
     def extract_entities(self, tokens):
         tags = self.get_possible_ner_tags()

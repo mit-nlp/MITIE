@@ -132,6 +132,23 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
 
+    MITIE_EXPORT mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model (
+        const char* filename,
+        const char* fe_filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+            - fe_filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads a saved MITIE named entity extractor from disk and returns a pointer to
+              the entity extractor object.
+            - filname must point to a serialized pure_model object, 
+              and fe_filname to a feature extractor file.
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - If the object can't be created then this function returns NULL.
+    !*/
+
     MITIE_EXPORT unsigned long mitie_get_num_possible_ner_tags (
         const mitie_named_entity_extractor* ner
     );
@@ -446,6 +463,23 @@ extern "C"
               there is some error that prevents us from writing to the given file.
     !*/
 
+    MITIE_EXPORT int mitie_save_named_entity_extractor_pure_model (
+        const char* filename,
+        const mitie_named_entity_extractor* ner
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+            - ner != NULL
+        ensures
+            - Saves part of the ner object to disk in a file with the given filename.  
+              Specifically, it saves everything except the feature extractor. 
+              Once this function finishes you will be able to read the ner object 
+              from disk by calling 
+              mitie_load_named_entity_extractor(filename,feature_extractor_filename).
+            - returns 0 upon success and a non-zero value on failure.  Failure happens if
+              there is some error that prevents us from writing to the given file.
+    !*/
 
     MITIE_EXPORT int mitie_save_binary_relation_detector (
         const char* filename,
