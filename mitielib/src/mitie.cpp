@@ -169,10 +169,35 @@ namespace
         }
     }
 
+    template <typename T, typename A1, typename A2, typename A3>
+    T* allocate(const A1& arg1, const A2& arg2, const A3& arg3)
+    /*!
+        This function is just like allocate() except it passes arg1, arg2, & arg3 to T's constructor.
+    !*/
+    {
+        const mitie_object_type type = allocatable_types<T>::type;
+        void* temp = malloc(sizeof(T)+min_alignment);
+        if (temp == 0)
+            throw std::bad_alloc();
+
+        *((int*)temp) = type;
+
+        try
+        {
+            return new((char*)temp+min_alignment) T(arg1,arg2,arg3);
+        }
+        catch (...)
+        {
+            free(temp);
+            throw std::bad_alloc();
+        }
+    }
+
+
     template <typename T, typename A1, typename A2, typename A3, typename A4>
     T* allocate(const A1& arg1, const A2& arg2, const A3& arg3, const A4& arg4)
     /*!
-        This function is just like allocate() except it passes arg1 and arg2 to T's constructor.
+        This function is just like allocate() except it passes arg1, arg2, arg3, and arg4 to T's constructor.
     !*/
     {
         const mitie_object_type type = allocatable_types<T>::type;
@@ -781,6 +806,52 @@ extern "C"
              return NULL;
          }
      }
+
+    
+    mitie_text_categorizer* mitie_load_text_categorizer_pure_model (
+         const char* filename,
+         const char* fe_filename
+     )
+     {
+         assert(filename != NULL);
+         assert(fe_filename != NULL);
+
+         text_categorizer* impl = 0;
+         try
+         {
+             string classname;
+             std::vector<std::string> tag_name_strings;
+             dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
+             total_word_feature_extractor fe;
+
+             dlib::deserialize(filename) >> classname;
+             if (classname != "mitie::text_categorizer_pure_model")
+                 throw dlib::error("This file does not contain a mitie::text_categorizer_pure_model. Contained: " + classname);
+             dlib::deserialize(filename) >> classname >> df >> tag_name_strings;
+
+             dlib::deserialize(fe_filename) >> classname;
+             if (classname != "mitie::total_word_feature_extractor")
+                 throw dlib::error("This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
+             dlib::deserialize(fe_filename) >> classname >> fe;
+
+             impl = allocate<text_categorizer>(tag_name_strings, fe, df);
+
+             return (mitie_text_categorizer*)impl;
+         }
+         catch(std::exception& e)
+         {
+ #ifndef NDEBUG
+             cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+ #endif
+             mitie_free(impl);
+             return NULL;
+         }
+         catch(...)
+         {
+             mitie_free(impl);
+             return NULL;
+         }
+     }
      
      int mitie_categorize_text (
          const mitie_text_categorizer* tcat_,
@@ -948,6 +1019,39 @@ extern "C"
             return 1;
         }
     }
+
+    int mitie_save_text_categorizer_pure_model (
+        const char* filename,
+        const mitie_text_categorizer* tcat_
+    )
+    {
+        const text_categorizer& tcat = checked_cast<text_categorizer>(tcat_);
+        assert(filename);
+
+        try
+        {
+            dlib::serialize(filename) 
+            << "mitie::text_categorizer_pure_model" 
+            << tcat.get_df()
+            << tcat.get_tag_name_strings();
+            return 0;
+        }
+        catch (std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error saving MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+            return 1;
+        }
+        catch (...)
+        {
+#ifndef NDEBUG
+            cerr << "Error saving MITIE model file: " << filename << endl;
+#endif
+            return 1;
+        }
+    }
+
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 

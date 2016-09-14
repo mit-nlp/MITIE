@@ -413,6 +413,22 @@ extern "C"
             - The returned object MUST BE FREED by a call to mitie_free().
             - If the object can't be created then this function returns NULL.
     !*/
+
+    MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer_pure_model (
+        const char* filename,
+        const char* fe_filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+            - fe_filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads a saved MITIE text categorizer object from disk and returns a
+              pointer to the text categorizer. filename must point to a serialised pure_model
+              and fe_filename to a serialised feature extractor.
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - If the object can't be created then this function returns NULL.
+    !*/
     
     MITIE_EXPORT int mitie_categorize_text (
         const mitie_text_categorizer* tcat_,
@@ -512,6 +528,24 @@ extern "C"
             - returns 0 upon success and a non-zero value on failure.  Failure happens if
               there is some error that prevents us from writing to the given file.
     !*/
+
+    MITIE_EXPORT int mitie_save_text_categorizer_pure_model (
+        const char* filename,
+        const mitie_text_categorizer* tcat
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+            - tcat != NULL
+        ensures
+            - Saves the given text categorizer pure model to disk (omitting the feature extractor)
+              in a file with the given filename.  Once this function
+              finishes you will be able to read the text categorizer object from disk by calling
+              mitie_load_text_categorizer(filename,fe_filename).
+            - returns 0 upon success and a non-zero value on failure.  Failure happens if
+              there is some error that prevents us from writing to the given file.
+    !*/
+
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 

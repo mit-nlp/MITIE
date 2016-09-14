@@ -583,8 +583,14 @@ _f.mitie_add_text_categorizer_labeled_text.argtypes = ctypes.c_void_p, ctypes.c_
 _f.mitie_load_text_categorizer.restype = ctypes.c_void_p
 _f.mitie_load_text_categorizer.argtypes = ctypes.c_char_p,
 
+_f.mitie_load_text_categorizer_pure_model.restype = ctypes.c_void_p
+_f.mitie_load_text_categorizer_pure_model.argtypes = ctypes.c_char_p, ctypes.c_char_p
+
 _f.mitie_save_text_categorizer.restype = ctypes.c_int
 _f.mitie_save_text_categorizer.argtypes = ctypes.c_void_p,
+
+_f.mitie_save_text_categorizer_pure_model.restype = ctypes.c_int
+_f.mitie_save_text_categorizer_pure_model.argtypes = ctypes.c_void_p,
 
 _f.mitie_text_categorizer_trainer_get_beta.restype = ctypes.c_double
 _f.mitie_text_categorizer_trainer_get_beta.argtypes = ctypes.c_void_p,
@@ -609,24 +615,36 @@ _f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POI
 
 
 class text_categorizer:
-    def __init__(self, filename):
+    def __init__(self, filename, fe_filename=None):
         self.__mitie_free = _f.mitie_free
-        if (isinstance(filename, ctypes.c_void_p)):
+        if (False):#(isinstance(filename, ctypes.c_void_p)):
             self.__obj = filename
         else:
-            self.__obj = _f.mitie_load_text_categorizer(filename)
+            if (fe_filename is None):
+                self.__obj = _f.mitie_load_text_categorizer(filename)
+            else:
+                print(filename,fe_filename)               
+                self.__obj = _f.mitie_load_text_categorizer_pure_model(filename,fe_filename)
         if (self.__obj == None):
             raise Exception("Unable to load text_categorizer detector from " + filename)
 
     def __del__(self):
         self.__mitie_free(self.__obj)
 
-    def save_to_disk(self, filename):
+    def save_to_disk(self, filename,pure_model=False):
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
-            tcat = text_categorizer(filename)"""
-        if (_f.mitie_save_text_categorizer(filename, self.__obj) != 0):
-            raise Exception("Unable to save text_categorizer to the file " + filename);
+            tcat = text_categorizer(filename)
+        if object was saved with pure_model=True, then you must also pass a feature extractor
+        filename to instantiate it:
+            tcat = text_categorizer(filename,fe_filename)
+        """
+        if (pure_model):
+            if (_f.mitie_save_text_categorizer_pure_model(filename, self.__obj) != 0):
+                raise Exception("Unable to save text_categorizer to the file " + filename);
+        else:
+            if (_f.mitie_save_text_categorizer(filename, self.__obj) != 0):
+                raise Exception("Unable to save text_categorizer to the file " + filename);
 
     
     def __call__(self, tokens):
