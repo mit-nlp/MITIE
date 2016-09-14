@@ -247,7 +247,8 @@ namespace mitie
         trainer.set_max_iterations(2000);
         //trainer.be_verbose();
 
-        if (count_of_least_common_label(labels) > 1)
+        /*
+        if (count_of_least_common_label(labels) > 1) 
         {
             train_text_classifier_objective obj(samples, labels, num_threads, beta, get_all_labels().size(), 2000);
 
@@ -268,7 +269,7 @@ namespace mitie
             cout << "best C: "<< C << endl;
             trainer.set_c(C);
         }
-
+	*/ 
         classifier_type df = trainer.train(samples, labels);
         matrix<double> res = test_multiclass_decision_function(df, samples, labels);
         cout << "test on train: \n" << res << endl;

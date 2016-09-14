@@ -617,7 +617,7 @@ _f.mitie_categorize_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.POI
 class text_categorizer:
     def __init__(self, filename, fe_filename=None):
         self.__mitie_free = _f.mitie_free
-        if (False):#(isinstance(filename, ctypes.c_void_p)):
+        if (isinstance(filename, ctypes.c_void_p)):
             self.__obj = filename
         else:
             if (fe_filename is None):
