@@ -368,12 +368,12 @@ namespace mitie
 
         svm_multiclass_linear_trainer<sparse_linear_kernel<ner_sample_type>,unsigned long> trainer;
 
-        trainer.set_c(300);
+        trainer.set_c(100);
         trainer.set_num_threads(num_threads);
         trainer.set_epsilon(0.0001);
         trainer.set_max_iterations(2000);
         //trainer.be_verbose();
-
+        /*
         if (count_of_least_common_label(labels) > 1)
         {
             train_ner_segment_classifier_objective obj(samples, labels, num_threads, beta, get_all_labels().size(), 2000);
@@ -395,7 +395,7 @@ namespace mitie
             cout << "best C: "<< C << endl;
             trainer.set_c(C);
         }
-
+        */
         classifier_type df = trainer.train(samples, labels);
         matrix<double> res = test_multiclass_decision_function(df, samples, labels);
         cout << "test on train: \n" << res << endl;
