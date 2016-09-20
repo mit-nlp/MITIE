@@ -93,7 +93,11 @@ def to_bytes(string):
     """Encode the string in utf-8. If the string is already encoded (bytes in Python 3
        or str in Python 2), return the string unmodified."""
     if hasattr(string, 'encode'):
-        string = string.encode('utf-8')
+        try:
+            temp = string.encode('utf-8')
+            string = temp
+        except:
+            pass
 
     return string
 
