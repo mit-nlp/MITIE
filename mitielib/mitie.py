@@ -790,17 +790,17 @@ class total_word_feature_extractor:
         return _result
 
     def get_words_in_dictionary(self):
-        num_words_in_dictionary = self.num_words_in_dictionary
-        result = (ctypes.c_char_p * num_words_in_dictionary)()
 
-        _f.mitie_total_word_feature_extractor_get_words_in_dictionary.restype = ctypes.c_int
-        _f.mitie_total_word_feature_extractor_get_words_in_dictionary.argtypes = ctypes.c_void_p, ctypes.POINTER(ctypes.c_char_p * num_words_in_dictionary)
+        _f.mitie_total_word_feature_extractor_get_words_in_dictionary.restype = ctypes.POINTER(ctypes.c_char_p)
+        _f.mitie_total_word_feature_extractor_get_words_in_dictionary.argtypes = ctypes.c_void_p, 
 
-        if _f.mitie_total_word_feature_extractor_get_words_in_dictionary(self.__obj, ctypes.byref(result)) != 0:
+        words = _f.mitie_total_word_feature_extractor_get_words_in_dictionary(self.__obj)
+        if words is None:
             raise Exception("Unable to get words in dictionary.")
-
-        _result = [result[i] for i in xrange(num_words_in_dictionary)]
-
-        return _result   
-
-
+        i = 0
+        res = []
+        while words[i] is not None:
+            res.append(words[i])
+            i += 1
+        _f.mitie_free(words)
+        return res

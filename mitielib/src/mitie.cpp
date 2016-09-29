@@ -1340,36 +1340,36 @@ extern "C"
 // ----------------------------------------------------------------------------------------
 
     unsigned long mitie_total_word_feature_extractor_fingerprint (
-        const mitie_total_word_feature_extractor* twfe_
+        const mitie_total_word_feature_extractor* twfe
     )
     {
-        return checked_cast<total_word_feature_extractor>(twfe_).get_fingerprint();
+        return checked_cast<total_word_feature_extractor>(twfe).get_fingerprint();
     }
 
 // ----------------------------------------------------------------------------------------
 
     unsigned long mitie_total_word_feature_extractor_num_dimensions (
-        const mitie_total_word_feature_extractor* twfe_
+        const mitie_total_word_feature_extractor* twfe
     )
     {
-        return checked_cast<total_word_feature_extractor>(twfe_).get_num_dimensions();
+        return checked_cast<total_word_feature_extractor>(twfe).get_num_dimensions();
     }
 
 // ----------------------------------------------------------------------------------------
 
     unsigned long mitie_total_word_feature_extractor_num_words_in_dictionary (
-        const mitie_total_word_feature_extractor* twfe_
+        const mitie_total_word_feature_extractor* twfe
     )
     {
-        return checked_cast<total_word_feature_extractor>(twfe_).get_num_words_in_dictionary();
+        return checked_cast<total_word_feature_extractor>(twfe).get_num_words_in_dictionary();
     }
 
 // ----------------------------------------------------------------------------------------
 
      int mitie_total_word_feature_extractor_get_feature_vector (
-         const mitie_total_word_feature_extractor* twfe_,
+         const mitie_total_word_feature_extractor* twfe,
          const char* word,
-         float result[]
+         float* result
      )
      {
          assert(word);
@@ -1378,7 +1378,7 @@ extern "C"
          {       
              dlib::matrix<float,0,1> feats;
 
-             checked_cast<total_word_feature_extractor>(twfe_).get_feature_vector(word, feats);
+             checked_cast<total_word_feature_extractor>(twfe).get_feature_vector(word, feats);
              for (long i = 0; i < feats.size(); ++i)
                  result[i] = feats(i);
                               
@@ -1395,29 +1395,10 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
-    int mitie_total_word_feature_extractor_get_words_in_dictionary (
-        const mitie_total_word_feature_extractor* twfe_,
-        char** result
+    char** mitie_total_word_feature_extractor_get_words_in_dictionary (
+        const mitie_total_word_feature_extractor* twfe
     )
     {
-         try
-         {       
-             std::vector<std::string> temp = checked_cast<total_word_feature_extractor>(twfe_).get_words_in_dictionary();
-            
-             for (unsigned long i = 0; i < temp.size(); ++i){
-                result[i] = &temp[i][0];
-             }
-
-                              
-             return 0; 
-         }
-         catch (...)
-         {
-#ifndef NDEBUG
-             cerr << "Error getting words in dictionary: " << endl;
-#endif
-             return 1;
-         }
-
-
+        std::vector<std::string> words = checked_cast<total_word_feature_extractor>(twfe).get_words_in_dictionary();
+        return std_vector_to_double_ptr(words);
     }
