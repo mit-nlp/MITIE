@@ -984,6 +984,76 @@ extern "C"
     !*/
 
 
+    // ----------------------------------------------------------------------------------------
+
+    typedef struct mitie_total_word_feature_extractor  mitie_total_word_feature_extractor;
+
+    MITIE_EXPORT mitie_total_word_feature_extractor* mitie_load_total_word_feature_extractor (
+        const char* filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads a saved MITIE total word feature extractor from disk and returns a pointer to
+              the entity extractor object.
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - If the object can't be created then this function returns NULL.
+    !*/
+
+
+    MITIE_EXPORT unsigned long mitie_total_word_feature_extractor_fingerprint (
+        const mitie_total_word_feature_extractor* twfe
+    );
+    /*!
+        requires
+            - twfe != NULL
+        ensures
+            - returns a 64bit ID number that uniquely identifies this object instance
+    !*/    
+
+    MITIE_EXPORT unsigned long mitie_total_word_feature_extractor_num_dimensions (
+        const mitie_total_word_feature_extractor* twfe
+    );
+    /*!
+        requires
+            - twfe != NULL
+        ensures
+            - returns the dimensionality of the feature vectors produced by this object.
+    !*/        
+
+    MITIE_EXPORT unsigned long mitie_total_word_feature_extractor_num_words_in_dictionary (
+        const mitie_total_word_feature_extractor* twfe
+    );
+    /*!
+        requires
+            - twfe != NULL
+        ensures
+            - returns the dimensionality of the feature vectors produced by this object.
+    !*/    
+       
+    MITIE_EXPORT int mitie_total_word_feature_extractor_get_feature_vector (
+         const mitie_total_word_feature_extractor* twfe_,
+         const char* word,
+         float result[]
+     );
+    /*!
+        requires
+            - twfe != NULL
+            - word == a NULL terminated C string.
+        ensures
+            - returns a feature vector for the corresponding word
+    !*/
+
+    int mitie_total_word_feature_extractor_get_words_in_dictionary (
+        const mitie_total_word_feature_extractor* twfe_,
+        char** result
+    );
+    /*!
+        requires
+            - twfe != NULL
+    */ 
+
 // ----------------------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------------------

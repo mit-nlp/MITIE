@@ -733,3 +733,74 @@ class text_categorizer_trainer(object):
             raise Exception("Unable to create text_categorizer.  Probably ran out of RAM")
         return text_categorizer(obj)
 
+##############################################################################
+
+_f.mitie_load_total_word_feature_extractor.restype = ctypes.c_void_p
+_f.mitie_load_total_word_feature_extractor.argtypes = ctypes.c_char_p,
+
+_f.mitie_total_word_feature_extractor_fingerprint.restype = ctypes.c_ulong
+_f.mitie_total_word_feature_extractor_fingerprint.argtypes = ctypes.c_void_p,
+
+_f.mitie_total_word_feature_extractor_num_dimensions.restype = ctypes.c_ulong
+_f.mitie_total_word_feature_extractor_num_dimensions.argtypes = ctypes.c_void_p,
+
+_f.mitie_total_word_feature_extractor_num_words_in_dictionary.restype = ctypes.c_ulong
+_f.mitie_total_word_feature_extractor_num_words_in_dictionary.argtypes = ctypes.c_void_p,
+
+
+class total_word_feature_extractor:
+    def __init__(self, filename):
+        filename = to_bytes(filename)
+        self.__mitie_free = _f.mitie_free
+        if isinstance(filename, ctypes.c_void_p):
+            self.__obj = filename
+        else:
+            self.__obj = _f.mitie_load_total_word_feature_extractor(filename)
+        if self.__obj is None:
+            raise Exception("Unable to load total_word_feature_extractor detector from " + filename)
+
+    def __del__(self):
+        self.__mitie_free(self.__obj)
+
+    @property
+    def fingerprint(self):
+        return _f.mitie_total_word_feature_extractor_fingerprint(self.__obj)
+
+    @property
+    def num_dimensions(self):
+        return _f.mitie_total_word_feature_extractor_num_dimensions(self.__obj)    
+    @property
+    def num_words_in_dictionary(self):
+        return _f.mitie_total_word_feature_extractor_num_words_in_dictionary(self.__obj)
+
+    def get_feature_vector(self, word):
+
+        word = to_bytes(word)
+        num_dimensions = self.num_dimensions
+        result = (ctypes.c_float*num_dimensions)()
+
+        _f.mitie_total_word_feature_extractor_get_feature_vector.restype = ctypes.c_int
+        _f.mitie_total_word_feature_extractor_get_feature_vector.argtypes = ctypes.c_void_p, ctypes.c_char_p, ctypes.POINTER(ctypes.c_float*num_dimensions)
+
+        if _f.mitie_total_word_feature_extractor_get_feature_vector(self.__obj, word, ctypes.byref(result)) != 0:
+            raise Exception("Unable to get feature vector.")
+
+        _result = [result[i] for i in xrange(num_dimensions)]
+
+        return _result
+
+    def get_words_in_dictionary(self):
+        num_words_in_dictionary = self.num_words_in_dictionary
+        result = (ctypes.c_char_p * num_words_in_dictionary)()
+
+        _f.mitie_total_word_feature_extractor_get_words_in_dictionary.restype = ctypes.c_int
+        _f.mitie_total_word_feature_extractor_get_words_in_dictionary.argtypes = ctypes.c_void_p, ctypes.POINTER(ctypes.c_char_p * num_words_in_dictionary)
+
+        if _f.mitie_total_word_feature_extractor_get_words_in_dictionary(self.__obj, ctypes.byref(result)) != 0:
+            raise Exception("Unable to get words in dictionary.")
+
+        _result = [result[i] for i in xrange(num_words_in_dictionary)]
+
+        return _result   
+
+
