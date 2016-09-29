@@ -1035,13 +1035,13 @@ extern "C"
     MITIE_EXPORT int mitie_total_word_feature_extractor_get_feature_vector (
          const mitie_total_word_feature_extractor* twfe_,
          const char* word,
-         float result[]
+         float* result
      );
     /*!
         requires
             - twfe != NULL
             - word == a NULL terminated C string.
-            - result is an empty array of floats. The pointer to the array should be passed 
+            - result is a pointer to a memory block the size of float * number of dimension. Number of dimensions can be obtained by the function mitie_total_word_feature_extractor_num_dimensions
         ensures
             - stores a feature vector for the corresponding word in result
             - returns 0 if successful, 1 if there is an error
@@ -1054,7 +1054,7 @@ extern "C"
     /*!
         requires
             - twfe != NULL
-            - result is an empty array of strings. The pointer to the array should be passed 
+            - result is a pointer to a memory block the size of char pointer * number of words in dictionary. Number of words in dictionary can be obtained by the function mitie_total_word_feature_extractor_num_words_in_dictionary
         ensures
             - stores the words in the dictionary inside result
             - returns 0 if successful, 1 if there is an error
