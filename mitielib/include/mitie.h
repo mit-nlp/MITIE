@@ -1054,8 +1054,12 @@ extern "C"
         requires
             - twfe != NULL
         ensures
-            - returns an array of strings. Each string is a word in the dictionary. The total number of words is mitie_total_word_feature_extractor_num_words_in_dictionary(twfe) 
-
+            - returns an array that contains a copy of the words in the dictionary.  
+            - The returned array is an array of pointers to NULL terminated C strings.  The array itself is terminated with a NULL.
+            - Each string is a word in the dictionary. The total number of words is mitie_total_word_feature_extractor_num_words_in_dictionary(twfe)
+            - It is the responsibility of the caller to free the returned array.  You free
+              it by calling mitie_free() once on the entire array. If the return value is stored in WORDS, you call mitie_free(WORDS).  DO NOT CALL FREE ON ELEMENTS OF WORDS.
+            - If something prevents this function from succeeding then a NULL is returned.
     */ 
 
 // ----------------------------------------------------------------------------------------

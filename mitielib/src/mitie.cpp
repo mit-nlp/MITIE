@@ -1399,6 +1399,13 @@ extern "C"
         const mitie_total_word_feature_extractor* twfe
     )
     {
-        std::vector<std::string> words = checked_cast<total_word_feature_extractor>(twfe).get_words_in_dictionary();
-        return std_vector_to_double_ptr(words);
+        try
+        {
+            std::vector<std::string> words = checked_cast<total_word_feature_extractor>(twfe).get_words_in_dictionary();
+            return std_vector_to_double_ptr(words);
+        }
+        catch (...)
+        {
+            return NULL;
+        }
     }
