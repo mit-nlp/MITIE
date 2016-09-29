@@ -1405,13 +1405,9 @@ extern "C"
              std::vector<std::string> temp = checked_cast<total_word_feature_extractor>(twfe_).get_words_in_dictionary();
             
              for (unsigned long i = 0; i < temp.size(); ++i){
-                
-                char *pc = new char[temp[i].size()+1];
-                std::strcpy(pc, temp[i].c_str());
-
-                result[i] = pc;
-                
+                result[i] = &temp[i][0];
              }
+
                               
              return 0; 
          }

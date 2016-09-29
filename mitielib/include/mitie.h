@@ -1041,8 +1041,10 @@ extern "C"
         requires
             - twfe != NULL
             - word == a NULL terminated C string.
+            - result is an empty array of floats. The pointer to the array should be passed 
         ensures
-            - returns a feature vector for the corresponding word
+            - stores a feature vector for the corresponding word in result
+            - returns 0 if successful, 1 if there is an error
     !*/
 
     int mitie_total_word_feature_extractor_get_words_in_dictionary (
@@ -1052,6 +1054,11 @@ extern "C"
     /*!
         requires
             - twfe != NULL
+            - result is an empty array of strings. The pointer to the array should be passed 
+        ensures
+            - stores the words in the dictionary inside result
+            - returns 0 if successful, 1 if there is an error
+
     */ 
 
 // ----------------------------------------------------------------------------------------
