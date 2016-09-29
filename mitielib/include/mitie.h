@@ -1054,7 +1054,7 @@ extern "C"
         requires
             - twfe != NULL
         ensures
-            - returns an array that contains a copy of the words in the dictionary. The number of words is mitie_total_word_feature_extractor_num_words_in_dictionary(twfe) 
+            - returns an array of strings. Each string is a word in the dictionary. The total number of words is mitie_total_word_feature_extractor_num_words_in_dictionary(twfe) 
 
     */ 
 
