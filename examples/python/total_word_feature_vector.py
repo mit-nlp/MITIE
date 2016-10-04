@@ -33,5 +33,8 @@ print
 # Get features for one word
 feats = twfe.get_feature_vector("home")
 print "First 5 features of word 'home'", feats[0:5]
+# The total word feature extractor will generate feature vectors for words not
+# in its dictionary as well.  It does this by looking at word morphology.  
 feats = twfe.get_feature_vector("_word_not_in_dictionary_")
 print "First 5 features of word '_word_not_in_dictionary_'", feats[0:5]
+

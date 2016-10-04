@@ -995,8 +995,8 @@ extern "C"
         requires
             - filename == a valid pointer to a NULL terminated C string
         ensures
-            - Reads a saved MITIE total word feature extractor from disk and returns a pointer to
-              the entity extractor object.
+            - Reads a saved MITIE total word feature extractor from disk and returns a
+              pointer to the extractor object.
             - The returned object MUST BE FREED by a call to mitie_free().
             - If the object can't be created then this function returns NULL.
     !*/
@@ -1029,7 +1029,11 @@ extern "C"
         requires
             - twfe != NULL
         ensures
-            - returns the dimensionality of the feature vectors produced by this object.
+            - While the total word feature extractor can produce vectors for any possible
+              string, it contains an internal dictionary of words for which it has
+              precomputed word vectors.  In general, word vectors will be of higher quality
+              for words in the dictionary than for arbitrary strings not in the dictionary. 
+            - Therefore, this function returns the number of words in the dictionary.
     !*/    
        
     MITIE_EXPORT int mitie_total_word_feature_extractor_get_feature_vector (
@@ -1041,10 +1045,10 @@ extern "C"
         requires
             - twfe != NULL
             - word == a NULL terminated C string.
-            - result is  a pointer to mitie_total_word_feature_extractor_num_dimensions(twfe) floats
+            - result == a pointer to mitie_total_word_feature_extractor_num_dimensions(twfe) floats.
         ensures
-            - stores a feature vector for the corresponding word in result
-            - returns 0 if successful, 1 if there is an error
+            - stores a feature vector for the corresponding word in result.
+            - returns 0 if successful, 1 if there is an error.
     !*/
 
     char** mitie_total_word_feature_extractor_get_words_in_dictionary (
@@ -1055,10 +1059,14 @@ extern "C"
             - twfe != NULL
         ensures
             - returns an array that contains a copy of the words in the dictionary.  
-            - The returned array is an array of pointers to NULL terminated C strings.  The array itself is terminated with a NULL.
-            - Each string is a word in the dictionary. The total number of words is mitie_total_word_feature_extractor_num_words_in_dictionary(twfe)
+            - The returned array is an array of pointers to NULL terminated C strings.  The
+              array itself is terminated with a NULL.
+            - Each string is a word in the dictionary. The total number of words is
+              mitie_total_word_feature_extractor_num_words_in_dictionary(twfe)
             - It is the responsibility of the caller to free the returned array.  You free
-              it by calling mitie_free() once on the entire array. If the return value is stored in WORDS, you call mitie_free(WORDS).  DO NOT CALL FREE ON ELEMENTS OF WORDS.
+              it by calling mitie_free() once on the entire array. If the return value is
+              stored in WORDS, you call mitie_free(WORDS).  DO NOT CALL FREE ON ELEMENTS OF
+              WORDS.
             - If something prevents this function from succeeding then a NULL is returned.
     */ 
 
