@@ -18,6 +18,7 @@
 #include <mitie/binary_relation_detector_trainer.h>
 #include <mitie/text_categorizer.h>
 #include <mitie/text_categorizer_trainer.h>
+#include <mitie/total_word_feature_extractor.h>
 
 using namespace mitie;
 
@@ -44,7 +45,8 @@ namespace
         MITIE_NER_TRAINING_INSTANCE,
         MITIE_NER_TRAINER,
         MITIE_TEXT_CATEGORIZER,
-        MITIE_TEXT_CATEGORIZER_TRAINER        
+        MITIE_TEXT_CATEGORIZER_TRAINER,
+        MITIE_TOTAL_WORD_FEATURE_EXTRACTOR       
     };
 
     template <typename T>
@@ -60,6 +62,7 @@ namespace
     template <> struct allocatable_types<ner_trainer>                   { const static mitie_object_type type = MITIE_NER_TRAINER; };
     template <> struct allocatable_types<text_categorizer>              { const static mitie_object_type type = MITIE_TEXT_CATEGORIZER; };
     template <> struct allocatable_types<text_categorizer_trainer>      { const static mitie_object_type type = MITIE_TEXT_CATEGORIZER_TRAINER; };
+    template <> struct allocatable_types<total_word_feature_extractor>      { const static mitie_object_type type = MITIE_TOTAL_WORD_FEATURE_EXTRACTOR; };
 
 
 // ----------------------------------------------------------------------------------------
@@ -373,6 +376,9 @@ extern "C"
             case MITIE_TEXT_CATEGORIZER:
                 destroy<text_categorizer>(object);
                 break;                
+            case MITIE_TOTAL_WORD_FEATURE_EXTRACTOR:
+                destroy<total_word_feature_extractor>(object);
+                break; 
             default:
                 std::cerr << "ERROR, mitie_free() called on non-MITIE object or called twice." << std::endl;
                 assert(false);
@@ -1297,3 +1303,109 @@ extern "C"
 
 }
 
+// ----------------------------------------------------------------------------------------
+
+    mitie_total_word_feature_extractor* mitie_load_total_word_feature_extractor (
+        const char* filename
+    )
+    {
+        assert(filename != NULL);
+
+        total_word_feature_extractor* impl = 0;
+        try
+        {
+            string classname;
+            impl = allocate<total_word_feature_extractor>();
+            dlib::deserialize(filename) >> classname;
+            if (classname != "mitie::total_word_feature_extractor")
+                throw dlib::error("This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
+            dlib::deserialize(filename) >> classname >> *impl;
+            return (mitie_total_word_feature_extractor*)impl;
+        }
+        catch(std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+            mitie_free(impl);
+            return NULL;
+        }
+        catch(...)
+        {
+            mitie_free(impl);
+            return NULL;
+        }
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_total_word_feature_extractor_fingerprint (
+        const mitie_total_word_feature_extractor* twfe
+    )
+    {
+        return checked_cast<total_word_feature_extractor>(twfe).get_fingerprint();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_total_word_feature_extractor_num_dimensions (
+        const mitie_total_word_feature_extractor* twfe
+    )
+    {
+        return checked_cast<total_word_feature_extractor>(twfe).get_num_dimensions();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+    unsigned long mitie_total_word_feature_extractor_num_words_in_dictionary (
+        const mitie_total_word_feature_extractor* twfe
+    )
+    {
+        return checked_cast<total_word_feature_extractor>(twfe).get_num_words_in_dictionary();
+    }
+
+// ----------------------------------------------------------------------------------------
+
+     int mitie_total_word_feature_extractor_get_feature_vector (
+         const mitie_total_word_feature_extractor* twfe,
+         const char* word,
+         float* result
+     )
+     {
+         assert(word);
+         
+         try
+         {       
+             dlib::matrix<float,0,1> feats;
+
+             checked_cast<total_word_feature_extractor>(twfe).get_feature_vector(word, feats);
+             for (long i = 0; i < feats.size(); ++i)
+                 result[i] = feats(i);
+                              
+             return 0; 
+         }
+         catch (...)
+         {
+#ifndef NDEBUG
+             cerr << "Error getting feature vector: " << endl;
+#endif
+             return 1;
+         }
+     }
+
+// ----------------------------------------------------------------------------------------
+
+    char** mitie_total_word_feature_extractor_get_words_in_dictionary (
+        const mitie_total_word_feature_extractor* twfe
+    )
+    {
+        try
+        {
+            std::vector<std::string> words = checked_cast<total_word_feature_extractor>(twfe).get_words_in_dictionary();
+            return std_vector_to_double_ptr(words);
+        }
+        catch (...)
+        {
+            return NULL;
+        }
+    }
