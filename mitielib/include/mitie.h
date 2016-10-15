@@ -431,31 +431,31 @@ extern "C"
     !*/
     
     MITIE_EXPORT int mitie_categorize_text (
-        const mitie_text_categorizer* tcat_,
+        const mitie_text_categorizer* tcat,
         const char** tokens,
         char** text_tag,
         double* text_score      
     );
     /*!
         requires            
-            - tcat_ != NULL
+            - tcat != NULL
             - tokens == An array of NULL terminated C strings.  The end of the array must
               be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
               array of tokens). 
             - text_tag != NULL  
             - text_score != NULL        
         ensures
-          - this function uses a trained text_categorizer to predict the category of a text,
+          - This function uses a trained text_categorizer to predict the category of a text,
             represented by an array of tokens, where each token is one word. The category is
             represented by its name (a string).  
           - returns 0 upon success and a non-zero value on failure.  
-          - text_tag and text_score MUST BE FREED by a call to mitie_free().
+          - text_tag MUST BE FREED by a call to mitie_free().
           - if (this function returns 0) then
-              - **text_tag == the predicted category to which this text belongs 
-                 (selected from the set of categories tcat_ knows about)
+              - *text_tag == A NULL terminated C string containing the predicted category
+                to which this text belongs (selected from the set of categories tcat knows
+                about)
               - *score == the confidence the categorizer has about its prediction.
     !*/
-
 
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
@@ -1051,6 +1051,92 @@ extern "C"
             - returns NULL if the object could not be created.
     !*/
 
+
+    // ----------------------------------------------------------------------------------------
+
+    typedef struct mitie_total_word_feature_extractor  mitie_total_word_feature_extractor;
+
+    MITIE_EXPORT mitie_total_word_feature_extractor* mitie_load_total_word_feature_extractor (
+        const char* filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads a saved MITIE total word feature extractor from disk and returns a
+              pointer to the extractor object.
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - If the object can't be created then this function returns NULL.
+    !*/
+
+
+    MITIE_EXPORT unsigned long mitie_total_word_feature_extractor_fingerprint (
+        const mitie_total_word_feature_extractor* twfe
+    );
+    /*!
+        requires
+            - twfe != NULL
+        ensures
+            - returns a 64bit ID number that uniquely identifies this object instance
+    !*/    
+
+    MITIE_EXPORT unsigned long mitie_total_word_feature_extractor_num_dimensions (
+        const mitie_total_word_feature_extractor* twfe
+    );
+    /*!
+        requires
+            - twfe != NULL
+        ensures
+            - returns the dimensionality of the feature vectors produced by this object.
+    !*/        
+
+    MITIE_EXPORT unsigned long mitie_total_word_feature_extractor_num_words_in_dictionary (
+        const mitie_total_word_feature_extractor* twfe
+    );
+    /*!
+        requires
+            - twfe != NULL
+        ensures
+            - While the total word feature extractor can produce vectors for any possible
+              string, it contains an internal dictionary of words for which it has
+              precomputed word vectors.  In general, word vectors will be of higher quality
+              for words in the dictionary than for arbitrary strings not in the dictionary. 
+            - Therefore, this function returns the number of words in the dictionary.
+    !*/    
+       
+    MITIE_EXPORT int mitie_total_word_feature_extractor_get_feature_vector (
+         const mitie_total_word_feature_extractor* twfe,
+         const char* word,
+         float* result
+     );
+    /*!
+        requires
+            - twfe != NULL
+            - word == a NULL terminated C string.
+            - result == a pointer to mitie_total_word_feature_extractor_num_dimensions(twfe) floats.
+        ensures
+            - stores a feature vector for the corresponding word in result.
+            - returns 0 if successful, 1 if there is an error.
+    !*/
+
+    char** mitie_total_word_feature_extractor_get_words_in_dictionary (
+        const mitie_total_word_feature_extractor* twfe
+    );
+    /*!
+        requires
+            - twfe != NULL
+        ensures
+            - returns an array that contains a copy of the words in the dictionary.  
+            - The returned array is an array of pointers to NULL terminated C strings.  The
+              array itself is terminated with a NULL.
+            - Each string is a word in the dictionary. The total number of words is
+              mitie_total_word_feature_extractor_num_words_in_dictionary(twfe)
+            - It is the responsibility of the caller to free the returned array.  You free
+              it by calling mitie_free() once on the entire array. If the return value is
+              stored in WORDS, you call mitie_free(WORDS).  DO NOT CALL FREE ON ELEMENTS OF
+              WORDS.
+            - If something prevents this function from succeeding then a NULL is returned.
+    */ 
 
 // ----------------------------------------------------------------------------------------
 
