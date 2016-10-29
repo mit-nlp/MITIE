@@ -248,8 +248,9 @@ class named_entity_extractor:
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
             ner = named_entity_extractor(filename)
-        if object was saved with pure_model=True, then you must also pass a feature extractor
-        filename to instantiate it:
+        If you saved with pure_model==True, the saved file will NOT include a serialised feature extractor object. 
+        This makes the file much smaller, but when you want to read from disk you also have to pass 
+        the name of the feature extractor file you used when training the model, e.g.:
             ner = named_entity_extractor(filename,fe_filename)
         """
         filename = to_bytes(filename)
@@ -681,7 +682,6 @@ class text_categorizer:
             if (fe_filename is None):
                 self.__obj = _f.mitie_load_text_categorizer(filename)
             else:
-                print(filename,fe_filename)               
                 self.__obj = _f.mitie_load_text_categorizer_pure_model(filename,fe_filename)
         if (self.__obj == None):
             raise Exception("Unable to load text_categorizer detector from " + to_default_str_type(filename))
@@ -693,8 +693,9 @@ class text_categorizer:
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
             tcat = text_categorizer(filename)
-        if object was saved with pure_model=True, then you must also pass a feature extractor
-        filename to instantiate it:
+        If you saved with pure_model==True, the saved file will NOT include a serialised feature extractor object.                                                                                         
+        This makes the file much smaller, but when you want to read from disk you also have to pass   
+        the name of the feature extractor file you used when training the model, e.g.:
             tcat = text_categorizer(filename,fe_filename)
         """
         filename = to_bytes(filename)
