@@ -5,6 +5,9 @@
 #    smaller files are dependent on some feature extractor file which must be
 #    provided when the model is loaded, as you will see in this example.
 #
+#    For a comparison of what a non-pure version of the API looks like you can
+#    read the categorize_text.py and train_text_categorizer.py examples. 
+#
 #
 import sys, os
 
