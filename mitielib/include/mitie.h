@@ -132,6 +132,26 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
 
+    MITIE_EXPORT mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model (
+        const char* filename,
+        const char* fe_filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+            - fe_filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads a saved MITIE named entity extractor from disk and returns a pointer to
+              the entity extractor object.
+            - filename must point to a serialized named_entity_extractor object 
+              which was saved using mitie_save_named_entity_extractor_pure_model.
+            - fe_filename must provide the name of a total_word_feature_extractor file.  In
+              particular, this must be a copy of the same feature extractor used when
+              creating the ner model.
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - If the object can't be created then this function returns NULL.
+    !*/
+
     MITIE_EXPORT unsigned long mitie_get_num_possible_ner_tags (
         const mitie_named_entity_extractor* ner
     );
@@ -396,6 +416,26 @@ extern "C"
             - The returned object MUST BE FREED by a call to mitie_free().
             - If the object can't be created then this function returns NULL.
     !*/
+
+    MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer_pure_model (
+        const char* filename,
+        const char* fe_filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+            - fe_filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads a saved MITIE text categorizer object from disk and returns a
+              pointer to the text categorizer.
+            - filename must point to a serialized text_categorizer object 
+              which was saved using mitie_save_text_categorizer_pure_model.
+            - fe_filename must provide the name of a total_word_feature_extractor file.  In
+              particular, this must be a copy of the same feature extractor used when
+              creating the text categorization model.
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - If the object can't be created then this function returns NULL.
+    !*/
     
     MITIE_EXPORT int mitie_categorize_text (
         const mitie_text_categorizer* tcat,
@@ -446,6 +486,25 @@ extern "C"
               there is some error that prevents us from writing to the given file.
     !*/
 
+    MITIE_EXPORT int mitie_save_named_entity_extractor_pure_model (
+        const char* filename,
+        const mitie_named_entity_extractor* ner
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+            - ner != NULL
+        ensures
+            - Saves part of the ner object to disk in a file with the given filename.  
+              Specifically, it saves everything except the feature extractor. 
+              Once this function finishes you will be able to read the ner object 
+              from disk by calling 
+              mitie_load_named_entity_extractor_pure_model(filename,feature_extractor_filename),
+              where feature_extractor_filename is a file containing the
+              total_word_feature_extractor used to create the ner object.
+            - returns 0 upon success and a non-zero value on failure.  Failure happens if
+              there is some error that prevents us from writing to the given file.
+    !*/
 
     MITIE_EXPORT int mitie_save_binary_relation_detector (
         const char* filename,
@@ -478,6 +537,26 @@ extern "C"
             - returns 0 upon success and a non-zero value on failure.  Failure happens if
               there is some error that prevents us from writing to the given file.
     !*/
+
+    MITIE_EXPORT int mitie_save_text_categorizer_pure_model (
+        const char* filename,
+        const mitie_text_categorizer* tcat
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+            - tcat != NULL
+        ensures
+            - Saves the given text categorizer pure model to disk (omitting the feature extractor)
+              in a file with the given filename.  Once this function
+              finishes you will be able to read the text categorizer object from disk by calling
+              mitie_load_text_categorizer_pure_model(filename,fe_filename), where
+              fe_filename is a file containing the total_word_feature_extractor used to
+              create the text categorizer object.
+            - returns 0 upon success and a non-zero value on failure.  Failure happens if
+              there is some error that prevents us from writing to the given file.
+    !*/
+
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 

@@ -60,6 +60,9 @@ _f.mitie_extract_entities.argtypes = ctypes.c_void_p, ctypes.c_void_p
 _f.mitie_load_named_entity_extractor.restype = ctypes.c_void_p
 _f.mitie_load_named_entity_extractor.argtypes = ctypes.c_char_p,
 
+_f.mitie_load_named_entity_extractor_pure_model.restype = ctypes.c_void_p
+_f.mitie_load_named_entity_extractor_pure_model.argtypes = ctypes.c_char_p, ctypes.c_char_p
+
 _f.mitie_load_entire_file.restype = ctypes.c_void_p
 _f.mitie_load_entire_file.argtypes = ctypes.c_char_p,
 
@@ -83,6 +86,9 @@ _f.mitie_entities_overlap.argtypes = ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ul
 
 _f.mitie_save_named_entity_extractor.restype = ctypes.c_int
 _f.mitie_save_named_entity_extractor.argtypes = ctypes.c_char_p, ctypes.c_void_p
+
+_f.mitie_save_named_entity_extractor_pure_model.restype = ctypes.c_int
+_f.mitie_save_named_entity_extractor_pure_model.argtypes = ctypes.c_char_p, ctypes.c_void_p
 
 _f.mitie_extract_binary_relation.restype = ctypes.c_void_p
 _f.mitie_extract_binary_relation.argtypes = (ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong,
@@ -211,7 +217,7 @@ def tokenize_with_offsets(string):
 
 
 class named_entity_extractor:
-    def __init__(self, filename):
+    def __init__(self, filename, fe_filename=None):
         self.__mitie_free = _f.mitie_free
         if isinstance(filename, ctypes.c_void_p):
             # If we get here then it means we are using the "private" constructor used by
@@ -220,8 +226,11 @@ class named_entity_extractor:
             self.__obj = filename
         else:
             filename = to_bytes(filename)
-            self.__obj = _f.mitie_load_named_entity_extractor(filename)
-        if self.__obj is None:
+            if (fe_filename is None):
+                self.__obj = _f.mitie_load_named_entity_extractor(filename)
+            else:
+                self.__obj = _f.mitie_load_named_entity_extractor_pure_model(filename,fe_filename)
+        if (self.__obj == None):
             raise Exception("Unable to load named entity extractor from " + filename)
 
     def __del__(self):
@@ -235,13 +244,22 @@ class named_entity_extractor:
         num = _f.mitie_get_num_possible_ner_tags(self.__obj)
         return [to_default_str_type(_f.mitie_get_named_entity_tagstr(self.__obj, i)) for i in xrange(num)]
 
-    def save_to_disk(self, filename):
+    def save_to_disk(self, filename, pure_model=False):
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
-            ner = named_entity_extractor(filename)"""
+            ner = named_entity_extractor(filename)
+        If you saved with pure_model==True, the saved file will NOT include a serialised feature extractor object. 
+        This makes the file much smaller, but when you want to read from disk you also have to pass 
+        the name of the feature extractor file you used when training the model, e.g.:
+            ner = named_entity_extractor(filename,fe_filename)
+        """
         filename = to_bytes(filename)
-        if _f.mitie_save_named_entity_extractor(filename, self.__obj) != 0:
-            raise Exception("Unable to save named_entity_extractor to the file " + filename)
+        if (pure_model):
+            if (_f.mitie_save_named_entity_extractor_pure_model(filename, self.__obj) != 0):
+                raise Exception("Unable to save named_entity_extractor to the file " + filename);
+        else:
+            if (_f.mitie_save_named_entity_extractor(filename, self.__obj) != 0):
+                raise Exception("Unable to save named_entity_extractor to the file " + filename);
 
     def extract_entities(self, tokens):
         tags = self.get_possible_ner_tags()
@@ -622,8 +640,14 @@ _f.mitie_add_text_categorizer_labeled_text.argtypes = ctypes.c_void_p, ctypes.c_
 _f.mitie_load_text_categorizer.restype = ctypes.c_void_p
 _f.mitie_load_text_categorizer.argtypes = ctypes.c_char_p,
 
+_f.mitie_load_text_categorizer_pure_model.restype = ctypes.c_void_p
+_f.mitie_load_text_categorizer_pure_model.argtypes = ctypes.c_char_p, ctypes.c_char_p
+
 _f.mitie_save_text_categorizer.restype = ctypes.c_int
 _f.mitie_save_text_categorizer.argtypes = ctypes.c_void_p,
+
+_f.mitie_save_text_categorizer_pure_model.restype = ctypes.c_int
+_f.mitie_save_text_categorizer_pure_model.argtypes = ctypes.c_void_p,
 
 _f.mitie_text_categorizer_trainer_get_beta.restype = ctypes.c_double
 _f.mitie_text_categorizer_trainer_get_beta.argtypes = ctypes.c_void_p,
@@ -649,26 +673,38 @@ _f.mitie_categorize_text.argtypes = (ctypes.c_void_p, ctypes.c_void_p,
 
 
 class text_categorizer:
-    def __init__(self, filename):
+    def __init__(self, filename, fe_filename=None):
         filename = to_bytes(filename)
         self.__mitie_free = _f.mitie_free
-        if isinstance(filename, ctypes.c_void_p):
+        if (isinstance(filename, ctypes.c_void_p)):
             self.__obj = filename
         else:
-            self.__obj = _f.mitie_load_text_categorizer(filename)
-        if self.__obj is None:
-            raise Exception("Unable to load text_categorizer detector from " + filename)
+            if (fe_filename is None):
+                self.__obj = _f.mitie_load_text_categorizer(filename)
+            else:
+                self.__obj = _f.mitie_load_text_categorizer_pure_model(filename,fe_filename)
+        if (self.__obj == None):
+            raise Exception("Unable to load text_categorizer detector from " + to_default_str_type(filename))
 
     def __del__(self):
         self.__mitie_free(self.__obj)
 
-    def save_to_disk(self, filename):
+    def save_to_disk(self, filename,pure_model=False):
         """Save this object to disk.  You recall it from disk with the following Python
         code: 
-            tcat = text_categorizer(filename)"""
+            tcat = text_categorizer(filename)
+        If you saved with pure_model==True, the saved file will NOT include a serialised feature extractor object.                                                                                         
+        This makes the file much smaller, but when you want to read from disk you also have to pass   
+        the name of the feature extractor file you used when training the model, e.g.:
+            tcat = text_categorizer(filename,fe_filename)
+        """
         filename = to_bytes(filename)
-        if _f.mitie_save_text_categorizer(filename, self.__obj) != 0:
-            raise Exception("Unable to save text_categorizer to the file " + to_default_str_type(filename))
+        if (pure_model):
+            if (_f.mitie_save_text_categorizer_pure_model(filename, self.__obj) != 0):
+                raise Exception("Unable to save text_categorizer to the file " + filename);
+        else:
+            if (_f.mitie_save_text_categorizer(filename, self.__obj) != 0):
+                raise Exception("Unable to save text_categorizer to the file " + to_default_str_type(filename));
 
     def __call__(self, tokens):
         """Categorise a piece of text. The input tokens should have been produced by 
