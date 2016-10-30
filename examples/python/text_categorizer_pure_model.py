@@ -1,6 +1,9 @@
 #!/usr/bin/python
 #
-#    This example shows how to use the MITIE Python API to train a text_categorizer.
+#    This example shows how to use the MITIE Python API to train a
+#    text_categorizer that produces smaller model files.  However, these
+#    smaller files are dependent on some feature extractor file which must be
+#    provided when the model is loaded, as you will see in this example.
 #
 #
 import sys, os
@@ -9,7 +12,7 @@ import sys, os
 # a lot of ways to do this, here we do it programmatically with the following
 # two statements:
 parent = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(parent + '/../../../mitielib')
+sys.path.append(parent + '/../../mitielib')
 
 from mitie import *
 
