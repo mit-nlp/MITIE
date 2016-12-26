@@ -62,13 +62,13 @@ rel_detector.save_to_disk("rel_classifier.svm")
 # Was Ben Franklin born in Boson?  If the score is > 0 then the
 # binary_relation_detector is predicting that he was.  In this case, the number is
 # positive so the detector made the right decision.
-print "detection score:", rel_detector(ner.extract_binary_relation(sentence, xrange(0,2), xrange(5,6)))
+print ("detection score:", rel_detector(ner.extract_binary_relation(sentence, xrange(0,2), xrange(5,6))))
 
 # Now let's try a different sentence
 sentence = ["Jimmy", "Smith", ",", "a", "guy", "raised", "in", "France"]
 # Was Jimmy Smith born in France?  Again, the detector correctly gives a number > 0.
-print "detection score:", rel_detector(ner.extract_binary_relation(sentence, xrange(0,2), xrange(7,8)))
+print ("detection score:", rel_detector(ner.extract_binary_relation(sentence, xrange(0,2), xrange(7,8))))
 # Now let's ask if France was born in Jimmy Smith.  This should be false and happily
 # the detector also correctly predicts a number < 0.
-print "detection score:", rel_detector(ner.extract_binary_relation(sentence, xrange(7,8), xrange(0,2)))
+print ("detection score:", rel_detector(ner.extract_binary_relation(sentence, xrange(7,8), xrange(0,2))))
 
