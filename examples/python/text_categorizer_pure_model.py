@@ -47,4 +47,4 @@ cat2 = text_categorizer("new_text_categorizer_pure_model.dat",fe_filename)
 
 text1 = "I am so happy"
 pred, conf = cat2(tokenize(text1))
-print("predict sentiment of text '{0}' to be {1} with confidence {2}".format(text1,pred,conf))
+print ("predict sentiment of text '{0}' to be {1} with confidence {2}".format(text1,pred,conf))
