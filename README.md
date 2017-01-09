@@ -8,7 +8,7 @@ extraction](http://blog.dlib.net/2014/04/mitie-completely-free-and-state-of-art.
 and [binary relation detection](http://blog.dlib.net/2014/07/mitie-v02-released-now-includes-python.html) 
 as well as tools for training custom extractors and relation detectors.  
 
-MITIE is built on top of [dlib](http://dlib.net), a high-performance machine-learning library[1], MITIE makes use of several state-of-the-art techniques including the use of distributional word embeddings[2] and Structural Support Vector Machines[3].  MITIE offers several pre-trained models providing varying levels of support for both English and Spanish, trained using a variety of linguistic resources (e.g., CoNLL 2003, ACE, [Wikipedia, Freebase](https://github.com/mit-nlp/MITIE/releases/download/v0.4/freebase_wikipedia_binary_relation_training_data_v1.0.tar.bz2), and Gigaword). The core MITIE software is written in C++, but bindings for several other software languages including Python, R, Java, C, and MATLAB allow a user to quickly integrate MITIE into his/her own applications.
+MITIE is built on top of [dlib](http://dlib.net), a high-performance machine-learning library[1], MITIE makes use of several state-of-the-art techniques including the use of distributional word embeddings[2] and Structural Support Vector Machines[3].  MITIE offers several pre-trained models providing varying levels of support for both English, Spanish, and German trained using a variety of linguistic resources (e.g., CoNLL 2003, ACE, [Wikipedia, Freebase](https://github.com/mit-nlp/MITIE/releases/download/v0.4/freebase_wikipedia_binary_relation_training_data_v1.0.tar.bz2), and Gigaword). The core MITIE software is written in C++, but bindings for several other software languages including Python, R, Java, C, and MATLAB allow a user to quickly integrate MITIE into his/her own applications.
 
 Outside projects have created API bindings for [OCaml](https://github.com/travisbrady/omitie) and 
 [.NET](https://github.com/BayardRock/MITIE-Dot-Net).  There is also an [interactive tool](https://github.com/Sotera/mitie-trainer) for labeling data and training MITIE.
@@ -27,9 +27,9 @@ model files which you can do by running:
 make MITIE-models
 ```
 or by simply downloading the [MITIE-models-v0.2.tar.bz2](https://github.com/mit-nlp/MITIE/releases/download/v0.4/MITIE-models-v0.2.tar.bz2)
-file and extracting it in your MITIE folder.  Note that the Spanish models are supplied in 
-a separate download.  So if you want to use the Spanish NER model then download [MITIE-models-v0.2-Spanish.zip](https://github.com/mit-nlp/MITIE/releases/download/v0.4/MITIE-models-v0.2-Spanish.zip) and
-extract it into your MITIE folder.
+file and extracting it in your MITIE folder.  Note that the Spanish and German models are supplied in 
+separate downloads.  So if you want to use the Spanish NER model then download [MITIE-models-v0.2-Spanish.zip](https://github.com/mit-nlp/MITIE/releases/download/v0.4/MITIE-models-v0.2-Spanish.zip) and
+extract it into your MITIE folder.  Similarly for the German model: [MITIE-models-v0.2-German.tar.bz2](https://github.com/mit-nlp/MITIE/releases/download/v0.4/MITIE-models-v0.2-German.tar.bz2)
 
 ### Using MITIE from the command line
 
