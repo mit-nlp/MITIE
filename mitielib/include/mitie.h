@@ -152,9 +152,8 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
     typedef struct mitie_total_word_feature_extractor mitie_total_word_feature_extractor;
-    MITIE_EXPORT mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_with_feature_extractor (
-		const char* filename,
-		const mitie_total_word_feature_extractor* fe_
+    MITIE_EXPORT mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_without_feature_extractor (
+		const char* filename
     );
     /*!
 	Added for Rasa_nlu multitenancy
@@ -208,6 +207,12 @@ extern "C"
               set of named entity detections.
             - If the object can't be created then this function returns NULL
     !*/
+
+    MITIE_EXPORT mitie_named_entity_detections* mitie_extract_entities_with_extractor(
+    	const mitie_named_entity_extractor* ner,
+		char** tokens,
+		const mitie_total_word_feature_extractor* fe_
+    );
 
     MITIE_EXPORT unsigned long mitie_ner_get_num_detections (
         const mitie_named_entity_detections* dets
@@ -445,9 +450,8 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
     
-    MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer_pure_model_with_feature_extractor(
-    	const char* filename, const mitie_total_word_feature_extractor* extractor
-    );
+    MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer_pure_model_without_feature_extractor(
+    	const char* filename);
     /*!
         Added for Rasa_nlu multitenancy
     !*/
@@ -478,6 +482,14 @@ extern "C"
                 about)
               - *score == the confidence the categorizer has about its prediction.
     !*/
+
+    MITIE_EXPORT int mitie_categorize_text_with_extractor (
+		const mitie_text_categorizer* tcat,
+		const char** tokens,
+		char** text_tag,
+		double* text_score,
+		const mitie_total_word_feature_extractor* fe_
+	);
 
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------

@@ -520,33 +520,17 @@ extern "C"
         }
     }
 
-    mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_with_feature_extractor (
-            const char* filename,
-            const mitie_total_word_feature_extractor* fe_
+    mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_without_feature_extractor (
+            const char* filename
 	)
 	{
 		assert(filename != NULL);
-		assert(fe_ != NULL);
 
 		named_entity_extractor* impl = 0;
 		try
 		{
-			string classname;
-			dlib::sequence_segmenter<ner_feature_extractor> segmenter;
-			std::vector<std::string> tag_name_strings;
-			dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
-			const total_word_feature_extractor& fe = checked_cast<total_word_feature_extractor>(fe_);
-
-
-			dlib::deserialize(filename) >> classname;
-			if (classname != "mitie::named_entity_extractor_pure_model")
-				throw dlib::error("This file does not contain a mitie::named_entity_extractor_pure_model. Contained: " + classname);
-			dlib::deserialize(filename) >> classname >> df >> segmenter >> tag_name_strings;
-
-			impl = allocate<named_entity_extractor>(tag_name_strings, fe, segmenter, df);
-
+			impl = allocate<named_entity_extractor>(filename);
 			return (mitie_named_entity_extractor*)impl;
-
 		}
 		catch(std::exception& e)
 		{
@@ -611,6 +595,38 @@ extern "C"
         }
 
     }
+
+    mitie_named_entity_detections* mitie_extract_entities_with_extractor (
+		const mitie_named_entity_extractor* ner_,
+		char** tokens,
+		const mitie_total_word_feature_extractor* fe_
+	)
+	{
+		const named_entity_extractor& ner = checked_cast<named_entity_extractor>(ner_);
+		const total_word_feature_extractor& fe_temp = checked_cast<total_word_feature_extractor>(fe_);
+		assert(tokens != NULL);
+
+		mitie_named_entity_detections* impl = 0;
+
+		try
+		{
+			impl = allocate<mitie_named_entity_detections>();
+
+			std::vector<std::string> words;
+			for (unsigned long i = 0; tokens[i]; ++i)
+				words.push_back(tokens[i]);
+
+			ner.predict(words, impl->ranges, impl->predicted_labels, impl->predicted_scores, fe_temp);
+			impl->tags = ner.get_tag_name_strings();
+			return impl;
+		}
+		catch(...)
+		{
+			mitie_free(impl);
+			return NULL;
+		}
+
+	}
 
     unsigned long mitie_ner_get_num_detections (
         const mitie_named_entity_detections* dets
@@ -902,28 +918,14 @@ extern "C"
          }
      }
 
-    mitie_text_categorizer* mitie_load_text_categorizer_pure_model_with_feature_extractor(
-        	const char* filename,
-			mitie_total_word_feature_extractor* fe_)
+    mitie_text_categorizer* mitie_load_text_categorizer_pure_model_without_feature_extractor(
+        	const char* filename)
     {
     	assert(filename != NULL);
-		assert(fe_ != NULL);
-
 		 text_categorizer* impl = 0;
 		 try
 		 {
-			 string classname;
-			 std::vector<std::string> tag_name_strings;
-			 dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
-			 const total_word_feature_extractor& fe = checked_cast<total_word_feature_extractor>(fe_);
-
-			 dlib::deserialize(filename) >> classname;
-			 if (classname != "mitie::text_categorizer_pure_model")
-				 throw dlib::error("This file does not contain a mitie::text_categorizer_pure_model. Contained: " + classname);
-			 dlib::deserialize(filename) >> classname >> df >> tag_name_strings;
-
-			 impl = allocate<text_categorizer>(tag_name_strings, fe, df);
-
+			 impl = allocate<text_categorizer>(filename);
 			 return (mitie_text_categorizer*)impl;
 		 }
 		 catch(std::exception& e)
@@ -980,6 +982,47 @@ extern "C"
          }
      }
      
+     int mitie_categorize_text_with_extractor (
+		  const mitie_text_categorizer* tcat_,
+		  const char** tokens,
+		  char** text_tag,
+		  double* text_score,
+		  const mitie_total_word_feature_extractor* fe_
+	  )
+	  {
+		  try
+		  {
+			  assert(text_tag);
+			  assert(text_score);
+
+			  string tag;
+			  double score;
+			  std::vector<std::string> words;
+
+			  while(*tokens)
+				  words.push_back(*tokens++);
+
+			  total_word_feature_extractor* fe_temp = (total_word_feature_extractor *) fe_;
+			  checked_cast<text_categorizer>(tcat_).predict(words,tag,score, *fe_temp);
+
+			  char * writable = (char*)allocate_bytes(tag.size()+1);
+			  std::copy(tag.begin(), tag.end(), writable);
+			  writable[tag.size()] = '\0';
+
+			  *text_tag = writable;
+			  *text_score = score;
+
+			  return 0;
+		  }
+		  catch (...)
+		  {
+ #ifndef NDEBUG
+			  cerr << "Error categorizing text: " << endl;
+ #endif
+			  return 1;
+		  }
+	  }
+
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 //                                      TRAINING ROUTINES

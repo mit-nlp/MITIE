@@ -113,6 +113,13 @@ namespace mitie
                       incorrect. That is, the canonical decision threshold is at 0.
         !*/
 
+        void predict(
+				const std::vector<std::string>& sentence,
+				string& text_tag,
+				double& text_score,
+				const total_word_feature_extractor& fe_
+		) const;
+
         string operator() (
                 const std::vector<std::string>& sentence
         ) const;

@@ -71,22 +71,32 @@ namespace mitie
         string& text_tag,
         double& text_score
     ) const {
-
-        std::pair<unsigned long, double> temp;
-
-        if (fe.get_num_dimensions() == 0) {
-            temp = df.predict(extract_BoW_features(sentence));
-        } else {
-            const std::vector<matrix<float, 0, 1> > &sent = sentence_to_feats(fe, sentence);
-            temp = df.predict(extract_combined_features(sentence, sent));
-        }
-
-        // now label the document
-        unsigned long text_tag_id = temp.first;
-        if(text_tag_id < tag_name_strings.size()) text_tag = tag_name_strings[text_tag_id];
-        else text_tag = "Unseen";
-        text_score = temp.second;
+        predict(sentence, text_tag, text_score, fe);
     }
+
+    void text_categorizer::
+	predict (
+		const std::vector<std::string>& sentence,
+		string& text_tag,
+		double& text_score,
+		const total_word_feature_extractor& fe_
+	) const {
+
+		std::pair<unsigned long, double> temp;
+
+		if (fe_.get_num_dimensions() == 0) {
+			temp = df.predict(extract_BoW_features(sentence));
+		} else {
+			const std::vector<matrix<float, 0, 1> > &sent = sentence_to_feats(fe_, sentence);
+			temp = df.predict(extract_combined_features(sentence, sent));
+		}
+
+		// now label the document
+		unsigned long text_tag_id = temp.first;
+		if(text_tag_id < tag_name_strings.size()) text_tag = tag_name_strings[text_tag_id];
+		else text_tag = "Unseen";
+		text_score = temp.second;
+	}
 
 // ----------------------------------------------------------------------------------------
 

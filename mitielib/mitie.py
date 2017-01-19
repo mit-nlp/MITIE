@@ -57,14 +57,17 @@ _f.mitie_get_num_possible_ner_tags.argtypes = ctypes.c_void_p,
 _f.mitie_extract_entities.restype = ctypes.c_void_p
 _f.mitie_extract_entities.argtypes = ctypes.c_void_p, ctypes.c_void_p
 
+_f.mitie_extract_entities_with_extractor.restype = ctypes.c_void_p
+_f.mitie_extract_entities_with_extractor.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p
+
 _f.mitie_load_named_entity_extractor.restype = ctypes.c_void_p
 _f.mitie_load_named_entity_extractor.argtypes = ctypes.c_char_p,
 
 _f.mitie_load_named_entity_extractor_pure_model.restype = ctypes.c_void_p
 _f.mitie_load_named_entity_extractor_pure_model.argtypes = ctypes.c_char_p, ctypes.c_char_p
 
-_f.mitie_load_named_entity_extractor_pure_model_with_feature_extractor.restype = ctypes.c_void_p
-_f.mitie_load_named_entity_extractor_pure_model_with_feature_extractor.argtypes = ctypes.c_char_p, ctypes.c_void_p
+_f.mitie_load_named_entity_extractor_pure_model_without_feature_extractor.restype = ctypes.c_void_p
+_f.mitie_load_named_entity_extractor_pure_model_without_feature_extractor.argtypes = ctypes.c_char_p,
 
 _f.mitie_load_entire_file.restype = ctypes.c_void_p
 _f.mitie_load_entire_file.argtypes = ctypes.c_char_p,
@@ -220,7 +223,7 @@ def tokenize_with_offsets(string):
 
 
 class named_entity_extractor:
-    def __init__(self, filename, fe_filename=None, text_feature_extractor=None):
+    def __init__(self, filename, fe_filename=None, pure_model=True):
         self.__mitie_free = _f.mitie_free
         if isinstance(filename, ctypes.c_void_p):
             # If we get here then it means we are using the "private" constructor used by
@@ -230,8 +233,8 @@ class named_entity_extractor:
         else:
             filename = to_bytes(filename)
             if (fe_filename is None):
-                if(text_feature_extractor is not None and isinstance(text_feature_extractor, total_word_feature_extractor)):
-                    self.__obj = _f.mitie_load_named_entity_extractor_pure_model_with_feature_extractor(filename, text_feature_extractor._obj)
+                if pure_model:
+                    self.__obj = _f.mitie_load_named_entity_extractor_pure_model_without_feature_extractor(filename)
                 else:
                     self.__obj = _f.mitie_load_named_entity_extractor(filename)
             else:
@@ -267,10 +270,13 @@ class named_entity_extractor:
             if (_f.mitie_save_named_entity_extractor(filename, self.__obj) != 0):
                 raise Exception("Unable to save named_entity_extractor to the file " + filename);
 
-    def extract_entities(self, tokens):
+    def extract_entities(self, tokens, feature_extractor=None):
         tags = self.get_possible_ner_tags()
         # Now extract the entities and return the results
-        dets = _f.mitie_extract_entities(self.__obj, python_to_mitie_str_array(tokens))
+        if(feature_extractor is not None and isinstance(feature_extractor, total_word_feature_extractor)):
+            dets = _f.mitie_extract_entities_with_extractor(self.__obj, python_to_mitie_str_array(tokens), feature_extractor._obj)
+        else:
+            dets = _f.mitie_extract_entities(self.__obj, python_to_mitie_str_array(tokens))
         if dets is None:
             raise Exception("Unable to create entity detections.")
         num = _f.mitie_ner_get_num_detections(dets)
@@ -649,8 +655,8 @@ _f.mitie_load_text_categorizer.argtypes = ctypes.c_char_p,
 _f.mitie_load_text_categorizer_pure_model.restype = ctypes.c_void_p
 _f.mitie_load_text_categorizer_pure_model.argtypes = ctypes.c_char_p, ctypes.c_char_p
 
-_f.mitie_load_text_categorizer_pure_model_with_feature_extractor.restype = ctypes.c_void_p
-_f.mitie_load_text_categorizer_pure_model_with_feature_extractor.argtypes = ctypes.c_char_p, ctypes.c_void_p
+_f.mitie_load_text_categorizer_pure_model_without_feature_extractor.restype = ctypes.c_void_p
+_f.mitie_load_text_categorizer_pure_model_without_feature_extractor.argtypes = ctypes.c_char_p,
 
 _f.mitie_save_text_categorizer.restype = ctypes.c_int
 _f.mitie_save_text_categorizer.argtypes = ctypes.c_void_p,
@@ -680,17 +686,21 @@ _f.mitie_categorize_text.restype = ctypes.c_ulong
 _f.mitie_categorize_text.argtypes = (ctypes.c_void_p, ctypes.c_void_p,
                                      ctypes.POINTER(ctypes.POINTER(ctypes.c_char_p)), ctypes.POINTER(ctypes.c_double))
 
+_f.mitie_categorize_text_with_extractor.restype = ctypes.c_ulong
+_f.mitie_categorize_text_with_extractor.argtypes = (ctypes.c_void_p, ctypes.c_void_p,
+                                     ctypes.POINTER(ctypes.POINTER(ctypes.c_char_p)), ctypes.POINTER(ctypes.c_double), ctypes.c_void_p)
+
 
 class text_categorizer:
-    def __init__(self, filename, fe_filename=None, text_feature_extractor=None):
+    def __init__(self, filename, fe_filename=None, pure_model=True):
         filename = to_bytes(filename)
         self.__mitie_free = _f.mitie_free
         if (isinstance(filename, ctypes.c_void_p)):
             self.__obj = filename
         else:
             if (fe_filename is None):
-                if (text_feature_extractor is not None and isinstance(text_feature_extractor, total_word_feature_extractor)):
-                    self.__obj = _f.mitie_load_text_categorizer_pure_model_with_feature_extractor(filename, text_feature_extractor._obj);
+                if pure_model:
+                    self.__obj = _f.mitie_load_text_categorizer_pure_model_without_feature_extractor(filename)
                 else:
                     self.__obj = _f.mitie_load_text_categorizer(filename)
             else:
@@ -718,14 +728,19 @@ class text_categorizer:
             if (_f.mitie_save_text_categorizer(filename, self.__obj) != 0):
                 raise Exception("Unable to save text_categorizer to the file " + to_default_str_type(filename));
 
-    def __call__(self, tokens):
+    def __call__(self, tokens, feature_extractor=None):
         """Categorise a piece of text. The input tokens should have been produced by 
         something like tokenize().  This function returns a predicted label and a confidence score."""
         score = ctypes.c_double()
         label = ctypes.POINTER(ctypes.c_char_p)()
         ctokens = python_to_mitie_str_array(tokens)
-        if _f.mitie_categorize_text(self.__obj, ctokens, ctypes.byref(label), ctypes.byref(score)) != 0:
-            raise Exception("Unable to classify text.")
+
+        if (feature_extractor is not None and isinstance(feature_extractor, total_word_feature_extractor)) :
+            if _f.mitie_categorize_text_with_extractor(self.__obj, ctokens, ctypes.byref(label), ctypes.byref(score), feature_extractor._obj) != 0:
+                raise Exception("Unable to classify text.")
+        else:
+            if _f.mitie_categorize_text(self.__obj, ctokens, ctypes.byref(label), ctypes.byref(score)) != 0:
+                raise Exception("Unable to classify text.")
         
         label = ctypes.cast(label, ctypes.c_char_p)
         _label, _score = label.value, score.value

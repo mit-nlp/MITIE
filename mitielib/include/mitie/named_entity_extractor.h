@@ -67,6 +67,9 @@ namespace mitie
                                const std::string& extractorName
         );
 
+		named_entity_extractor(const std::string& pureModelName
+		);
+
         dlib::uint64 get_fingerprint(
         ) const { return fingerprint; }
         /*!
@@ -108,6 +111,14 @@ namespace mitie
                       sentence[#chunks[i].first] through sentence[#chunks[i].second-1].
                     - The textual label for the i-th entity is get_tag_name_strings()[#chunk_tags[i]].
         !*/
+
+        void predict(
+			const std::vector<std::string>& sentence,
+			std::vector<std::pair<unsigned long, unsigned long> >& chunks,
+			std::vector<unsigned long>& chunk_tags,
+			std::vector<double>& chunk_scores,
+			const total_word_feature_extractor& fe_
+		) const;
 
         void operator() (
             const std::vector<std::string>& sentence,

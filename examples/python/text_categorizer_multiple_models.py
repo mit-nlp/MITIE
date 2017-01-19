@@ -50,17 +50,17 @@ cat2.save_to_disk("new_text_categorizer_2_pure_model.dat",pure_model=True)
 
 text_feature_extractor = total_word_feature_extractor(fe_filename)
 
-cat1_new = text_categorizer("new_text_categorizer_1_pure_model.dat", None, text_feature_extractor)
-cat2_new = text_categorizer("new_text_categorizer_2_pure_model.dat", None, text_feature_extractor)
+cat1_new = text_categorizer("new_text_categorizer_1_pure_model.dat", None, True)
+cat2_new = text_categorizer("new_text_categorizer_2_pure_model.dat", None, True)
 
 text1 = "I am so happy"
-pred, conf = cat1_new(tokenize(text1))
+pred, conf = cat1_new(tokenize(text1), text_feature_extractor)
 print ("predict sentiment of text '{0}' to be {1} with confidence {2}".format(text1,pred,conf))
 
 text2 = "I want to recharge phone"
-pred2, conf2 = cat2_new(tokenize(text2))
+pred2, conf2 = cat2_new(tokenize(text2), text_feature_extractor)
 print ("predict sentiment of text '{0}' to be {1} with confidence {2}".format(text2,pred2,conf2))
 
 text3 = "Stop"
-pred3, conf3 = cat2_new(tokenize(text3))
+pred3, conf3 = cat2_new(tokenize(text3), text_feature_extractor)
 print ("predict sentiment of text '{0}' to be {1} with confidence {2}".format(text3,pred3,conf3))
