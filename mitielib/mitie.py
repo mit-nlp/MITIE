@@ -39,7 +39,7 @@ else:
     # pick the one with the most recent timestamp.
     files = ([parent + '/libmitie.so', 'libmitie.so', 'libmitie.dylib',
               parent + '/libmitie.dylib', '/usr/local/lib/libmitie.so',
-              '/usr/local/lib/libmitie.dylib'])
+              '/usr/local/lib/libmitie.dylib', parent + "/build/libmitie.dylib"])
     times = [(_last_modified_time(f), f) for f in files]
     most_recent = max(times, key=lambda x: x[0])[1]
     _f = ctypes.CDLL(most_recent)
@@ -62,6 +62,9 @@ _f.mitie_load_named_entity_extractor.argtypes = ctypes.c_char_p,
 
 _f.mitie_load_named_entity_extractor_pure_model.restype = ctypes.c_void_p
 _f.mitie_load_named_entity_extractor_pure_model.argtypes = ctypes.c_char_p, ctypes.c_char_p
+
+_f.mitie_load_named_entity_extractor_pure_model_with_feature_extractor.restype = ctypes.c_void_p
+_f.mitie_load_named_entity_extractor_pure_model_with_feature_extractor.argtypes = ctypes.c_char_p, ctypes.c_void_p
 
 _f.mitie_load_entire_file.restype = ctypes.c_void_p
 _f.mitie_load_entire_file.argtypes = ctypes.c_char_p,
@@ -217,7 +220,7 @@ def tokenize_with_offsets(string):
 
 
 class named_entity_extractor:
-    def __init__(self, filename, fe_filename=None):
+    def __init__(self, filename, fe_filename=None, text_feature_extractor=None):
         self.__mitie_free = _f.mitie_free
         if isinstance(filename, ctypes.c_void_p):
             # If we get here then it means we are using the "private" constructor used by
@@ -227,7 +230,10 @@ class named_entity_extractor:
         else:
             filename = to_bytes(filename)
             if (fe_filename is None):
-                self.__obj = _f.mitie_load_named_entity_extractor(filename)
+                if(text_feature_extractor is not None and isinstance(text_feature_extractor, total_word_feature_extractor)):
+                    self.__obj = _f.mitie_load_named_entity_extractor_pure_model_with_feature_extractor(filename, text_feature_extractor._obj)
+                else:
+                    self.__obj = _f.mitie_load_named_entity_extractor(filename)
             else:
                 self.__obj = _f.mitie_load_named_entity_extractor_pure_model(filename,fe_filename)
         if (self.__obj == None):
@@ -643,6 +649,9 @@ _f.mitie_load_text_categorizer.argtypes = ctypes.c_char_p,
 _f.mitie_load_text_categorizer_pure_model.restype = ctypes.c_void_p
 _f.mitie_load_text_categorizer_pure_model.argtypes = ctypes.c_char_p, ctypes.c_char_p
 
+_f.mitie_load_text_categorizer_pure_model_with_feature_extractor.restype = ctypes.c_void_p
+_f.mitie_load_text_categorizer_pure_model_with_feature_extractor.argtypes = ctypes.c_char_p, ctypes.c_void_p
+
 _f.mitie_save_text_categorizer.restype = ctypes.c_int
 _f.mitie_save_text_categorizer.argtypes = ctypes.c_void_p,
 
@@ -673,14 +682,17 @@ _f.mitie_categorize_text.argtypes = (ctypes.c_void_p, ctypes.c_void_p,
 
 
 class text_categorizer:
-    def __init__(self, filename, fe_filename=None):
+    def __init__(self, filename, fe_filename=None, text_feature_extractor=None):
         filename = to_bytes(filename)
         self.__mitie_free = _f.mitie_free
         if (isinstance(filename, ctypes.c_void_p)):
             self.__obj = filename
         else:
             if (fe_filename is None):
-                self.__obj = _f.mitie_load_text_categorizer(filename)
+                if (text_feature_extractor is not None and isinstance(text_feature_extractor, total_word_feature_extractor)):
+                    self.__obj = _f.mitie_load_text_categorizer_pure_model_with_feature_extractor(filename, text_feature_extractor._obj);
+                else:
+                    self.__obj = _f.mitie_load_text_categorizer(filename)
             else:
                 self.__obj = _f.mitie_load_text_categorizer_pure_model(filename,fe_filename)
         if (self.__obj == None):
@@ -797,6 +809,10 @@ class total_word_feature_extractor:
 
     def __del__(self):
         self.__mitie_free(self.__obj)
+
+    @property
+    def _obj(self):
+        return self.__obj
 
     @property
     def fingerprint(self):

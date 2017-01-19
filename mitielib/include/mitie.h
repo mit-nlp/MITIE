@@ -151,6 +151,14 @@ extern "C"
             - The returned object MUST BE FREED by a call to mitie_free().
             - If the object can't be created then this function returns NULL.
     !*/
+    typedef struct mitie_total_word_feature_extractor mitie_total_word_feature_extractor;
+    MITIE_EXPORT mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_with_feature_extractor (
+		const char* filename,
+		const mitie_total_word_feature_extractor* fe_
+    );
+    /*!
+	Added for Rasa_nlu multitenancy
+    !*/
 
     MITIE_EXPORT unsigned long mitie_get_num_possible_ner_tags (
         const mitie_named_entity_extractor* ner
@@ -437,6 +445,13 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
     
+    MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer_pure_model_with_feature_extractor(
+    	const char* filename, const mitie_total_word_feature_extractor* extractor
+    );
+    /*!
+        Added for Rasa_nlu multitenancy
+    !*/
+
     MITIE_EXPORT int mitie_categorize_text (
         const mitie_text_categorizer* tcat,
         const char** tokens,

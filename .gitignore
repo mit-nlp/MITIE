@@ -32,6 +32,9 @@ examples/cpp/train_relation_extraction/rel_classifier.svm
 examples/cpp/train_relation_extraction/train_relation_extraction_example
 examples/C/relation_extraction/relation_extraction_example
 examples/python/new_ner_model.dat
+examples/python/new_text_categorizer_1_pure_model.dat
+examples/python/new_text_categorizer_2_pure_model.dat
+examples/python/new_text_categorizer_pure_model.dat
 examples/python/rel_classifier.svm
 examples/cpp/text_categorizer/text_categorizer_example
 examples/cpp/train_text_categorizer/train_text_categorizer_example
@@ -43,3 +46,8 @@ examples/cpp/train_text_categorizer_BoW/train_text_categorizer_BoW_example
 tools/R-binding/MITIE_*.tar.gz
 tools/R-binding/MITIE/src/dlib/
 tools/R-binding/MITIE/src/mitielib/
+
+# Eclipse
+.cproject
+.project
+.settings/

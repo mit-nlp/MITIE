@@ -128,7 +128,7 @@ namespace mitie
                 feats.set_size(0);
                 return;
             }
-
+            dlib::matrix<float,0,1> temp;
             morph_fe.get_feature_vector(word, temp);
             feats = join_cols(dlib::zeros_matrix<float>(non_morph_feats,1), temp);
             // This is an indicator feature used to model the fact that this word is

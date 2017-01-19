@@ -520,6 +520,49 @@ extern "C"
         }
     }
 
+    mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_with_feature_extractor (
+            const char* filename,
+            const mitie_total_word_feature_extractor* fe_
+	)
+	{
+		assert(filename != NULL);
+		assert(fe_ != NULL);
+
+		named_entity_extractor* impl = 0;
+		try
+		{
+			string classname;
+			dlib::sequence_segmenter<ner_feature_extractor> segmenter;
+			std::vector<std::string> tag_name_strings;
+			dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
+			const total_word_feature_extractor& fe = checked_cast<total_word_feature_extractor>(fe_);
+
+
+			dlib::deserialize(filename) >> classname;
+			if (classname != "mitie::named_entity_extractor_pure_model")
+				throw dlib::error("This file does not contain a mitie::named_entity_extractor_pure_model. Contained: " + classname);
+			dlib::deserialize(filename) >> classname >> df >> segmenter >> tag_name_strings;
+
+			impl = allocate<named_entity_extractor>(tag_name_strings, fe, segmenter, df);
+
+			return (mitie_named_entity_extractor*)impl;
+
+		}
+		catch(std::exception& e)
+		{
+#ifndef NDEBUG
+			cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+			mitie_free(impl);
+			return NULL;
+		}
+		catch(...)
+		{
+			mitie_free(impl);
+			return NULL;
+		}
+	}
+
     unsigned long mitie_get_num_possible_ner_tags (
         const mitie_named_entity_extractor* ner_
     )
@@ -858,6 +901,45 @@ extern "C"
              return NULL;
          }
      }
+
+    mitie_text_categorizer* mitie_load_text_categorizer_pure_model_with_feature_extractor(
+        	const char* filename,
+			mitie_total_word_feature_extractor* fe_)
+    {
+    	assert(filename != NULL);
+		assert(fe_ != NULL);
+
+		 text_categorizer* impl = 0;
+		 try
+		 {
+			 string classname;
+			 std::vector<std::string> tag_name_strings;
+			 dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
+			 const total_word_feature_extractor& fe = checked_cast<total_word_feature_extractor>(fe_);
+
+			 dlib::deserialize(filename) >> classname;
+			 if (classname != "mitie::text_categorizer_pure_model")
+				 throw dlib::error("This file does not contain a mitie::text_categorizer_pure_model. Contained: " + classname);
+			 dlib::deserialize(filename) >> classname >> df >> tag_name_strings;
+
+			 impl = allocate<text_categorizer>(tag_name_strings, fe, df);
+
+			 return (mitie_text_categorizer*)impl;
+		 }
+		 catch(std::exception& e)
+		 {
+ #ifndef NDEBUG
+			 cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+ #endif
+			 mitie_free(impl);
+			 return NULL;
+		 }
+		 catch(...)
+		 {
+			 mitie_free(impl);
+			 return NULL;
+		 }
+    }
      
      int mitie_categorize_text (
          const mitie_text_categorizer* tcat_,
