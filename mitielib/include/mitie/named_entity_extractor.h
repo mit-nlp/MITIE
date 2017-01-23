@@ -67,8 +67,8 @@ namespace mitie
                                const std::string& extractorName
         );
 
-		named_entity_extractor(const std::string& pureModelName
-		);
+        named_entity_extractor(const std::string& pureModelName
+        );
 
         dlib::uint64 get_fingerprint(
         ) const { return fingerprint; }
@@ -113,12 +113,12 @@ namespace mitie
         !*/
 
         void predict(
-			const std::vector<std::string>& sentence,
-			std::vector<std::pair<unsigned long, unsigned long> >& chunks,
-			std::vector<unsigned long>& chunk_tags,
-			std::vector<double>& chunk_scores,
-			const total_word_feature_extractor& fe_
-		) const;
+            const std::vector<std::string>& sentence,
+            std::vector<std::pair<unsigned long, unsigned long> >& chunks,
+            std::vector<unsigned long>& chunk_tags,
+            std::vector<double>& chunk_scores,
+            const total_word_feature_extractor& fe_
+        ) const;
 
         void operator() (
             const std::vector<std::string>& sentence,

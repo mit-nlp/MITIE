@@ -64,7 +64,7 @@ namespace mitie
                 - #feats.size() == get_num_dimensions()
         !*/
         {
-        	std::vector<dlib::uint16> hits;
+            std::vector<dlib::uint16> hits;
             substrings.find_substrings(begin, end, hits);
             hits_to_vect(hits, feats);
         }
@@ -94,7 +94,7 @@ namespace mitie
                   iterator range.
         !*/
         {
-        	std::vector<dlib::uint16> hits;
+            std::vector<dlib::uint16> hits;
             substrings.find_substrings(word, hits);
             hits_to_vect(hits, feats);
         }

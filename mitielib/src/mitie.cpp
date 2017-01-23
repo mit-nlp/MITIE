@@ -524,27 +524,27 @@ extern "C"
             const char* filename
 	)
 	{
-		assert(filename != NULL);
+        assert(filename != NULL);
 
-		named_entity_extractor* impl = 0;
-		try
-		{
-			impl = allocate<named_entity_extractor>(filename);
-			return (mitie_named_entity_extractor*)impl;
-		}
-		catch(std::exception& e)
-		{
+        named_entity_extractor* impl = 0;
+        try
+        {
+            impl = allocate<named_entity_extractor>(filename);
+            return (mitie_named_entity_extractor*)impl;
+        }
+        catch(std::exception& e)
+        {
 #ifndef NDEBUG
-			cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+            cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
 #endif
-			mitie_free(impl);
-			return NULL;
-		}
-		catch(...)
-		{
-			mitie_free(impl);
-			return NULL;
-		}
+            mitie_free(impl);
+            return NULL;
+        }
+        catch(...)
+        {
+            mitie_free(impl);
+            return NULL;
+        }
 	}
 
     unsigned long mitie_get_num_possible_ner_tags (
@@ -597,34 +597,34 @@ extern "C"
     }
 
     mitie_named_entity_detections* mitie_extract_entities_with_extractor (
-		const mitie_named_entity_extractor* ner_,
-		char** tokens,
-		const mitie_total_word_feature_extractor* fe_
-	)
-	{
-		const named_entity_extractor& ner = checked_cast<named_entity_extractor>(ner_);
-		const total_word_feature_extractor& fe_temp = checked_cast<total_word_feature_extractor>(fe_);
-		assert(tokens != NULL);
+        const mitie_named_entity_extractor* ner_,
+        char** tokens,
+        const mitie_total_word_feature_extractor* fe_
+    )
+    {
+        const named_entity_extractor& ner = checked_cast<named_entity_extractor>(ner_);
+        const total_word_feature_extractor& fe_temp = checked_cast<total_word_feature_extractor>(fe_);
+        assert(tokens != NULL);
 
-		mitie_named_entity_detections* impl = 0;
+        mitie_named_entity_detections* impl = 0;
 
-		try
-		{
-			impl = allocate<mitie_named_entity_detections>();
+        try
+        {
+            impl = allocate<mitie_named_entity_detections>();
 
-			std::vector<std::string> words;
-			for (unsigned long i = 0; tokens[i]; ++i)
-				words.push_back(tokens[i]);
+            std::vector<std::string> words;
+            for (unsigned long i = 0; tokens[i]; ++i)
+                words.push_back(tokens[i]);
 
-			ner.predict(words, impl->ranges, impl->predicted_labels, impl->predicted_scores, fe_temp);
-			impl->tags = ner.get_tag_name_strings();
-			return impl;
-		}
-		catch(...)
-		{
-			mitie_free(impl);
-			return NULL;
-		}
+            ner.predict(words, impl->ranges, impl->predicted_labels, impl->predicted_scores, fe_temp);
+            impl->tags = ner.get_tag_name_strings();
+            return impl;
+        }
+        catch(...)
+        {
+            mitie_free(impl);
+            return NULL;
+        }
 
 	}
 
@@ -919,28 +919,28 @@ extern "C"
      }
 
     mitie_text_categorizer* mitie_load_text_categorizer_pure_model_without_feature_extractor(
-        	const char* filename)
+        const char* filename)
     {
-    	assert(filename != NULL);
-		 text_categorizer* impl = 0;
-		 try
-		 {
-			 impl = allocate<text_categorizer>(filename);
-			 return (mitie_text_categorizer*)impl;
-		 }
-		 catch(std::exception& e)
-		 {
+         assert(filename != NULL);
+         text_categorizer* impl = 0;
+         try
+         {
+             impl = allocate<text_categorizer>(filename);
+             return (mitie_text_categorizer*)impl;
+         }
+         catch(std::exception& e)
+         {
  #ifndef NDEBUG
-			 cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+             cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
  #endif
-			 mitie_free(impl);
-			 return NULL;
-		 }
-		 catch(...)
-		 {
-			 mitie_free(impl);
-			 return NULL;
-		 }
+             mitie_free(impl);
+             return NULL;
+         }
+         catch(...)
+         {
+             mitie_free(impl);
+             return NULL;
+         }
     }
      
      int mitie_categorize_text (
@@ -983,45 +983,45 @@ extern "C"
      }
      
      int mitie_categorize_text_with_extractor (
-		  const mitie_text_categorizer* tcat_,
-		  const char** tokens,
-		  char** text_tag,
-		  double* text_score,
-		  const mitie_total_word_feature_extractor* fe_
-	  )
-	  {
-		  try
-		  {
-			  assert(text_tag);
-			  assert(text_score);
+         const mitie_text_categorizer* tcat_,
+         const char** tokens,
+         char** text_tag,
+         double* text_score,
+         const mitie_total_word_feature_extractor* fe_
+     )
+	 {
+		 try
+		 {
+		     assert(text_tag);
+		     assert(text_score);
 
-			  string tag;
-			  double score;
-			  std::vector<std::string> words;
+		     string tag;
+		     double score;
+		     std::vector<std::string> words;
 
-			  while(*tokens)
-				  words.push_back(*tokens++);
+		     while(*tokens)
+		         words.push_back(*tokens++);
 
-			  total_word_feature_extractor* fe_temp = (total_word_feature_extractor *) fe_;
-			  checked_cast<text_categorizer>(tcat_).predict(words,tag,score, *fe_temp);
+		     total_word_feature_extractor* fe_temp = (total_word_feature_extractor *) fe_;
+		     checked_cast<text_categorizer>(tcat_).predict(words,tag,score, *fe_temp);
 
-			  char * writable = (char*)allocate_bytes(tag.size()+1);
-			  std::copy(tag.begin(), tag.end(), writable);
-			  writable[tag.size()] = '\0';
+		     char * writable = (char*)allocate_bytes(tag.size()+1);
+		     std::copy(tag.begin(), tag.end(), writable);
+		     writable[tag.size()] = '\0';
 
-			  *text_tag = writable;
-			  *text_score = score;
+		     *text_tag = writable;
+		     *text_score = score;
 
-			  return 0;
-		  }
-		  catch (...)
-		  {
+		     return 0;
+		 }
+		 catch (...)
+		 {
  #ifndef NDEBUG
-			  cerr << "Error categorizing text: " << endl;
+		     cerr << "Error categorizing text: " << endl;
  #endif
-			  return 1;
-		  }
-	  }
+		     return 1;
+		 }
+	 }
 
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
