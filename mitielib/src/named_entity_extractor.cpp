@@ -34,7 +34,8 @@ namespace mitie
     named_entity_extractor::
     named_entity_extractor(const std::string& pureModelName,
                            const std::string& extractorName
-    ) {
+    )
+    {
         std::string classname;
         dlib::deserialize(pureModelName) >> classname;
         if (classname != "mitie::named_entity_extractor_pure_model")
@@ -53,7 +54,8 @@ namespace mitie
 
     named_entity_extractor::
     named_entity_extractor(const std::string& pureModelName
-    ) {
+    )
+    {
         std::string classname;
         dlib::deserialize(pureModelName) >> classname;
         if (classname != "mitie::named_entity_extractor_pure_model")

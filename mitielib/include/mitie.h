@@ -153,7 +153,7 @@ extern "C"
     !*/
     typedef struct mitie_total_word_feature_extractor mitie_total_word_feature_extractor;
     MITIE_EXPORT mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_without_feature_extractor (
-		const char* filename
+        const char* filename
     );
     /*!
 	Added for Rasa_nlu multitenancy
@@ -209,9 +209,9 @@ extern "C"
     !*/
 
     MITIE_EXPORT mitie_named_entity_detections* mitie_extract_entities_with_extractor(
-    	const mitie_named_entity_extractor* ner,
-		char** tokens,
-		const mitie_total_word_feature_extractor* fe_
+        const mitie_named_entity_extractor* ner,
+        char** tokens,
+        const mitie_total_word_feature_extractor* fe_
     );
 
     MITIE_EXPORT unsigned long mitie_ner_get_num_detections (
@@ -451,7 +451,8 @@ extern "C"
     !*/
     
     MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer_pure_model_without_feature_extractor(
-    	const char* filename);
+        const char* filename
+    );
     /*!
         Added for Rasa_nlu multitenancy
     !*/
@@ -484,12 +485,12 @@ extern "C"
     !*/
 
     MITIE_EXPORT int mitie_categorize_text_with_extractor (
-		const mitie_text_categorizer* tcat,
-		const char** tokens,
-		char** text_tag,
-		double* text_score,
-		const mitie_total_word_feature_extractor* fe_
-	);
+        const mitie_text_categorizer* tcat,
+        const char** tokens,
+        char** text_tag,
+        double* text_score,
+        const mitie_total_word_feature_extractor* fe_
+    );
 
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------

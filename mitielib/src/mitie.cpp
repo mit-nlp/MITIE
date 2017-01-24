@@ -989,39 +989,39 @@ extern "C"
          double* text_score,
          const mitie_total_word_feature_extractor* fe_
      )
-	 {
-		 try
-		 {
-		     assert(text_tag);
-		     assert(text_score);
+     {
+         try
+         {
+             assert(text_tag);
+             assert(text_score);
 
-		     string tag;
-		     double score;
-		     std::vector<std::string> words;
+             string tag;
+             double score;
+             std::vector<std::string> words;
 
-		     while(*tokens)
+             while(*tokens)
 		         words.push_back(*tokens++);
 
-		     total_word_feature_extractor* fe_temp = (total_word_feature_extractor *) fe_;
-		     checked_cast<text_categorizer>(tcat_).predict(words,tag,score, *fe_temp);
+             total_word_feature_extractor* fe_temp = (total_word_feature_extractor *) fe_;
+             checked_cast<text_categorizer>(tcat_).predict(words,tag,score, *fe_temp);
 
-		     char * writable = (char*)allocate_bytes(tag.size()+1);
-		     std::copy(tag.begin(), tag.end(), writable);
-		     writable[tag.size()] = '\0';
+             char * writable = (char*)allocate_bytes(tag.size()+1);
+             std::copy(tag.begin(), tag.end(), writable);
+             writable[tag.size()] = '\0';
 
-		     *text_tag = writable;
-		     *text_score = score;
+             *text_tag = writable;
+             *text_score = score;
 
-		     return 0;
-		 }
-		 catch (...)
-		 {
+             return 0;
+         }
+         catch (...)
+         {
  #ifndef NDEBUG
-		     cerr << "Error categorizing text: " << endl;
+             cerr << "Error categorizing text: " << endl;
  #endif
-		     return 1;
-		 }
-	 }
+             return 1;
+         }
+     }
 
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
