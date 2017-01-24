@@ -58,8 +58,9 @@ namespace mitie
                   into a meaningful text name for the document tag.
         !*/
 
-        text_categorizer(const std::string& pureModelName,
-                               const std::string& extractorName
+        text_categorizer(
+                const std::string& pureModelName,
+                const std::string& extractorName
         );
 
         /*!
