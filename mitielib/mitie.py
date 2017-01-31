@@ -60,6 +60,9 @@ _f.mitie_extract_entities.argtypes = ctypes.c_void_p, ctypes.c_void_p
 _f.mitie_extract_entities_with_extractor.restype = ctypes.c_void_p
 _f.mitie_extract_entities_with_extractor.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.c_void_p
 
+_f.mitie_check_ner_pure_model.restype = ctypes.c_int
+_f.mitie_check_ner_pure_model.argtypes = ctypes.c_char_p,
+
 _f.mitie_load_named_entity_extractor.restype = ctypes.c_void_p
 _f.mitie_load_named_entity_extractor.argtypes = ctypes.c_char_p,
 
@@ -223,7 +226,7 @@ def tokenize_with_offsets(string):
 
 
 class named_entity_extractor:
-    def __init__(self, filename, fe_filename=None, pure_model=True):
+    def __init__(self, filename, fe_filename=None):
         self.__mitie_free = _f.mitie_free
         if isinstance(filename, ctypes.c_void_p):
             # If we get here then it means we are using the "private" constructor used by
@@ -232,14 +235,15 @@ class named_entity_extractor:
             self.__obj = filename
         else:
             filename = to_bytes(filename)
-            if (fe_filename is None):
-                if pure_model:
+            if _f.mitie_check_ner_pure_model(filename) == 0:
+                if fe_filename is None:
                     self.__obj = _f.mitie_load_named_entity_extractor_pure_model_without_feature_extractor(filename)
                 else:
-                    self.__obj = _f.mitie_load_named_entity_extractor(filename)
+                    self.__obj = _f.mitie_load_named_entity_extractor_pure_model(filename, fe_filename)
             else:
-                self.__obj = _f.mitie_load_named_entity_extractor_pure_model(filename,fe_filename)
-        if (self.__obj == None):
+                self.__obj = _f.mitie_load_named_entity_extractor(filename)
+
+        if self.__obj is None:
             raise Exception("Unable to load named entity extractor from " + filename)
 
     def __del__(self):
@@ -649,6 +653,9 @@ _f.mitie_create_text_categorizer_trainer.argtypes = ctypes.c_char_p,
 _f.mitie_add_text_categorizer_labeled_text.restype = ctypes.c_int
 _f.mitie_add_text_categorizer_labeled_text.argtypes = ctypes.c_void_p, ctypes.c_void_p, ctypes.c_char_p
 
+_f.mitie_check_text_categorizer_pure_model.restype = ctypes.c_int
+_f.mitie_check_text_categorizer_pure_model.argtypes = ctypes.c_char_p,
+
 _f.mitie_load_text_categorizer.restype = ctypes.c_void_p
 _f.mitie_load_text_categorizer.argtypes = ctypes.c_char_p,
 
@@ -692,20 +699,20 @@ _f.mitie_categorize_text_with_extractor.argtypes = (ctypes.c_void_p, ctypes.c_vo
 
 
 class text_categorizer:
-    def __init__(self, filename, fe_filename=None, pure_model=True):
+    def __init__(self, filename, fe_filename=None):
         filename = to_bytes(filename)
         self.__mitie_free = _f.mitie_free
-        if (isinstance(filename, ctypes.c_void_p)):
+        if isinstance(filename, ctypes.c_void_p):
             self.__obj = filename
         else:
-            if (fe_filename is None):
-                if pure_model:
+            if _f.mitie_check_text_categorizer_pure_model(filename) == 0:
+                if fe_filename is None:
                     self.__obj = _f.mitie_load_text_categorizer_pure_model_without_feature_extractor(filename)
                 else:
-                    self.__obj = _f.mitie_load_text_categorizer(filename)
+                    self.__obj = _f.mitie_load_text_categorizer_pure_model(filename, fe_filename)
             else:
-                self.__obj = _f.mitie_load_text_categorizer_pure_model(filename,fe_filename)
-        if (self.__obj == None):
+                self.__obj = _f.mitie_load_text_categorizer(filename)
+        if self.__obj is None:
             raise Exception("Unable to load text_categorizer detector from " + to_default_str_type(filename))
 
     def __del__(self):

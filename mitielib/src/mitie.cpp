@@ -520,6 +520,32 @@ extern "C"
         }
     }
 
+    int mitie_check_ner_pure_model(
+        const char* filename
+    )
+    {
+        assert(filename != NULL);
+        try {
+            string classname;
+            dlib::deserialize(filename) >> classname;
+            if (classname == "mitie::named_entity_extractor_pure_model")
+            {
+                return 0;
+            }
+        }
+        catch(std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error in opening MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+        }
+        catch(...)
+        {
+
+        }
+        return 1;
+    }
+
     mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_without_feature_extractor (
         const char* filename
     )
@@ -599,11 +625,11 @@ extern "C"
     mitie_named_entity_detections* mitie_extract_entities_with_extractor (
         const mitie_named_entity_extractor* ner_,
         char** tokens,
-        const mitie_total_word_feature_extractor* fe_
+        const mitie_total_word_feature_extractor* fe
     )
     {
         const named_entity_extractor& ner = checked_cast<named_entity_extractor>(ner_);
-        const total_word_feature_extractor& fe_temp = checked_cast<total_word_feature_extractor>(fe_);
+        const total_word_feature_extractor& fe_temp = checked_cast<total_word_feature_extractor>(fe);
         assert(tokens != NULL);
 
         mitie_named_entity_detections* impl = 0;
@@ -916,6 +942,32 @@ extern "C"
              return NULL;
          }
      }
+
+    int mitie_check_text_categorizer_pure_model(
+        const char* filename
+    )
+    {
+        assert(filename != NULL);
+        try {
+            string classname;
+            dlib::deserialize(filename) >> classname;
+            if (classname == "mitie::text_categorizer_pure_model")
+            {
+                return 0;
+            }
+        }
+        catch(std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error in opening MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+        }
+        catch(...)
+        {
+
+        }
+        return 1;
+    }
 
     mitie_text_categorizer* mitie_load_text_categorizer_pure_model_without_feature_extractor(
          const char* filename)

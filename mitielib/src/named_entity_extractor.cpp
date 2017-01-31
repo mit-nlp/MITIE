@@ -50,6 +50,8 @@ namespace mitie
                     "This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
 
         dlib::deserialize(extractorName) >> classname >> fe;
+
+        compute_fingerprint();
     }
 
     named_entity_extractor::
@@ -83,10 +85,10 @@ namespace mitie
         std::vector<std::pair<unsigned long, unsigned long> >& chunks,
         std::vector<unsigned long>& chunk_tags,
         std::vector<double>& chunk_scores,
-        const total_word_feature_extractor& fe_
+        const total_word_feature_extractor& fe
     ) const
     {
-        const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe_, sentence);
+        const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
         segmenter.segment_sequence(sent, chunks);
 
 
@@ -124,6 +126,17 @@ namespace mitie
         std::vector<unsigned long>& chunk_tags
     ) const
     {
+        (*this).operator ()(sentence, chunks, chunk_tags, fe);
+    }
+
+    void named_entity_extractor::
+    operator() (
+        const std::vector<std::string>& sentence,
+        std::vector<std::pair<unsigned long, unsigned long> >& chunks,
+        std::vector<unsigned long>& chunk_tags,
+        const total_word_feature_extractor& fe
+    ) const
+    {
         const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
         segmenter.segment_sequence(sent, chunks);
 
@@ -138,7 +151,7 @@ namespace mitie
 
             // Only output this chunk if it is predicted to be an entity.  Recall that if
             // the classifier outputs a ID outside the range of our labels then it's
-            // predicting "this isn't an entity at all". 
+            // predicting "this isn't an entity at all".
             if (tag < tag_name_strings.size())
             {
                 final_chunks.push_back(chunks[j]);
