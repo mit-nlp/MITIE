@@ -76,6 +76,13 @@ namespace mitie
         std::vector<double>& chunk_scores
     ) const
     {
+        if(fe.get_num_dimensions() == 0)
+        {
+            throw dlib::error(
+                    EMISSING_REQUIRED_OPTION,
+                    "Feature extractor is not initialized."
+                    "Initialize the feature extractor in constructor or provide one during prediction");
+        }
         predict(sentence, chunks, chunk_tags, chunk_scores, fe);
     }
 
@@ -88,6 +95,10 @@ namespace mitie
         const total_word_feature_extractor& fe
     ) const
     {
+        if(fe.get_num_dimensions() == 0)
+        {
+            throw dlib::error(EMISSING_REQUIRED_OPTION, "Feature extractor is not provided.");
+        }
         const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
         segmenter.segment_sequence(sent, chunks);
 
@@ -126,6 +137,13 @@ namespace mitie
         std::vector<unsigned long>& chunk_tags
     ) const
     {
+        if(fe.get_num_dimensions() == 0)
+        {
+            throw dlib::error(
+                    EMISSING_REQUIRED_OPTION,
+                    "Feature extractor is not initialized."
+                    "Initialize the feature extractor in constructor or provide one during prediction");
+        }
         (*this).operator ()(sentence, chunks, chunk_tags, fe);
     }
 
@@ -137,6 +155,10 @@ namespace mitie
         const total_word_feature_extractor& fe
     ) const
     {
+        if(fe.get_num_dimensions() == 0)
+        {
+            throw dlib::error(EMISSING_REQUIRED_OPTION, "Feature extractor is not provided.");
+        }
         const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
         segmenter.segment_sequence(sent, chunks);
 
