@@ -483,25 +483,7 @@ extern "C"
         named_entity_extractor* impl = 0;
         try
         {
-            string classname;
-            dlib::sequence_segmenter<ner_feature_extractor> segmenter;
-            std::vector<std::string> tag_name_strings;
-            dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
-            total_word_feature_extractor fe;
-
-
-            dlib::deserialize(filename) >> classname;
-            if (classname != "mitie::named_entity_extractor_pure_model")
-                throw dlib::error("This file does not contain a mitie::named_entity_extractor_pure_model. Contained: " + classname);
-            dlib::deserialize(filename) >> classname >> df >> segmenter >> tag_name_strings;
-
-            dlib::deserialize(fe_filename) >> classname;
-            if (classname != "mitie::total_word_feature_extractor")
-                throw dlib::error("This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
-            dlib::deserialize(fe_filename) >> classname >> fe;
-
-            impl = allocate<named_entity_extractor>(tag_name_strings, fe, segmenter, df);
-
+            impl = allocate<named_entity_extractor>(filename, fe_filename);
             return (mitie_named_entity_extractor*)impl;
 
         }
@@ -528,7 +510,8 @@ extern "C"
         try {
             string classname;
             dlib::deserialize(filename) >> classname;
-            if (classname == "mitie::named_entity_extractor_pure_model")
+            if (classname == "mitie::named_entity_extractor_pure_model"
+                    || classname == "mitie::named_entity_extractor_pure_model_with_version")
             {
                 return 0;
             }
@@ -909,23 +892,7 @@ extern "C"
          text_categorizer* impl = 0;
          try
          {
-             string classname;
-             std::vector<std::string> tag_name_strings;
-             dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
-             total_word_feature_extractor fe;
-
-             dlib::deserialize(filename) >> classname;
-             if (classname != "mitie::text_categorizer_pure_model")
-                 throw dlib::error("This file does not contain a mitie::text_categorizer_pure_model. Contained: " + classname);
-             dlib::deserialize(filename) >> classname >> df >> tag_name_strings;
-
-             dlib::deserialize(fe_filename) >> classname;
-             if (classname != "mitie::total_word_feature_extractor")
-                 throw dlib::error("This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
-             dlib::deserialize(fe_filename) >> classname >> fe;
-
-             impl = allocate<text_categorizer>(tag_name_strings, fe, df);
-
+             impl = allocate<text_categorizer>(filename, fe_filename);
              return (mitie_text_categorizer*)impl;
          }
          catch(std::exception& e)
@@ -951,7 +918,8 @@ extern "C"
         try {
             string classname;
             dlib::deserialize(filename) >> classname;
-            if (classname == "mitie::text_categorizer_pure_model")
+            if (classname == "mitie::text_categorizer_pure_model"
+                    || classname == "mitie::text_categorizer_pure_model_with_version")
             {
                 return 0;
             }
@@ -1120,10 +1088,12 @@ extern "C"
         try
         {
             dlib::serialize(filename) 
-            << "mitie::named_entity_extractor_pure_model"
+            << "mitie::named_entity_extractor_pure_model_with_version"
+            << ner.get_max_supported_pure_model_version()
             << ner.get_df()
             << ner.get_segmenter()
-            << ner.get_tag_name_strings();
+            << ner.get_tag_name_strings()
+            << ner.get_total_word_feature_extractor().get_fingerprint();
             return 0;
         }
         catch (std::exception& e)
@@ -1213,9 +1183,11 @@ extern "C"
         try
         {
             dlib::serialize(filename) 
-            << "mitie::text_categorizer_pure_model" 
+            << "mitie::text_categorizer_pure_model_with_version"
+            << tcat.get_max_supported_pure_model_version()
             << tcat.get_df()
-            << tcat.get_tag_name_strings();
+            << tcat.get_tag_name_strings()
+            << tcat.get_total_word_feature_extractor().get_fingerprint();
             return 0;
         }
         catch (std::exception& e)

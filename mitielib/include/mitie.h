@@ -1060,9 +1060,6 @@ extern "C"
     !*/
     // ----------------------------------------------------------------------------------------
 
-    typedef struct mitie_text_categorizer_trainer mitie_text_categorizer_trainer;
-
-
     MITIE_EXPORT mitie_text_categorizer_trainer* mitie_create_text_categorizer_trainer (
         const char* filename
     );
@@ -1178,8 +1175,6 @@ extern "C"
 
 
     // ----------------------------------------------------------------------------------------
-
-    typedef struct mitie_total_word_feature_extractor  mitie_total_word_feature_extractor;
 
     MITIE_EXPORT mitie_total_word_feature_extractor* mitie_load_total_word_feature_extractor (
         const char* filename

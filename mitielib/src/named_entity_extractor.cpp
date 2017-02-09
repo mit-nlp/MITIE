@@ -17,7 +17,8 @@ namespace mitie
         const total_word_feature_extractor& fe_,
         const dlib::sequence_segmenter<ner_feature_extractor>& segmenter_,
         const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& df_
-    ) : tag_name_strings(tag_name_strings_), fe(fe_), segmenter(segmenter_), df(df_) 
+    ) : tag_name_strings(tag_name_strings_), fe(fe_), segmenter(segmenter_), df(df_),
+        pure_model_version(get_max_supported_pure_model_version())
     { 
         // make sure the requirements are not violated.
         DLIB_CASSERT(df.number_of_classes() >= tag_name_strings.size(),"invalid inputs"); 
@@ -27,7 +28,7 @@ namespace mitie
         {
             DLIB_CASSERT(df_tags.count(i) == 1, "The classifier must be capable of predicting each possible tag as output.");
         }
-
+        tfe_fingerprint = fe.get_fingerprint();
         compute_fingerprint();
     }
 
@@ -37,12 +38,34 @@ namespace mitie
     )
     {
         std::string classname;
-        dlib::deserialize(pureModelName) >> classname;
-        if (classname != "mitie::named_entity_extractor_pure_model")
+        dlib::proxy_deserialize stream_wrap = dlib::deserialize(pureModelName);
+        stream_wrap >> classname;
+        if(classname == "mitie::named_entity_extractor_pure_model") {
+            pure_model_version = pure_model_version_0;
+        } else if (classname == "mitie::named_entity_extractor_pure_model_with_version") {
+            stream_wrap >> pure_model_version;
+        } else {
             throw dlib::error(
                     "This file does not contain a mitie::named_entity_extractor_pure_model. Contained: " + classname);
+        }
 
-        dlib::deserialize(pureModelName) >> classname >> df >> segmenter >> tag_name_strings;
+        switch(pure_model_version)
+        {
+            case pure_model_version_0:
+                stream_wrap >> df >> segmenter >> tag_name_strings;
+                break;
+
+            case pure_model_version_1:
+                stream_wrap >> df >> segmenter >> tag_name_strings >> tfe_fingerprint;
+                break;
+
+            default:
+                throw dlib::error(
+                        "Unsupported version of pure model found. "
+                        "Found: " + dlib::cast_to_string(pure_model_version) +
+                        "Supported upto : " + dlib::cast_to_string(get_max_supported_pure_model_version()));
+        }
+
 
         dlib::deserialize(extractorName) >> classname;
         if (classname != "mitie::total_word_feature_extractor")
@@ -50,6 +73,11 @@ namespace mitie
                     "This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
 
         dlib::deserialize(extractorName) >> classname >> fe;
+
+        if(pure_model_version != pure_model_version_0 && tfe_fingerprint != fe.get_fingerprint())
+            throw dlib::error(
+                    "Fingerprint mismatch. "
+                    "Feature extractor must be same as the one used for training the model");
 
         compute_fingerprint();
     }
@@ -59,12 +87,34 @@ namespace mitie
     )
     {
         std::string classname;
-        dlib::deserialize(pureModelName) >> classname;
-        if (classname != "mitie::named_entity_extractor_pure_model")
+        dlib::proxy_deserialize stream_wrap = dlib::deserialize(pureModelName);
+        stream_wrap >> classname;
+        if(classname == "mitie::named_entity_extractor_pure_model") {
+            pure_model_version = pure_model_version_0;
+        } else if (classname == "mitie::named_entity_extractor_pure_model_with_version") {
+            stream_wrap >> pure_model_version;
+        } else {
             throw dlib::error(
                     "This file does not contain a mitie::named_entity_extractor_pure_model. Contained: " + classname);
+        }
 
-        dlib::deserialize(pureModelName) >> classname >> df >> segmenter >> tag_name_strings;
+        switch(pure_model_version)
+        {
+            case pure_model_version_0:
+                stream_wrap >> df >> segmenter >> tag_name_strings;
+                break;
+
+            case pure_model_version_1:
+                stream_wrap >> df >> segmenter >> tag_name_strings >> tfe_fingerprint;
+                break;
+
+            default:
+                throw dlib::error(
+                        "Unsupported version of pure model found. "
+                        "Found: " + dlib::cast_to_string(pure_model_version) +
+                        "Supported upto : " + dlib::cast_to_string(get_max_supported_pure_model_version()));
+        }
+        compute_fingerprint();
     }
 // ----------------------------------------------------------------------------------------
 
@@ -76,13 +126,6 @@ namespace mitie
         std::vector<double>& chunk_scores
     ) const
     {
-        if(fe.get_num_dimensions() == 0)
-        {
-            throw dlib::error(
-                    EMISSING_REQUIRED_OPTION,
-                    "Feature extractor is not initialized."
-                    "Initialize the feature extractor in constructor or provide one during prediction");
-        }
         predict(sentence, chunks, chunk_tags, chunk_scores, fe);
     }
 
@@ -95,9 +138,11 @@ namespace mitie
         const total_word_feature_extractor& fe
     ) const
     {
-        if(fe.get_num_dimensions() == 0)
+        if(pure_model_version != pure_model_version_0 && this->tfe_fingerprint != fe.get_fingerprint())
         {
-            throw dlib::error(EMISSING_REQUIRED_OPTION, "Feature extractor is not provided.");
+            throw dlib::error(
+                    "Fingerprint mismatch. "
+                    "Feature extractor must be same as the one used for training the model");
         }
         const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
         segmenter.segment_sequence(sent, chunks);
@@ -137,13 +182,6 @@ namespace mitie
         std::vector<unsigned long>& chunk_tags
     ) const
     {
-        if(fe.get_num_dimensions() == 0)
-        {
-            throw dlib::error(
-                    EMISSING_REQUIRED_OPTION,
-                    "Feature extractor is not initialized."
-                    "Initialize the feature extractor in constructor or provide one during prediction");
-        }
         (*this).operator ()(sentence, chunks, chunk_tags, fe);
     }
 
@@ -155,9 +193,11 @@ namespace mitie
         const total_word_feature_extractor& fe
     ) const
     {
-        if(fe.get_num_dimensions() == 0)
+        if(pure_model_version != pure_model_version_0 && this->tfe_fingerprint != fe.get_fingerprint())
         {
-            throw dlib::error(EMISSING_REQUIRED_OPTION, "Feature extractor is not provided.");
+            throw dlib::error(
+                    "Fingerprint mismatch. "
+                    "Feature extractor must be same as the one used for training the model");
         }
         const std::vector<matrix<float,0,1> >& sent = sentence_to_feats(fe, sentence);
         segmenter.segment_sequence(sent, chunks);
