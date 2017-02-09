@@ -152,6 +152,41 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
 
+    typedef struct mitie_total_word_feature_extractor mitie_total_word_feature_extractor;
+
+    MITIE_EXPORT int mitie_check_ner_pure_model(
+        const char* filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads a saved MITIE ner object from disk and checks whether it is
+              a pure model or not.
+            - filename must point to a serialized ner object
+              which was saved using mitie_save_named_entity_extractor_pure_model
+              or mitie_save_named_entity_extractor.
+            - returns 0 if its a pure model and a non-zero value otherwise
+    !*/
+
+    MITIE_EXPORT mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_without_feature_extractor (
+        const char* filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads a saved MITIE named entity extractor from disk and returns a pointer to
+              the entity extractor object.
+            - filename must point to a serialized named_entity_extractor object
+              which was saved using mitie_save_named_entity_extractor_pure_model.
+            - Since the object contains just the model, subsequent calls to extract entities
+              must provide a valid total_word_feature_extractor object. Specifically, use
+              mitie_extract_entities_with_extractor() instead of mitie_extract_entities()
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - If the object can't be created then this function returns NULL.
+    !*/
+
     MITIE_EXPORT unsigned long mitie_get_num_possible_ner_tags (
         const mitie_named_entity_extractor* ner
     );
@@ -194,6 +229,26 @@ extern "C"
             - tokens == An array of NULL terminated C strings.  The end of the array must
               be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
               array of tokens).  
+        ensures
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - Runs the supplied named entity extractor on the tokenized text and returns a
+              set of named entity detections.
+            - If the object can't be created then this function returns NULL
+    !*/
+
+    MITIE_EXPORT mitie_named_entity_detections* mitie_extract_entities_with_extractor(
+        const mitie_named_entity_extractor* ner,
+        char** tokens,
+        const mitie_total_word_feature_extractor* fe
+    );
+    /*!
+        requires
+            - ner != NULL
+            - tokens == An array of NULL terminated C strings.  The end of the array must
+              be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
+              array of tokens).
+            - fe != NULL; Pointer to a valid mitie_total_word_feature_extractor object. This must
+              be the same feature extractor which was used when creating the ner model.
         ensures
             - The returned object MUST BE FREED by a call to mitie_free().
             - Runs the supplied named entity extractor on the tokenized text and returns a
@@ -437,6 +492,35 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
     
+    MITIE_EXPORT int mitie_check_text_categorizer_pure_model(
+        const char* filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads a saved MITIE text categorizer object from disk and checks whether it is
+              a pure model or not.
+            - filename must point to a serialized text_categorizer object
+              which was saved using mitie_save_text_categorizer_pure_model or mitie_save_text_categorizer.
+            - returns 0 if its a pure model and a non-zero value otherwise
+    !*/
+
+    mitie_text_categorizer* mitie_load_text_categorizer_pure_model_without_feature_extractor(
+        const char* filename
+    );
+    /*!
+        requires
+            - filename == a valid pointer to a NULL terminated C string
+        ensures
+            - Reads a saved MITIE text categorizer from disk and returns a pointer to
+              the categorizer object.
+            - filename must point to a serialized text_categorizer object
+              which was saved using mitie_save_text_categorizer_pure_model.
+            - The returned object MUST BE FREED by a call to mitie_free().
+            - If the object can't be created then this function returns NULL.
+    !*/
+
     MITIE_EXPORT int mitie_categorize_text (
         const mitie_text_categorizer* tcat,
         const char** tokens,
@@ -452,16 +536,46 @@ extern "C"
             - text_tag != NULL  
             - text_score != NULL        
         ensures
-          - This function uses a trained text_categorizer to predict the category of a text,
-            represented by an array of tokens, where each token is one word. The category is
-            represented by its name (a string).  
-          - returns 0 upon success and a non-zero value on failure.  
-          - text_tag MUST BE FREED by a call to mitie_free().
-          - if (this function returns 0) then
-              - *text_tag == A NULL terminated C string containing the predicted category
-                to which this text belongs (selected from the set of categories tcat knows
-                about)
-              - *score == the confidence the categorizer has about its prediction.
+            - This function uses a trained text_categorizer to predict the category of a text,
+              represented by an array of tokens, where each token is one word. The category is
+              represented by its name (a string).
+            - returns 0 upon success and a non-zero value on failure.
+            - text_tag MUST BE FREED by a call to mitie_free().
+            - if (this function returns 0) then
+                - *text_tag == A NULL terminated C string containing the predicted category
+                  to which this text belongs (selected from the set of categories tcat knows
+                  about)
+                - *score == the confidence the categorizer has about its prediction.
+    !*/
+
+    MITIE_EXPORT int mitie_categorize_text_with_extractor (
+        const mitie_text_categorizer* tcat,
+        const char** tokens,
+        char** text_tag,
+        double* text_score,
+        const mitie_total_word_feature_extractor* fe
+    );
+    /*!
+        requires
+            - tcat != NULL
+            - tokens == An array of NULL terminated C strings.  The end of the array must
+              be indicated by a NULL value (i.e. exactly how mitie_tokenize() defines an
+              array of tokens).
+            - text_tag != NULL
+            - text_score != NULL
+            - fe != NULL This feature_extractor must be same as the one which was used
+              during creation of the text categorizer
+        ensures
+            - This function uses a trained text_categorizer to predict the category of a text,
+              represented by an array of tokens, where each token is one word. The category is
+              represented by its name (a string).
+            - returns 0 upon success and a non-zero value on failure.
+            - text_tag MUST BE FREED by a call to mitie_free().
+            - if (this function returns 0) then
+                - *text_tag == A NULL terminated C string containing the predicted category
+                  to which this text belongs (selected from the set of categories tcat knows
+                  about)
+                - *score == the confidence the categorizer has about its prediction.
     !*/
 
 // ----------------------------------------------------------------------------------------
@@ -946,9 +1060,6 @@ extern "C"
     !*/
     // ----------------------------------------------------------------------------------------
 
-    typedef struct mitie_text_categorizer_trainer mitie_text_categorizer_trainer;
-
-
     MITIE_EXPORT mitie_text_categorizer_trainer* mitie_create_text_categorizer_trainer (
         const char* filename
     );
@@ -1064,8 +1175,6 @@ extern "C"
 
 
     // ----------------------------------------------------------------------------------------
-
-    typedef struct mitie_total_word_feature_extractor  mitie_total_word_feature_extractor;
 
     MITIE_EXPORT mitie_total_word_feature_extractor* mitie_load_total_word_feature_extractor (
         const char* filename

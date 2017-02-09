@@ -483,27 +483,63 @@ extern "C"
         named_entity_extractor* impl = 0;
         try
         {
-            string classname;
-            dlib::sequence_segmenter<ner_feature_extractor> segmenter;
-            std::vector<std::string> tag_name_strings;
-            dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
-            total_word_feature_extractor fe;
-
-
-            dlib::deserialize(filename) >> classname;
-            if (classname != "mitie::named_entity_extractor_pure_model")
-                throw dlib::error("This file does not contain a mitie::named_entity_extractor_pure_model. Contained: " + classname);
-            dlib::deserialize(filename) >> classname >> df >> segmenter >> tag_name_strings;
-
-            dlib::deserialize(fe_filename) >> classname;
-            if (classname != "mitie::total_word_feature_extractor")
-                throw dlib::error("This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
-            dlib::deserialize(fe_filename) >> classname >> fe;
-
-            impl = allocate<named_entity_extractor>(tag_name_strings, fe, segmenter, df);
-
+            impl = allocate<named_entity_extractor>(filename, fe_filename);
             return (mitie_named_entity_extractor*)impl;
 
+        }
+        catch(std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+            mitie_free(impl);
+            return NULL;
+        }
+        catch(...)
+        {
+            mitie_free(impl);
+            return NULL;
+        }
+    }
+
+    int mitie_check_ner_pure_model(
+        const char* filename
+    )
+    {
+        assert(filename != NULL);
+        try {
+            string classname;
+            dlib::deserialize(filename) >> classname;
+            if (classname == "mitie::named_entity_extractor_pure_model"
+                    || classname == "mitie::named_entity_extractor_pure_model_with_version")
+            {
+                return 0;
+            }
+        }
+        catch(std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error in opening MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+        }
+        catch(...)
+        {
+
+        }
+        return 1;
+    }
+
+    mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_without_feature_extractor (
+        const char* filename
+    )
+    {
+        assert(filename != NULL);
+
+        named_entity_extractor* impl = 0;
+        try
+        {
+            impl = allocate<named_entity_extractor>(filename);
+            return (mitie_named_entity_extractor*)impl;
         }
         catch(std::exception& e)
         {
@@ -567,6 +603,37 @@ extern "C"
             return NULL;
         }
 
+    }
+
+    mitie_named_entity_detections* mitie_extract_entities_with_extractor (
+        const mitie_named_entity_extractor* ner_,
+        char** tokens,
+        const mitie_total_word_feature_extractor* fe
+    )
+    {
+        const named_entity_extractor& ner = checked_cast<named_entity_extractor>(ner_);
+        const total_word_feature_extractor& fe_temp = checked_cast<total_word_feature_extractor>(fe);
+        assert(tokens != NULL);
+
+        mitie_named_entity_detections* impl = 0;
+
+        try
+        {
+            impl = allocate<mitie_named_entity_detections>();
+
+            std::vector<std::string> words;
+            for (unsigned long i = 0; tokens[i]; ++i)
+                words.push_back(tokens[i]);
+
+            ner.predict(words, impl->ranges, impl->predicted_labels, impl->predicted_scores, fe_temp);
+            impl->tags = ner.get_tag_name_strings();
+            return impl;
+        }
+        catch(...)
+        {
+            mitie_free(impl);
+            return NULL;
+        }
     }
 
     unsigned long mitie_ner_get_num_detections (
@@ -782,36 +849,36 @@ extern "C"
     }
     
     mitie_text_categorizer* mitie_load_text_categorizer (
-         const char* filename
+        const char* filename
      )
      {
-         assert(filename != NULL);
+        assert(filename != NULL);
 
-         text_categorizer* impl = 0;
-         try
-         {
-             string classname;
-             impl = allocate<text_categorizer>();
-             dlib::deserialize(filename) >> classname;
-             if (classname != "mitie::text_categorizer")
-                 throw dlib::error("This file does not contain a mitie::text_categorizer. Contained: " + classname);
-             dlib::deserialize(filename) >> classname >> *impl;
-             return (mitie_text_categorizer*)impl;
-         }
-         catch(std::exception& e)
-         {
+        text_categorizer* impl = 0;
+        try
+        {
+            string classname;
+            impl = allocate<text_categorizer>();
+            dlib::deserialize(filename) >> classname;
+            if (classname != "mitie::text_categorizer")
+                throw dlib::error("This file does not contain a mitie::text_categorizer. Contained: " + classname);
+            dlib::deserialize(filename) >> classname >> *impl;
+            return (mitie_text_categorizer*)impl;
+        }
+        catch(std::exception& e)
+        {
  #ifndef NDEBUG
-             cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+            cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
  #endif
-             mitie_free(impl);
-             return NULL;
-         }
-         catch(...)
-         {
-             mitie_free(impl);
-             return NULL;
-         }
-     }
+            mitie_free(impl);
+            return NULL;
+        }
+        catch(...)
+        {
+            mitie_free(impl);
+            return NULL;
+        }
+    }
 
     
     mitie_text_categorizer* mitie_load_text_categorizer_pure_model (
@@ -825,23 +892,7 @@ extern "C"
          text_categorizer* impl = 0;
          try
          {
-             string classname;
-             std::vector<std::string> tag_name_strings;
-             dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long> df;
-             total_word_feature_extractor fe;
-
-             dlib::deserialize(filename) >> classname;
-             if (classname != "mitie::text_categorizer_pure_model")
-                 throw dlib::error("This file does not contain a mitie::text_categorizer_pure_model. Contained: " + classname);
-             dlib::deserialize(filename) >> classname >> df >> tag_name_strings;
-
-             dlib::deserialize(fe_filename) >> classname;
-             if (classname != "mitie::total_word_feature_extractor")
-                 throw dlib::error("This file does not contain a mitie::total_word_feature_extractor. Contained: " + classname);
-             dlib::deserialize(fe_filename) >> classname >> fe;
-
-             impl = allocate<text_categorizer>(tag_name_strings, fe, df);
-
+             impl = allocate<text_categorizer>(filename, fe_filename);
              return (mitie_text_categorizer*)impl;
          }
          catch(std::exception& e)
@@ -858,6 +909,58 @@ extern "C"
              return NULL;
          }
      }
+
+    int mitie_check_text_categorizer_pure_model(
+        const char* filename
+    )
+    {
+        assert(filename != NULL);
+        try {
+            string classname;
+            dlib::deserialize(filename) >> classname;
+            if (classname == "mitie::text_categorizer_pure_model"
+                    || classname == "mitie::text_categorizer_pure_model_with_version")
+            {
+                return 0;
+            }
+        }
+        catch(std::exception& e)
+        {
+#ifndef NDEBUG
+            cerr << "Error in opening MITIE model file: " << filename << "\n" << e.what() << endl;
+#endif
+        }
+        catch(...)
+        {
+
+        }
+        return 1;
+    }
+
+    mitie_text_categorizer* mitie_load_text_categorizer_pure_model_without_feature_extractor(
+         const char* filename)
+    {
+         assert(filename != NULL);
+         text_categorizer* impl = 0;
+         try
+         {
+             impl = allocate<text_categorizer>(filename);
+             return (mitie_text_categorizer*)impl;
+         }
+         catch(std::exception& e)
+         {
+ #ifndef NDEBUG
+             cerr << "Error loading MITIE model file: " << filename << "\n" << e.what() << endl;
+ #endif
+             mitie_free(impl);
+             return NULL;
+         }
+         catch(...)
+         {
+             mitie_free(impl);
+             return NULL;
+         }
+    }
      
      int mitie_categorize_text (
          const mitie_text_categorizer* tcat_,
@@ -898,6 +1001,47 @@ extern "C"
          }
      }
      
+     int mitie_categorize_text_with_extractor (
+         const mitie_text_categorizer* tcat_,
+         const char** tokens,
+         char** text_tag,
+         double* text_score,
+         const mitie_total_word_feature_extractor* fe_
+     )
+     {
+         try
+         {
+             assert(text_tag);
+             assert(text_score);
+
+             string tag;
+             double score;
+             std::vector<std::string> words;
+
+             while(*tokens)
+                 words.push_back(*tokens++);
+
+             total_word_feature_extractor* fe_temp = (total_word_feature_extractor *) fe_;
+             checked_cast<text_categorizer>(tcat_).predict(words,tag,score, *fe_temp);
+
+             char * writable = (char*)allocate_bytes(tag.size()+1);
+             std::copy(tag.begin(), tag.end(), writable);
+             writable[tag.size()] = '\0';
+
+             *text_tag = writable;
+             *text_score = score;
+
+             return 0;
+         }
+         catch (...)
+         {
+ #ifndef NDEBUG
+             cerr << "Error categorizing text: " << endl;
+ #endif
+             return 1;
+         }
+     }
+
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 //                                      TRAINING ROUTINES
@@ -944,10 +1088,12 @@ extern "C"
         try
         {
             dlib::serialize(filename) 
-            << "mitie::named_entity_extractor_pure_model"
+            << "mitie::named_entity_extractor_pure_model_with_version"
+            << ner.get_max_supported_pure_model_version()
             << ner.get_df()
             << ner.get_segmenter()
-            << ner.get_tag_name_strings();
+            << ner.get_tag_name_strings()
+            << ner.get_total_word_feature_extractor().get_fingerprint();
             return 0;
         }
         catch (std::exception& e)
@@ -1037,9 +1183,11 @@ extern "C"
         try
         {
             dlib::serialize(filename) 
-            << "mitie::text_categorizer_pure_model" 
+            << "mitie::text_categorizer_pure_model_with_version"
+            << tcat.get_max_supported_pure_model_version()
             << tcat.get_df()
-            << tcat.get_tag_name_strings();
+            << tcat.get_tag_name_strings()
+            << tcat.get_total_word_feature_extractor().get_fingerprint();
             return 0;
         }
         catch (std::exception& e)

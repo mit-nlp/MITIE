@@ -28,7 +28,7 @@ namespace mitie
         !*/
     public:
 
-        named_entity_extractor():fingerprint(0){}
+        named_entity_extractor():fingerprint(0), tfe_fingerprint(0), pure_model_version(0){}
         /*!
             ensures
                 - When used this object won't output any entities.   You need to either use
@@ -66,6 +66,23 @@ namespace mitie
         named_entity_extractor(const std::string& pureModelName,
                                const std::string& extractorName
         );
+        /*!
+            requires
+                - pureModelName must be the right path to the serialized pure entity extractor in the disk
+                - extractorName must be the right path to the serialized fe in the disk
+            ensures
+                - Loads the given objects into *this.
+                - For pure_model_version_1 and above, an exception is thrown if the fingerprint of
+                  the feature extractor in pure model file does not match that in the feature extractor file
+        !*/
+
+        named_entity_extractor(const std::string& pureModelName
+        );
+        /*!
+            requires
+                - Use this constructor to load just the pure model. You can 
+                  provide a total_word_feature_extractor explicitly while prediction.
+        !*/
 
         dlib::uint64 get_fingerprint(
         ) const { return fingerprint; }
@@ -89,7 +106,9 @@ namespace mitie
         /*!
             ensures
                 - Runs the named entity recognizer on the sequence of tokenized words
-                  inside sentence.  The detected named entities are stored into chunks.  
+                  inside sentence.  The detected named entities are stored into chunks.
+                - If this instance has just the pure model and feature_extractor has not been initialized,
+                  use the overloaded predict() method to provide the feature_extractor
                 - #chunks == the locations of the named entities. 
                 - The identified named entities are listed inside chunks in the order in
                   which they appeared in the input sentence.  
@@ -109,6 +128,39 @@ namespace mitie
                     - The textual label for the i-th entity is get_tag_name_strings()[#chunk_tags[i]].
         !*/
 
+        void predict(
+            const std::vector<std::string>& sentence,
+            std::vector<std::pair<unsigned long, unsigned long> >& chunks,
+            std::vector<unsigned long>& chunk_tags,
+            std::vector<double>& chunk_scores,
+            const total_word_feature_extractor& fe
+        ) const;
+        /*!
+            ensures
+                - Runs the named entity recognizer on the sequence of tokenized words
+                  inside sentence. The detected named entities are stored into chunks.
+                - #chunks == the locations of the named entities.
+                - The identified named entities are listed inside chunks in the order in
+                  which they appeared in the input sentence.
+                - #chunks.size() == #chunk_tags.size()
+                - for all valid i:
+                    - #chunk_tags[i] == the label for the entity at location #chunks[i].  Moreover,
+                      chunk tag ID numbers are contiguous and start at 0.  Therefore we have:
+                        - 0 <= #chunk_tags[i] < get_tag_name_strings().size()
+                    - #chuck_score[i] == the score for the entity at location #chunks[i]. The value
+                      represents a confidence score, but does not represent a probability. Accordingly,
+                      the value may range outside of the closed interval of 0 to 1. A larger value
+                      represents a higher confidence. A value < 0 indicates that the label is likely
+                      incorrect. That is, the canonical decision threshold is at 0.
+                    - #chunks[i] == a half open range indicating where the entity is within
+                      sentence.  In particular, the entity is composed of the tokens
+                      sentence[#chunks[i].first] through sentence[#chunks[i].second-1].
+                    - The textual label for the i-th entity is get_tag_name_strings()[#chunk_tags[i]].
+                - fe == This total_word_feature_extractor should be same as the one used
+                      while training this ner. For pure_model_version_1 and above,
+                      an exception is thrown if there is a mismatch
+        !*/
+
         void operator() (
             const std::vector<std::string>& sentence,
             std::vector<std::pair<unsigned long, unsigned long> >& chunks,
@@ -117,7 +169,9 @@ namespace mitie
         /*!
             ensures
                 - Runs the named entity recognizer on the sequence of tokenized words
-                  inside sentence.  The detected named entities are stored into chunks.  
+                  inside sentence.  The detected named entities are stored into chunks.
+                - If this instance has just the pure model and feature_extractor has not been initialized,
+                  use the overloaded method to provide the feature_extractor
                 - #chunks == the locations of the named entities. 
                 - The identified named entities are listed inside chunks in the order in
                   which they appeared in the input sentence.  
@@ -130,6 +184,33 @@ namespace mitie
                       sentence.  In particular, the entity is composed of the tokens
                       sentence[#chunks[i].first] through sentence[#chunks[i].second-1].
                     - The textual label for the i-th entity is get_tag_name_strings()[#chunk_tags[i]].
+        !*/
+
+        void operator() (
+            const std::vector<std::string>& sentence,
+            std::vector<std::pair<unsigned long, unsigned long> >& chunks,
+            std::vector<unsigned long>& chunk_tags,
+            const total_word_feature_extractor& fe
+        ) const;
+        /*!
+            ensures
+                - Runs the named entity recognizer on the sequence of tokenized words
+                  inside sentence.  The detected named entities are stored into chunks.
+                - #chunks == the locations of the named entities.
+                - The identified named entities are listed inside chunks in the order in
+                  which they appeared in the input sentence.
+                - #chunks.size() == #chunk_tags.size()
+                - for all valid i:
+                    - #chunk_tags[i] == the label for the entity at location #chunks[i].  Moreover,
+                      chunk tag ID numbers are contiguous and start at 0.  Therefore we have:
+                        - 0 <= #chunk_tags[i] < get_tag_name_strings().size()
+                    - #chunks[i] == a half open range indicating where the entity is within
+                      sentence.  In particular, the entity is composed of the tokens
+                      sentence[#chunks[i].first] through sentence[#chunks[i].second-1].
+                    - The textual label for the i-th entity is get_tag_name_strings()[#chunk_tags[i]].
+                - fe == The instance of total_word_feature_extractor to be used for extracting features.
+                      It should be same as the one used while training this ner. For pure_model_version_1 and above,
+                      an exception is thrown if there is a mismatch
         !*/
 
         const std::vector<std::string>& get_tag_name_strings (
@@ -174,6 +255,12 @@ namespace mitie
             return df;
         };
 
+        const int get_max_supported_pure_model_version() const { return pure_model_version_1; }
+
+        enum supported_pure_model_versions {
+            pure_model_version_0 = 0,
+            pure_model_version_1
+        };
 
     private:
         void compute_fingerprint()
@@ -182,14 +269,16 @@ namespace mitie
             dlib::vectorstream sout(buf);
             sout << "fingerprint";
             dlib::serialize(tag_name_strings, sout);
-            serialize(fe.get_fingerprint(), sout);
+            serialize(tfe_fingerprint, sout);
             serialize(segmenter, sout);
             serialize(df, sout);
 
             fingerprint = dlib::murmur_hash3_128bit(&buf[0], buf.size()).first;
         }
 
+        int pure_model_version;
         dlib::uint64 fingerprint;
+        dlib::uint64 tfe_fingerprint;
         std::vector<std::string> tag_name_strings;
         total_word_feature_extractor fe;
         dlib::sequence_segmenter<ner_feature_extractor> segmenter;
