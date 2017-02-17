@@ -506,7 +506,7 @@ extern "C"
             - returns 0 if its a pure model and a non-zero value otherwise
     !*/
 
-    mitie_text_categorizer* mitie_load_text_categorizer_pure_model_without_feature_extractor(
+    MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer_pure_model_without_feature_extractor(
         const char* filename
     );
     /*!
@@ -1239,7 +1239,7 @@ extern "C"
             - returns 0 if successful, 1 if there is an error.
     !*/
 
-    char** mitie_total_word_feature_extractor_get_words_in_dictionary (
+    MITIE_EXPORT char** mitie_total_word_feature_extractor_get_words_in_dictionary (
         const mitie_total_word_feature_extractor* twfe
     );
     /*!
@@ -1257,8 +1257,6 @@ extern "C"
               WORDS.
             - If something prevents this function from succeeding then a NULL is returned.
     */ 
-
-// ----------------------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
