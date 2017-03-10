@@ -20,6 +20,11 @@ if (NOT TARGET mitie)
       set(BUILD_SHARED_LIBS 1)
    endif()
 
+   set(DLIB_LINK_WITH_LIBPNG OFF CACHE STRING "not needed by MITIE" FORCE)
+   set(DLIB_LINK_WITH_LIBJPEG OFF CACHE STRING "not needed by MITIE" FORCE)
+   set(DLIB_LINK_WITH_SQLITE3 OFF CACHE STRING "not needed by MITIE" FORCE)
+
+
    include(../dlib/dlib/cmake)
    include_directories(include)
 
