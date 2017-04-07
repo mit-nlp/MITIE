@@ -244,7 +244,7 @@ class named_entity_extractor:
                 self.__obj = _f.mitie_load_named_entity_extractor(filename)
 
         if self.__obj is None:
-            raise Exception("Unable to load named entity extractor from " + filename)
+            raise Exception("Unable to load named entity extractor from " + to_default_str_type(filename))
 
     def __del__(self):
         self.__mitie_free(self.__obj)
@@ -361,7 +361,7 @@ class binary_relation_detector:
             filename = to_bytes(filename)
             self.__obj = _f.mitie_load_binary_relation_detector(filename)
         if self.__obj is None:
-            raise Exception("Unable to load binary relation detector from " + filename)
+            raise Exception("Unable to load binary relation detector from " + to_default_str_type(filename))
 
     def __del__(self):
         self.__mitie_free(self.__obj)
@@ -372,7 +372,7 @@ class binary_relation_detector:
             ner = binary_relation_detector(filename)"""
         filename = to_bytes(filename)
         if _f.mitie_save_binary_relation_detector(filename, self.__obj) != 0:
-            raise Exception("Unable to save binary_relation_detector to the file " + filename)
+            raise Exception("Unable to save binary_relation_detector to the file " + to_default_str_type(filename))
 
     def __str__(self):
         return "binary_relation_detector: " + \
@@ -486,7 +486,7 @@ class ner_trainer(object):
         self.__obj = _f.mitie_create_ner_trainer(filename)
         self.__mitie_free = _f.mitie_free
         if self.__obj is None:
-            raise Exception("Unable to create ner_trainer based on " + filename)
+            raise Exception("Unable to create ner_trainer based on " + to_default_str_type(filename))
 
     def __del__(self):
         self.__mitie_free(self.__obj)
