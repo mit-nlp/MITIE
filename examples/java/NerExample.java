@@ -16,7 +16,14 @@ public class NerExample
         // variable if on a UNIX system.  This example program comes with both .bat and .sh
         // scripts that show how to do this on any system.
 
-
+        try
+        {
+            System.loadLibrary("javamitie");
+        }
+        catch (UnsatisfiedLinkError e)
+        {
+            System.err.println("java.library.path=" + System.getProperty("java.library.path"));
+        }
 
         System.out.println("loading NER model...");
         NamedEntityExtractor ner = new NamedEntityExtractor("../../MITIE-models/english/ner_model.dat");
