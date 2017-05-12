@@ -7,4 +7,4 @@ export CLASSPATH=../../mitielib/javamitie.jar:.
 
 javac TrainSeparateDocCategorizerExample.java
 
-java TrainSeparateDocCategorizerExample
+java -Djava.library.path="../../mitielib/" TrainSeparateDocCategorizerExample
