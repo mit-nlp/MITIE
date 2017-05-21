@@ -182,7 +182,10 @@ add_custom_command(TARGET ${output_library_name}
 #then make it so we install the compiled library and jar into that folder
 if (install_target_output_folder)
     # Determine the path to our CMakeLists.txt file.
-    string(REGEX REPLACE "CMakeLists.txt$" "" base_path ${CMAKE_PARENT_LIST_FILE})
+    # There is either a bug (or break in compatability maybe) between versions
+    # of cmake that cause the or expression in this regular expression to be
+    # necessary.
+    string(REGEX REPLACE "(cmake_swig_jni|CMakeLists.txt)$" "" base_path ${CMAKE_PARENT_LIST_FILE})
     # The directory we will write the output files to.
     set(install_dir "${base_path}${install_target_output_folder}")
     set(CMAKE_INSTALL_PREFIX "${install_dir}")

@@ -7,4 +7,4 @@ export CLASSPATH=../../mitielib/javamitie.jar:.
 
 javac NerExample.java
 
-java NerExample 
+java -Djava.library.path="../../mitielib/" NerExample
