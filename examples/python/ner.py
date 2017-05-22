@@ -18,17 +18,17 @@ from collections import defaultdict
 
 
 
-print "loading NER model..."
+print("loading NER model...")
 ner = named_entity_extractor('../../MITIE-models/english/ner_model.dat')
-print "\nTags output by this NER model:", ner.get_possible_ner_tags()
+print("\nTags output by this NER model:", ner.get_possible_ner_tags())
 
-# Load a text file and convert it into a list of words.  
+# Load a text file and convert it into a list of words.
 tokens = tokenize(load_entire_file('../../sample_text.txt'))
-print "Tokenized input:", tokens
+print("Tokenized input:", tokens)
 
 entities = ner.extract_entities(tokens)
-print "\nEntities found:", entities
-print "\nNumber of entities detected:", len(entities)
+print("\nEntities found:", entities)
+print("\nNumber of entities detected:", len(entities))
 
 # entities is a list of tuples, each containing an xrange that indicates which
 # tokens are part of the entity, the entity tag, and an associate score.  The
@@ -40,8 +40,8 @@ for e in entities:
     tag = e[1]
     score = e[2]
     score_text = "{:0.3f}".format(score)
-    entity_text = " ".join(tokens[i] for i in range)
-    print "   Score: " + score_text + ": " + tag + ": " + entity_text
+    entity_text = " ".join(tokens[i].decode() for i in range)
+    print("   Score: " + score_text + ": " + tag + ": " + entity_text)
 
 
 
@@ -56,7 +56,7 @@ rel_detector = binary_relation_detector("../../MITIE-models/english/binary_relat
 
 # First, let's make a list of neighboring entities.  Once we have this list we
 # will ask the relation detector if any of these entity pairs is an example of
-# the "person born in place" relation. 
+# the "person born in place" relation.
 neighboring_entities = [(entities[i][0], entities[i+1][0]) for i in xrange(len(entities)-1)]
 # Also swap the entities and add those in as well.  We do this because "person
 # born in place" mentions can appear in the text in as "place is birthplace of
@@ -78,9 +78,9 @@ for person, place in neighboring_entities:
     score = rel_detector(rel)
     # Print out any matching relations.
     if (score > 0):
-        person_text     = " ".join(tokens[i] for i in person)
-        birthplace_text = " ".join(tokens[i] for i in place)
-        print person_text, "BORN_IN", birthplace_text 
+        person_text     = " ".join(tokens[i].decode() for i in person)
+        birthplace_text = " ".join(tokens[i].decode() for i in place)
+        print(person_text, "BORN_IN", birthplace_text)
 
 # The code above shows the basic details of MITIE's relation detection API.
 # However, it is important to note that real world data is noisy any confusing.
@@ -97,12 +97,11 @@ for person, place in neighboring_entities:
     rel = ner.extract_binary_relation(tokens, person, place)
     score = rel_detector(rel)
     if (score > 0):
-        person_text     = " ".join(tokens[i] for i in person)
-        birthplace_text = " ".join(tokens[i] for i in place)
+        person_text     = " ".join(tokens[i].decode() for i in person)
+        birthplace_text = " ".join(tokens[i].decode() for i in place)
         if (person_text == query):
             hits[birthplace_text] += 1
 
-print "\nTop most common relations:"
-for place, count in sorted(hits.iteritems(), key=lambda x:x[1], reverse=True):
-    print count, "relations claiming", query, "was born in", place
-
+print("\nTop most common relations:")
+for place, count in sorted(hits.items(), key=lambda x:x[1], reverse=True):
+    print(count, "relations claiming", query, "was born in", place)
