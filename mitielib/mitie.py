@@ -179,7 +179,7 @@ def load_entire_file(filename):
     filename = to_bytes(filename)
     x = _f.mitie_load_entire_file(filename)
     if x is None:
-        raise Exception("Unable to load file " + filename)
+        raise Exception("Unable to load file " + to_default_str_type(filename))
     res = ctypes.string_at(x) 
     _f.mitie_free(x)
     return res
@@ -269,10 +269,10 @@ class named_entity_extractor:
         filename = to_bytes(filename)
         if (pure_model):
             if (_f.mitie_save_named_entity_extractor_pure_model(filename, self.__obj) != 0):
-                raise Exception("Unable to save named_entity_extractor to the file " + filename);
+                raise Exception("Unable to save named_entity_extractor to the file " + to_default_str_type(filename));
         else:
             if (_f.mitie_save_named_entity_extractor(filename, self.__obj) != 0):
-                raise Exception("Unable to save named_entity_extractor to the file " + filename);
+                raise Exception("Unable to save named_entity_extractor to the file " + to_default_str_type(filename));
 
     def extract_entities(self, tokens, feature_extractor=None):
         tags = self.get_possible_ner_tags()
@@ -730,7 +730,7 @@ class text_categorizer:
         filename = to_bytes(filename)
         if (pure_model):
             if (_f.mitie_save_text_categorizer_pure_model(filename, self.__obj) != 0):
-                raise Exception("Unable to save text_categorizer to the file " + filename);
+                raise Exception("Unable to save text_categorizer to the file " + to_default_str_type(filename));
         else:
             if (_f.mitie_save_text_categorizer(filename, self.__obj) != 0):
                 raise Exception("Unable to save text_categorizer to the file " + to_default_str_type(filename));
@@ -762,7 +762,7 @@ class text_categorizer_trainer(object):
         self.__obj = _f.mitie_create_text_categorizer_trainer(filename)
         self.__mitie_free = _f.mitie_free
         if self.__obj is None:
-            raise Exception("Unable to create text_categorizer_trainer based on " + filename)
+            raise Exception("Unable to create text_categorizer_trainer based on " + to_default_str_type(filename))
 
     def __del__(self):
         self.__mitie_free(self.__obj)
@@ -827,7 +827,7 @@ class total_word_feature_extractor:
         else:
             self.__obj = _f.mitie_load_total_word_feature_extractor(filename)
         if self.__obj is None:
-            raise Exception("Unable to load total_word_feature_extractor detector from " + filename)
+            raise Exception("Unable to load total_word_feature_extractor detector from " + to_default_str_type(filename))
 
     def __del__(self):
         self.__mitie_free(self.__obj)
