@@ -70,27 +70,50 @@ namespace mitie
         {
             bool result = get_next_token(token, token_offset);
 
-            // Check if token has a UTF-8 ’ character in it and if so then split it into
-            // two tokens based on that.
-            for (unsigned long i = 1; i < token.size(); ++i)
+            // check if the token starts with a unicode double quote, if so, break it into
+            // two tokens.
+            if (token.size() >= 4 && 
+                (unsigned char)token[0] == 0xE2 &&
+                (unsigned char)token[1] == 0x80 &&
+                (unsigned char)token[2] == 0x9C)
             {
-                if ((unsigned char)token[i]   == 0xE2 &&
-                    i+2 < token.size() && 
-                    (unsigned char)token[i+1] == 0x80 &&
-                    (unsigned char)token[i+2] == 0x99)
+                next_token = token.substr(3);
+                token.resize(3);
+                return result;
+            }
+            else if (token.size() >= 4 &&  // check if it ends with a unicode double code and break if so.
+                (unsigned char)token[token.size()-3] == 0xE2 &&
+                (unsigned char)token[token.size()-2] == 0x80 &&
+                (unsigned char)token[token.size()-1] == 0x9D)
+            {
+                next_token = token.substr(token.size()-3);
+                token.resize(token.size()-3);
+                return result;
+            }
+            else
+            {
+                // Check if token has a UTF-8 ’ character in it and if so then split it into
+                // two tokens based on that.
+                for (unsigned long i = 1; i < token.size(); ++i)
                 {
-                    // Save the second half of the string as the next token and return the
-                    // first half.
-                    next_token_offset = token_offset + i + next_token_front_padding;
-                    // we drop 2 bytes off the front of this next token, if there are
-                    // subsequent UTF-8 ’ characters here we split again and need to keep
-                    // track that we dropped these two bytes so we can output the correct
-                    // token_offset.
-                    next_token_front_padding = 2;
-                    next_token = token.substr(i+2);
-                    next_token[0] = '\'';
-                    token.resize(i);
-                    return result;
+                    if ((unsigned char)token[i]   == 0xE2 &&
+                        i+2 < token.size() && 
+                        (unsigned char)token[i+1] == 0x80 &&
+                        (unsigned char)token[i+2] == 0x99)
+                    {
+                        // Save the second half of the string as the next token and return the
+                        // first half.
+                        next_token_offset = token_offset + i + next_token_front_padding;
+                        // we drop 2 bytes off the front of this next token, if there are
+                        // subsequent UTF-8 ’ characters here we split again and need to keep
+                        // track that we dropped these two bytes so we can output the correct
+                        // token_offset.
+                        next_token_front_padding = 2;
+                        next_token = token.substr(i+2);
+                        next_token[0] = '\'';
+                        token.resize(i);
+                        return result;
+                    }
                 }
             }
 
@@ -184,6 +207,23 @@ namespace mitie
                         return true;
                     else
                         ++token_offset;
+                }
+                else if ((unsigned char)ch == 0xc2) // Check if this is a unicode non-breaking space.  We want to treat those like whitespace.
+                {
+                    get_next_char();
+                    if ((unsigned char)in->peek() == 0xa0) // if it was a non-breaking space then do whitespace handling
+                    {
+                        // discard whitespace
+                        get_next_char();
+                        if (token.size() != 0)
+                            return true;
+                        else
+                            token_offset+=2;
+                    }
+                    else
+                    {
+                        token += ch;
+                    }
                 }
                 else
                 {
