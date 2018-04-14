@@ -4,8 +4,10 @@ from distutils.command.build import build
 import os
 import platform
 import sys
+import re
 
 import subprocess
+from distutils.version import LooseVersion
 
 
 class BuildMITIE(build):
