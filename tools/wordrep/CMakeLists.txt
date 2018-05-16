@@ -20,7 +20,6 @@ set(source
 
 PROJECT(${project_name})
 
-include(../../mitielib/tell_visual_studio_to_use_static_runtime.cmake)
 include(../../mitielib/cmake)
 
 

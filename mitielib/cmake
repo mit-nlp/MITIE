@@ -3,6 +3,8 @@ set(DLIB_LINK_WITH_LIBPNG OFF CACHE STRING "not needed by MITIE" FORCE)
 set(DLIB_LINK_WITH_LIBJPEG OFF CACHE STRING "not needed by MITIE" FORCE)
 set(DLIB_LINK_WITH_SQLITE3 OFF CACHE STRING "not needed by MITIE" FORCE)
 
+include(../../mitielib/tell_visual_studio_to_use_static_runtime.cmake)
+
 # Don't add mitie if it's already been added to the cmake project
 if (NOT TARGET mitie)
 
