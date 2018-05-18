@@ -429,21 +429,24 @@ namespace dlib
             }
 
             T& operator() (
-                long r, 
-                long c
-            ) { return data[r*nc_ + c]; }
+                size_t r, 
+                size_t c
+            ) 
+            {
+                return data[r*nc_ + c]; 
+            }
 
             const T& operator() (
-                long r, 
-                long c
+                size_t r, 
+                size_t c
             ) const { return data[r*nc_ + c]; }
 
             T& operator() (
-                long i 
+                size_t i 
             ) { return data[i]; }
 
             const T& operator() (
-                long i 
+                size_t i 
             ) const { return data[i]; }
 
             void swap(
@@ -463,8 +466,8 @@ namespace dlib
             ) const { return nc_; }
 
             void set_size (
-                long nr,
-                long nc
+                size_t nr,
+                size_t nc
             )
             {
                 if (data) 
@@ -842,21 +845,21 @@ namespace dlib
             }
 
             T& operator() (
-                long r, 
-                long c
+                size_t r, 
+                size_t c
             ) { return data[c*nr_ + r]; }
 
             const T& operator() (
-                long r, 
-                long c
+                size_t r,
+                size_t c
             ) const { return data[c*nr_ + r]; }
 
             T& operator() (
-                long i 
+                size_t i
             ) { return data[i]; }
 
             const T& operator() (
-                long i 
+                size_t i
             ) const { return data[i]; }
 
             void swap(
@@ -876,8 +879,8 @@ namespace dlib
             ) const { return nc_; }
 
             void set_size (
-                long nr,
-                long nc
+                size_t nr,
+                size_t nc
             )
             {
                 if (data) 
