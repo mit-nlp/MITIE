@@ -700,15 +700,16 @@ _f.mitie_categorize_text_with_extractor.argtypes = (ctypes.c_void_p, ctypes.c_vo
 
 class text_categorizer:
     def __init__(self, filename, fe_filename=None):
-        filename = to_bytes(filename)
         self.__mitie_free = _f.mitie_free
         if isinstance(filename, ctypes.c_void_p):
             self.__obj = filename
         else:
+            filename = to_bytes(filename)
             if _f.mitie_check_text_categorizer_pure_model(filename) == 0:
                 if fe_filename is None:
                     self.__obj = _f.mitie_load_text_categorizer_pure_model_without_feature_extractor(filename)
                 else:
+                    fe_filename = to_bytes(fe_filename)
                     self.__obj = _f.mitie_load_text_categorizer_pure_model(filename, fe_filename)
             else:
                 self.__obj = _f.mitie_load_text_categorizer(filename)
