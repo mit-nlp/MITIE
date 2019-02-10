@@ -49,7 +49,7 @@ class BuildMITIE(build):
 
 
 setup(
-    version='0.5.0',
+    version='0.7.0',
     name='mitie',
     packages=['mitie'],
     package_dir={'mitie': 'mitielib'},
