@@ -77,6 +77,8 @@ namespace mitie
                 (unsigned char)token[1] == 0x80 &&
                 (unsigned char)token[2] == 0x9C)
             {
+                next_token_offset = token_offset + 3;
+                next_token_front_padding = 0;
                 next_token = token.substr(3);
                 token.resize(3);
                 return result;
@@ -86,6 +88,8 @@ namespace mitie
                 (unsigned char)token[token.size()-2] == 0x80 &&
                 (unsigned char)token[token.size()-1] == 0x9D)
             {
+                next_token_offset = token_offset + token.size()-3;
+                next_token_front_padding = 0;
                 next_token = token.substr(token.size()-3);
                 token.resize(token.size()-3);
                 return result;
