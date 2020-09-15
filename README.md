@@ -11,7 +11,8 @@ as well as tools for training custom extractors and relation detectors.
 MITIE is built on top of [dlib](http://dlib.net), a high-performance machine-learning library[1], MITIE makes use of several state-of-the-art techniques including the use of distributional word embeddings[2] and Structural Support Vector Machines[3].  MITIE offers several pre-trained models providing varying levels of support for both English, Spanish, and German trained using a variety of linguistic resources (e.g., CoNLL 2003, ACE, [Wikipedia, Freebase](https://github.com/mit-nlp/MITIE/releases/download/v0.4/freebase_wikipedia_binary_relation_training_data_v1.0.tar.bz2), and Gigaword). The core MITIE software is written in C++, but bindings for several other software languages including Python, R, Java, C, and MATLAB allow a user to quickly integrate MITIE into his/her own applications.
 
 Outside projects have created API bindings for [OCaml](https://github.com/travisbrady/omitie), 
-[.NET](https://github.com/BayardRock/MITIE-Dot-Net), and [.NET Core](https://github.com/slamj1/MitieNetCore). There is also an [interactive tool](https://github.com/Sotera/mitie-trainer) for labeling data and training MITIE.
+[.NET](https://github.com/BayardRock/MITIE-Dot-Net), [.NET Core](https://github.com/slamj1/MitieNetCore), and
+[Ruby](https://github.com/ankane/mitie).  There is also an [interactive tool](https://github.com/Sotera/mitie-trainer) for labeling data and training MITIE.
 
 # Using MITIE
 
