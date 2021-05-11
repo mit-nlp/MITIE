@@ -173,6 +173,25 @@ We have built Python 2.7 binaries packaged with sample models for 64bit Linux an
 
 We have built Java binaries for the 64bit JVM which work on Linux and Windows.  You can download the precompiled package here: [Precompiled Java MITIE 0.3](https://github.com/mit-nlp/MITIE/releases/download/v0.4/mitie-java-v0.3-windows64-or-linux64.zip).  In the file is an examples/java folder.  You can run the example by executing the provided .bat or .sh file.
 
+# Citing MITIE
+
+There isn't any paper specifically about MITIE. However, since MITIE is
+basically just a thin wrapper around dlib please cite dlib's JMLR paper if you
+use MITIE in your research:
+
+```
+Davis E. King. Dlib-ml: A Machine Learning Toolkit. Journal of Machine Learning Research 10, pp. 1755-1758, 2009
+
+@Article{dlib09,
+  author = {Davis E. King},
+  title = {Dlib-ml: A Machine Learning Toolkit},
+  journal = {Journal of Machine Learning Research},
+  year = {2009},
+  volume = {10},
+  pages = {1755-1758},
+}
+```
+
 # License
 
 MITIE is licensed under the Boost Software License - Version 1.0 - August 17th, 2003.  
