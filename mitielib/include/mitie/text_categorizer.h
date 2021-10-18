@@ -35,7 +35,7 @@ namespace mitie
         text_categorizer(
                 const std::vector<std::string>& tag_name_strings,
                 const total_word_feature_extractor& fe,
-                const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<ner_sample_type>,unsigned long>& df
+                const dlib::multiclass_linear_decision_function<dlib::sparse_linear_kernel<text_sample_type>,unsigned long>& df
         );
 
         /*!
