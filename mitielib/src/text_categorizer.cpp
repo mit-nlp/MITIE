@@ -1,5 +1,4 @@
 
-#include <mitie/text_feature_extraction.h>
 #include <mitie/text_categorizer.h>
 
 using namespace dlib;
