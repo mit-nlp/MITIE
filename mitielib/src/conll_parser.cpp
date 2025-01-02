@@ -6,11 +6,11 @@
 #include <fstream>
 #include <dlib/string.h>
 
-using namespace std;
 using namespace dlib;
 
 namespace mitie
 {
+    using namespace std;
 
 // ----------------------------------------------------------------------------------------
 

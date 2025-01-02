@@ -9,12 +9,12 @@
 #include <dlib/serialize.h>
 #include <vector>
 
-using namespace std;
-
 // ----------------------------------------------------------------------------------------
 
 namespace mitie
 {
+    using namespace std;
+    
     class approximate_substring_set
     {
         /*!

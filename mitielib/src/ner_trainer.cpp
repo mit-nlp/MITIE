@@ -7,11 +7,11 @@
 #include <dlib/optimization.h>
 #include <dlib/misc_api.h>
 
-using namespace std;
 using namespace dlib;
 
 namespace mitie
 {
+    using namespace std;
 
 // ----------------------------------------------------------------------------------------
 
