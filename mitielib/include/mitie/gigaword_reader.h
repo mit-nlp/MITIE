@@ -4,9 +4,10 @@
 #ifndef MIT_LL_GIGAWoRD_READER_H_
 #define MIT_LL_GIGAWoRD_READER_H_
 
-#include "dlib/xml_parser.h"
-#include "dlib/string.h"
-#include "dlib/dir_nav.h"
+#include <mitie/mitie_api_prefix.h>
+#include <dlib/xml_parser.h>
+#include <dlib/string.h>
+#include <dlib/dir_nav.h>
 #include <list>
 #include <fstream>
 
@@ -15,7 +16,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    struct gigaword_document
+    struct MITIE_API gigaword_document
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
@@ -32,7 +33,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    class gigaword_file_reader 
+    class MITIE_API gigaword_file_reader 
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
@@ -242,7 +243,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    class gigaword_reader 
+    class MITIE_API gigaword_reader 
     {
         /*!
             WHAT THIS OBJECT REPRESENTS

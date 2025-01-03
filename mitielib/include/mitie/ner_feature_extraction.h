@@ -4,6 +4,7 @@
 #ifndef MIT_LL_MITIE_NeR_FEATURE_EXTRACTION_H_
 #define MIT_LL_MITIE_NeR_FEATURE_EXTRACTION_H_
 
+#include <mitie/mitie_api_prefix.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -16,7 +17,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    class ner_feature_extractor
+    class MITIE_API ner_feature_extractor
     {
 
     public:
@@ -64,7 +65,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    std::vector<dlib::matrix<float,0,1> > sentence_to_feats (
+    MITIE_API std::vector<dlib::matrix<float,0,1> > sentence_to_feats (
         const total_word_feature_extractor& fe,
         const std::vector<std::string>& sentence
     );
@@ -78,7 +79,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    const unsigned long MAX_FEAT = 500000;
+    constexpr unsigned long MAX_FEAT = 500000;
 
     inline std::pair<dlib::uint32,double> make_feat (
         const std::pair<dlib::uint64,dlib::uint64>& hash
@@ -103,7 +104,7 @@ namespace mitie
 
     typedef std::vector<std::pair<dlib::uint32,double> > ner_sample_type;
 
-    ner_sample_type extract_ner_chunk_features (
+    MITIE_API ner_sample_type extract_ner_chunk_features (
         const std::vector<std::string>& words,
         const std::vector<dlib::matrix<float,0,1> >& feats,
         const std::pair<unsigned long, unsigned long>& chunk_range

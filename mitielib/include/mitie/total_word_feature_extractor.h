@@ -4,8 +4,9 @@
 #ifndef MIT_LL_TOTAL_WoRD_FEATURE_EXTRACTOR_H_
 #define MIT_LL_TOTAL_WoRD_FEATURE_EXTRACTOR_H_
 
+#include <mitie/mitie_api_prefix.h>
 #include <map>
-#include "word_morphology_feature_extractor.h"
+#include <mitie/word_morphology_feature_extractor.h>
 #include <dlib/statistics.h>
 #include <dlib/vectorstream.h>
 #include <dlib/hash.h>
@@ -13,7 +14,7 @@
 namespace mitie 
 {
 
-    class total_word_feature_extractor
+    class MITIE_API total_word_feature_extractor
     {
         /*!
             WHAT THIS OBJECT REPRESENTS

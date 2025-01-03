@@ -4,16 +4,17 @@
 #ifndef MIT_LL_CoUNT_MIN_SKETCH_H_
 #define MIT_LL_CoUNT_MIN_SKETCH_H_
 
-#include "dlib/array2d.h"
-#include "dlib/uintn.h"
-#include "dlib/hash.h"
-#include "dlib/byte_orderer.h"
+#include <mitie/mitie_api_prefix.h>
+#include <dlib/array2d.h>
+#include <dlib/uintn.h>
+#include <dlib/hash.h>
+#include <dlib/byte_orderer.h>
 #include <queue>
-#include "dlib/image_transforms.h"
+#include <dlib/image_transforms.h>
 
 namespace mitie
 {
-    class count_min_sketch
+    class MITIE_API count_min_sketch
     {
         /*!
             WHAT THIS OBJECT REPRESENTS

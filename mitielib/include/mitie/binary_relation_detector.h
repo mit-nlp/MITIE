@@ -4,6 +4,7 @@
 #ifndef MIT_LL_BINARY_rELATION_DETECTION_H_
 #define MIT_LL_BINARY_rELATION_DETECTION_H_
 
+#include <mitie/mitie_api_prefix.h>
 #include <dlib/hash.h>
 #include <dlib/svm.h>
 #include <dlib/serialize.h>
@@ -19,7 +20,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    struct binary_relation
+    struct MITIE_API binary_relation
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
@@ -32,7 +33,7 @@ namespace mitie
         dlib::uint64 total_word_feature_extractor_fingerprint;
     };
 
-    binary_relation extract_binary_relation (
+    MITIE_API binary_relation extract_binary_relation (
         const std::vector<std::string>& tokens,
         const std::pair<unsigned long, unsigned long>& rel_arg1,
         const std::pair<unsigned long, unsigned long>& rel_arg2,
@@ -52,7 +53,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    struct binary_relation_detector 
+    struct MITIE_API binary_relation_detector 
     {
         /*!
             WHAT THIS OBJECT REPRESENTS

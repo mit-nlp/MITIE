@@ -1,6 +1,7 @@
 #ifndef MIT_LL_MITIE_TexT_FEATURE_EXTRACTION_H_
 #define MIT_LL_MITIE_TexT_FEATURE_EXTRACTION_H_
 
+#include <mitie/mitie_api_prefix.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -16,7 +17,7 @@ namespace mitie
 
     typedef std::vector<std::pair<dlib::uint32, double> > text_sample_type;
 
-    text_sample_type extract_text_features (
+    MITIE_API text_sample_type extract_text_features (
         const std::vector<std::string>& words,
         const std::vector<dlib::matrix<float,0,1> >& feats
     );
@@ -30,7 +31,7 @@ namespace mitie
     !*/
 
 // ----------------------------------------------------------------------------------------
-    text_sample_type extract_BoW_features (
+    MITIE_API text_sample_type extract_BoW_features (
             const std::vector<std::string>& words
     );
     /*!
@@ -42,7 +43,7 @@ namespace mitie
     !*/
 
 // ----------------------------------------------------------------------------------------
-    text_sample_type extract_combined_features (
+    MITIE_API text_sample_type extract_combined_features (
             const std::vector<std::string>& words,
             const std::vector<dlib::matrix<float,0,1> >& feats
     );

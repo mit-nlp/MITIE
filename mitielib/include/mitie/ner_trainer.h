@@ -4,6 +4,7 @@
 #ifndef MIT_LL_MITIE_NER_TRAINER_H_
 #define MIT_LL_MITIE_NER_TRAINER_H_
 
+#include <mitie/mitie_api_prefix.h>
 #include <vector>
 #include <string>
 #include <utility>
@@ -17,7 +18,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    class ner_training_instance
+    class MITIE_API ner_training_instance
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
@@ -108,7 +109,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    class ner_trainer
+    class MITIE_API ner_trainer
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
@@ -274,7 +275,7 @@ namespace mitie
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-    struct ner_eval_metrics
+    struct MITIE_API ner_eval_metrics
     {
         /*!
             WHAT THIS OBJECT REPRESENTS
@@ -293,13 +294,13 @@ namespace mitie
         double overall_recall;
     };
 
-    std::ostream& operator<< (std::ostream& out_, const ner_eval_metrics& item);
+    MITIE_API std::ostream& operator<< (std::ostream& out_, const ner_eval_metrics& item);
     /*!
         ensures
             - print the contents of item to the output stream in a nice format.
     !*/
 
-    ner_eval_metrics evaluate_named_entity_recognizer (
+    MITIE_API ner_eval_metrics evaluate_named_entity_recognizer (
         const named_entity_extractor& ner,
         const std::vector<std::vector<std::string> >& sentences,
         const std::vector<std::vector<std::pair<unsigned long, unsigned long> > >& chunks,

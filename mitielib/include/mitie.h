@@ -4,11 +4,7 @@
 #ifndef MITLL_MITIe_H_
 #define MITLL_MITIe_H_
 
-#if defined(_WIN32)
-#define MITIE_EXPORT __declspec(dllexport)
-#else
-#define MITIE_EXPORT
-#endif
+#include <mitie/mitie_api_prefix.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -35,7 +31,7 @@ extern "C"
     typedef struct mitie_named_entity_extractor  mitie_named_entity_extractor;
     typedef struct mitie_named_entity_detections mitie_named_entity_detections;
 
-    MITIE_EXPORT void mitie_free (
+    MITIE_API void mitie_free (
         void* object 
     );
     /*!
@@ -47,7 +43,7 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
-    MITIE_EXPORT char* mitie_load_entire_file (
+    MITIE_API char* mitie_load_entire_file (
         const char* filename
     );
     /*!
@@ -63,7 +59,7 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
-    MITIE_EXPORT char** mitie_tokenize (
+    MITIE_API char** mitie_tokenize (
         const char* text
     );
     /*!
@@ -83,7 +79,7 @@ extern "C"
             - If something prevents this function from succeeding then a NULL is returned.
     !*/
 
-    MITIE_EXPORT char** mitie_tokenize_file (
+    MITIE_API char** mitie_tokenize_file (
         const char* filename
     );
     /*!
@@ -96,7 +92,7 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
-    MITIE_EXPORT char** mitie_tokenize_with_offsets (
+    MITIE_API char** mitie_tokenize_with_offsets (
         const char* text,
         unsigned long** token_offsets
     );
@@ -119,7 +115,7 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
-    MITIE_EXPORT mitie_named_entity_extractor* mitie_load_named_entity_extractor (
+    MITIE_API mitie_named_entity_extractor* mitie_load_named_entity_extractor (
         const char* filename
     );
     /*!
@@ -132,7 +128,7 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
 
-    MITIE_EXPORT mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model (
+    MITIE_API mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model (
         const char* filename,
         const char* fe_filename
     );
@@ -154,7 +150,7 @@ extern "C"
 
     typedef struct mitie_total_word_feature_extractor mitie_total_word_feature_extractor;
 
-    MITIE_EXPORT int mitie_check_ner_pure_model(
+    MITIE_API int mitie_check_ner_pure_model(
         const char* filename
     );
     /*!
@@ -169,7 +165,7 @@ extern "C"
             - returns 0 if its a pure model and a non-zero value otherwise
     !*/
 
-    MITIE_EXPORT mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_without_feature_extractor (
+    MITIE_API mitie_named_entity_extractor* mitie_load_named_entity_extractor_pure_model_without_feature_extractor (
         const char* filename
     );
     /*!
@@ -187,7 +183,7 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
 
-    MITIE_EXPORT unsigned long mitie_get_num_possible_ner_tags (
+    MITIE_API unsigned long mitie_get_num_possible_ner_tags (
         const mitie_named_entity_extractor* ner
     );
     /*!
@@ -201,7 +197,7 @@ extern "C"
               the numeric IDs are just 0, 1, 2, and 3.  
     !*/
 
-    MITIE_EXPORT const char* mitie_get_named_entity_tagstr (
+    MITIE_API const char* mitie_get_named_entity_tagstr (
         const mitie_named_entity_extractor* ner,
         unsigned long idx
     );
@@ -219,7 +215,7 @@ extern "C"
 
 // ----------------------------------------------------------------------------------------
 
-    MITIE_EXPORT mitie_named_entity_detections* mitie_extract_entities (
+    MITIE_API mitie_named_entity_detections* mitie_extract_entities (
         const mitie_named_entity_extractor* ner,
         char** tokens 
     );
@@ -236,7 +232,7 @@ extern "C"
             - If the object can't be created then this function returns NULL
     !*/
 
-    MITIE_EXPORT mitie_named_entity_detections* mitie_extract_entities_with_extractor(
+    MITIE_API mitie_named_entity_detections* mitie_extract_entities_with_extractor(
         const mitie_named_entity_extractor* ner,
         char** tokens,
         const mitie_total_word_feature_extractor* fe
@@ -256,7 +252,7 @@ extern "C"
             - If the object can't be created then this function returns NULL
     !*/
 
-    MITIE_EXPORT unsigned long mitie_ner_get_num_detections (
+    MITIE_API unsigned long mitie_ner_get_num_detections (
         const mitie_named_entity_detections* dets
     );
     /*!
@@ -266,7 +262,7 @@ extern "C"
             - returns the number of named entity detections inside the dets object.
     !*/
 
-    MITIE_EXPORT unsigned long mitie_ner_get_detection_position (
+    MITIE_API unsigned long mitie_ner_get_detection_position (
         const mitie_named_entity_detections* dets,
         unsigned long idx
     );
@@ -287,7 +283,7 @@ extern "C"
               entities never contain the same tokens as each other.
     !*/
 
-    MITIE_EXPORT unsigned long mitie_ner_get_detection_length (
+    MITIE_API unsigned long mitie_ner_get_detection_length (
         const mitie_named_entity_detections* dets,
         unsigned long idx
     );
@@ -301,7 +297,7 @@ extern "C"
               named entity detection.  
     !*/
 
-    MITIE_EXPORT unsigned long mitie_ner_get_detection_tag (
+    MITIE_API unsigned long mitie_ner_get_detection_tag (
         const mitie_named_entity_detections* dets,
         unsigned long idx
     );
@@ -313,7 +309,7 @@ extern "C"
             - returns a numeric value that identifies the type of the idx-th named entity.
     !*/
 
-    MITIE_EXPORT const char* mitie_ner_get_detection_tagstr (
+    MITIE_API const char* mitie_ner_get_detection_tagstr (
         const mitie_named_entity_detections* dets,
         unsigned long idx
     );
@@ -327,7 +323,7 @@ extern "C"
             - The returned pointer is valid until mitie_free(dets) is called.
     !*/
 
-    MITIE_EXPORT double mitie_ner_get_detection_score (
+    MITIE_API double mitie_ner_get_detection_score (
         const mitie_named_entity_detections* dets,
         unsigned long idx
     );
@@ -349,7 +345,7 @@ extern "C"
     typedef struct mitie_binary_relation_detector mitie_binary_relation_detector;
     typedef struct mitie_binary_relation mitie_binary_relation;
 
-    MITIE_EXPORT mitie_binary_relation_detector* mitie_load_binary_relation_detector (
+    MITIE_API mitie_binary_relation_detector* mitie_load_binary_relation_detector (
         const char* filename
     );
     /*!
@@ -362,7 +358,7 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
 
-    MITIE_EXPORT const char* mitie_binary_relation_detector_name_string (
+    MITIE_API const char* mitie_binary_relation_detector_name_string (
         const mitie_binary_relation_detector* detector
     );
     /*!
@@ -374,7 +370,7 @@ extern "C"
             - The returned pointer is valid until mitie_free(detector) is called.
     !*/
 
-    MITIE_EXPORT int mitie_entities_overlap (
+    MITIE_API int mitie_entities_overlap (
         unsigned long arg1_start,
         unsigned long arg1_length,
         unsigned long arg2_start,
@@ -389,7 +385,7 @@ extern "C"
               overlap and returns 1 if they do.
     !*/
 
-    MITIE_EXPORT mitie_binary_relation* mitie_extract_binary_relation (
+    MITIE_API mitie_binary_relation* mitie_extract_binary_relation (
         const mitie_named_entity_extractor* ner,
         char** tokens,
         unsigned long arg1_start,
@@ -430,7 +426,7 @@ extern "C"
             - returns NULL if the object could not be created.
     !*/
 
-    MITIE_EXPORT int mitie_classify_binary_relation (
+    MITIE_API int mitie_classify_binary_relation (
         const mitie_binary_relation_detector* detector,
         const mitie_binary_relation* relation,
         double* score
@@ -459,7 +455,7 @@ extern "C"
     typedef struct mitie_text_categorizer  mitie_text_categorizer;
     typedef struct mitie_text_categorizer_trainer  mitie_text_categorizer_trainer;
 
-    MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer (
+    MITIE_API mitie_text_categorizer* mitie_load_text_categorizer (
         const char* filename
     );
     /*!
@@ -472,7 +468,7 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
 
-    MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer_pure_model (
+    MITIE_API mitie_text_categorizer* mitie_load_text_categorizer_pure_model (
         const char* filename,
         const char* fe_filename
     );
@@ -492,7 +488,7 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
     
-    MITIE_EXPORT int mitie_check_text_categorizer_pure_model(
+    MITIE_API int mitie_check_text_categorizer_pure_model(
         const char* filename
     );
     /*!
@@ -506,7 +502,7 @@ extern "C"
             - returns 0 if its a pure model and a non-zero value otherwise
     !*/
 
-    MITIE_EXPORT mitie_text_categorizer* mitie_load_text_categorizer_pure_model_without_feature_extractor(
+    MITIE_API mitie_text_categorizer* mitie_load_text_categorizer_pure_model_without_feature_extractor(
         const char* filename
     );
     /*!
@@ -521,7 +517,7 @@ extern "C"
             - If the object can't be created then this function returns NULL.
     !*/
 
-    MITIE_EXPORT int mitie_categorize_text (
+    MITIE_API int mitie_categorize_text (
         const mitie_text_categorizer* tcat,
         const char** tokens,
         char** text_tag,
@@ -548,7 +544,7 @@ extern "C"
                 - *score == the confidence the categorizer has about its prediction.
     !*/
 
-    MITIE_EXPORT int mitie_categorize_text_with_extractor (
+    MITIE_API int mitie_categorize_text_with_extractor (
         const mitie_text_categorizer* tcat,
         const char** tokens,
         char** text_tag,
@@ -584,7 +580,7 @@ extern "C"
 // ----------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------
 
-    MITIE_EXPORT int mitie_save_named_entity_extractor (
+    MITIE_API int mitie_save_named_entity_extractor (
         const char* filename,
         const mitie_named_entity_extractor* ner
     );
@@ -600,7 +596,7 @@ extern "C"
               there is some error that prevents us from writing to the given file.
     !*/
 
-    MITIE_EXPORT int mitie_save_named_entity_extractor_pure_model (
+    MITIE_API int mitie_save_named_entity_extractor_pure_model (
         const char* filename,
         const mitie_named_entity_extractor* ner
     );
@@ -620,7 +616,7 @@ extern "C"
               there is some error that prevents us from writing to the given file.
     !*/
 
-    MITIE_EXPORT int mitie_save_binary_relation_detector (
+    MITIE_API int mitie_save_binary_relation_detector (
         const char* filename,
         const mitie_binary_relation_detector* detector 
     );
@@ -636,7 +632,7 @@ extern "C"
               there is some error that prevents us from writing to the given file.
     !*/
 
-    MITIE_EXPORT int mitie_save_text_categorizer (
+    MITIE_API int mitie_save_text_categorizer (
         const char* filename,
         const mitie_text_categorizer* tcat
     );
@@ -652,7 +648,7 @@ extern "C"
               there is some error that prevents us from writing to the given file.
     !*/
 
-    MITIE_EXPORT int mitie_save_text_categorizer_pure_model (
+    MITIE_API int mitie_save_text_categorizer_pure_model (
         const char* filename,
         const mitie_text_categorizer* tcat
     );
@@ -677,7 +673,7 @@ extern "C"
     typedef struct mitie_ner_trainer mitie_ner_trainer;
     typedef struct mitie_ner_training_instance mitie_ner_training_instance;
 
-    MITIE_EXPORT mitie_ner_training_instance* mitie_create_ner_training_instance (
+    MITIE_API mitie_ner_training_instance* mitie_create_ner_training_instance (
         char** tokens
     );
     /*!
@@ -694,7 +690,7 @@ extern "C"
             - returns NULL if the object could not be created.
     !*/
 
-    MITIE_EXPORT unsigned long mitie_ner_training_instance_num_tokens (
+    MITIE_API unsigned long mitie_ner_training_instance_num_tokens (
         const mitie_ner_training_instance* instance
     );
     /*!
@@ -706,7 +702,7 @@ extern "C"
               mitie_create_ner_training_instance().
     !*/
 
-    MITIE_EXPORT unsigned long mitie_ner_training_instance_num_entities (
+    MITIE_API unsigned long mitie_ner_training_instance_num_entities (
         const mitie_ner_training_instance* instance
     );
     /*!
@@ -718,7 +714,7 @@ extern "C"
               mitie_add_ner_training_entity() increases this count by 1.
     !*/
 
-    MITIE_EXPORT int mitie_overlaps_any_entity (
+    MITIE_API int mitie_overlaps_any_entity (
         mitie_ner_training_instance* instance,
         unsigned long start,
         unsigned long length
@@ -735,7 +731,7 @@ extern "C"
             - returns 1 if any entities overlap and 0 otherwise.
     !*/
 
-    MITIE_EXPORT int mitie_add_ner_training_entity (
+    MITIE_API int mitie_add_ner_training_entity (
         mitie_ner_training_instance* instance,
         unsigned long start,
         unsigned long length,
@@ -756,7 +752,7 @@ extern "C"
               caused by running out of memory.
     !*/
 
-    MITIE_EXPORT mitie_ner_trainer* mitie_create_ner_trainer (
+    MITIE_API mitie_ner_trainer* mitie_create_ner_trainer (
         const char* filename
     );
     /*!
@@ -776,7 +772,7 @@ extern "C"
               That is, initially there are no training instances in the trainer.
     !*/
 
-    MITIE_EXPORT unsigned long mitie_ner_trainer_size (
+    MITIE_API unsigned long mitie_ner_trainer_size (
         const mitie_ner_trainer* trainer
     );
     /*!
@@ -786,7 +782,7 @@ extern "C"
             - returns the number of training instances in the given trainer object.
     !*/
 
-    MITIE_EXPORT int mitie_add_ner_training_instance(
+    MITIE_API int mitie_add_ner_training_instance(
         mitie_ner_trainer* trainer,
         const mitie_ner_training_instance* instance
     );
@@ -801,7 +797,7 @@ extern "C"
               caused by running out of memory.
     !*/
 
-    MITIE_EXPORT void mitie_ner_trainer_set_beta (
+    MITIE_API void mitie_ner_trainer_set_beta (
         mitie_ner_trainer* trainer,
         double beta
     );
@@ -813,7 +809,7 @@ extern "C"
             - mitie_ner_trainer_get_beta(trainer) == beta 
     !*/
 
-    MITIE_EXPORT double mitie_ner_trainer_get_beta (
+    MITIE_API double mitie_ner_trainer_get_beta (
         const mitie_ner_trainer* trainer
     );
     /*!
@@ -833,7 +829,7 @@ extern "C"
                   avoiding false alarms.
     !*/
 
-    MITIE_EXPORT void mitie_ner_trainer_set_num_threads (
+    MITIE_API void mitie_ner_trainer_set_num_threads (
         mitie_ner_trainer* trainer,
         unsigned long num_threads 
     );
@@ -844,7 +840,7 @@ extern "C"
             - mitie_ner_trainer_get_num_threads(trainer) == num_threads
     !*/
 
-    MITIE_EXPORT unsigned long mitie_ner_trainer_get_num_threads (
+    MITIE_API unsigned long mitie_ner_trainer_get_num_threads (
         const mitie_ner_trainer* trainer
     );
     /*!
@@ -856,7 +852,7 @@ extern "C"
               the number of available CPU cores for maximum training speed.
     !*/
 
-    MITIE_EXPORT mitie_named_entity_extractor* mitie_train_named_entity_extractor (
+    MITIE_API mitie_named_entity_extractor* mitie_train_named_entity_extractor (
         const mitie_ner_trainer* trainer
     );
     /*!
@@ -875,7 +871,7 @@ extern "C"
 
     typedef struct mitie_binary_relation_trainer mitie_binary_relation_trainer;
 
-    MITIE_EXPORT mitie_binary_relation_trainer* mitie_create_binary_relation_trainer (
+    MITIE_API mitie_binary_relation_trainer* mitie_create_binary_relation_trainer (
         const char* relation_name,
         const mitie_named_entity_extractor* ner
     );
@@ -899,7 +895,7 @@ extern "C"
               instances in it. 
     !*/
 
-    MITIE_EXPORT unsigned long mitie_binary_relation_trainer_num_positive_examples (
+    MITIE_API unsigned long mitie_binary_relation_trainer_num_positive_examples (
         const mitie_binary_relation_trainer* trainer
     );
     /*!
@@ -909,7 +905,7 @@ extern "C"
             - returns the number of positive training instances in the given trainer object.
     !*/
 
-    MITIE_EXPORT unsigned long mitie_binary_relation_trainer_num_negative_examples (
+    MITIE_API unsigned long mitie_binary_relation_trainer_num_negative_examples (
         const mitie_binary_relation_trainer* trainer
     );
     /*!
@@ -919,7 +915,7 @@ extern "C"
             - returns the number of negative training instances in the given trainer object.
     !*/
 
-    MITIE_EXPORT int mitie_add_positive_binary_relation (
+    MITIE_API int mitie_add_positive_binary_relation (
         mitie_binary_relation_trainer* trainer,
         char** tokens,
         unsigned long arg1_start,
@@ -954,7 +950,7 @@ extern "C"
               happen if we run out of memory.
     !*/
 
-    MITIE_EXPORT int mitie_add_negative_binary_relation (
+    MITIE_API int mitie_add_negative_binary_relation (
         mitie_binary_relation_trainer* trainer,
         char** tokens,
         unsigned long arg1_start,
@@ -988,7 +984,7 @@ extern "C"
               happen if we run out of memory.
     !*/
 
-    MITIE_EXPORT void mitie_binary_relation_trainer_set_beta (
+    MITIE_API void mitie_binary_relation_trainer_set_beta (
         mitie_binary_relation_trainer* trainer,
         double beta
     );
@@ -1000,7 +996,7 @@ extern "C"
             - mitie_binary_relation_trainer_get_beta(trainer) == beta 
     !*/
 
-    MITIE_EXPORT double mitie_binary_relation_trainer_get_beta (
+    MITIE_API double mitie_binary_relation_trainer_get_beta (
         const mitie_binary_relation_trainer* trainer
     );
     /*!
@@ -1020,7 +1016,7 @@ extern "C"
                   avoiding false alarms.
     !*/
 
-    MITIE_EXPORT void mitie_binary_relation_trainer_set_num_threads (
+    MITIE_API void mitie_binary_relation_trainer_set_num_threads (
         mitie_binary_relation_trainer* trainer,
         unsigned long num_threads 
     );
@@ -1031,7 +1027,7 @@ extern "C"
             - mitie_binary_relation_trainer_get_num_threads(trainer) == num_threads
     !*/
 
-    MITIE_EXPORT unsigned long mitie_binary_relation_trainer_get_num_threads (
+    MITIE_API unsigned long mitie_binary_relation_trainer_get_num_threads (
         const mitie_binary_relation_trainer* trainer
     );
     /*!
@@ -1043,7 +1039,7 @@ extern "C"
               to the number of available CPU cores for maximum training speed.
     !*/
 
-    MITIE_EXPORT mitie_binary_relation_detector* mitie_train_binary_relation_detector (
+    MITIE_API mitie_binary_relation_detector* mitie_train_binary_relation_detector (
         const mitie_binary_relation_trainer* trainer
     );
     /*!
@@ -1060,7 +1056,7 @@ extern "C"
     !*/
     // ----------------------------------------------------------------------------------------
 
-    MITIE_EXPORT mitie_text_categorizer_trainer* mitie_create_text_categorizer_trainer (
+    MITIE_API mitie_text_categorizer_trainer* mitie_create_text_categorizer_trainer (
         const char* filename
     );
     /*!
@@ -1080,7 +1076,7 @@ extern "C"
               That is, initially there are no training instances in the trainer.
     !*/
 
-    MITIE_EXPORT unsigned long mitie_text_categorizer_trainer_size (
+    MITIE_API unsigned long mitie_text_categorizer_trainer_size (
         const mitie_text_categorizer_trainer* trainer
     );
     /*!
@@ -1091,7 +1087,7 @@ extern "C"
     !*/
 
 
-    MITIE_EXPORT void mitie_text_categorizer_trainer_set_beta (
+    MITIE_API void mitie_text_categorizer_trainer_set_beta (
         mitie_text_categorizer_trainer* trainer,
         double beta
     );
@@ -1103,7 +1099,7 @@ extern "C"
             - mitie_text_categorizer_trainer_get_beta(trainer) == beta
     !*/
 
-    MITIE_EXPORT double mitie_text_categorizer_trainer_get_beta (
+    MITIE_API double mitie_text_categorizer_trainer_get_beta (
         const mitie_text_categorizer_trainer* trainer
     );
     /*!
@@ -1116,7 +1112,7 @@ extern "C"
               recall as precision. Set to 1 if these are equally important.               
     !*/
 
-    MITIE_EXPORT void mitie_text_categorizer_trainer_set_num_threads (
+    MITIE_API void mitie_text_categorizer_trainer_set_num_threads (
         mitie_text_categorizer_trainer* trainer,
         unsigned long num_threads
     );
@@ -1127,7 +1123,7 @@ extern "C"
             - mitie_text_categorizer_trainer_get_num_threads(trainer) == num_threads
     !*/
 
-    MITIE_EXPORT unsigned long mitie_text_categorizer_trainer_get_num_threads (
+    MITIE_API unsigned long mitie_text_categorizer_trainer_get_num_threads (
         const mitie_text_categorizer_trainer* trainer
     );
     /*!
@@ -1139,7 +1135,7 @@ extern "C"
               the number of available CPU cores for maximum training speed.
     !*/
 
-    MITIE_EXPORT int mitie_add_text_categorizer_labeled_text (
+    MITIE_API int mitie_add_text_categorizer_labeled_text (
         mitie_text_categorizer_trainer* trainer,
         const char** tokens,
         const char* label
@@ -1159,7 +1155,7 @@ extern "C"
               caused by running out of memory.
     !*/
 
-    MITIE_EXPORT mitie_text_categorizer* mitie_train_text_categorizer (
+    MITIE_API mitie_text_categorizer* mitie_train_text_categorizer (
         const mitie_text_categorizer_trainer* trainer
     );
     /*!
@@ -1176,7 +1172,7 @@ extern "C"
 
     // ----------------------------------------------------------------------------------------
 
-    MITIE_EXPORT mitie_total_word_feature_extractor* mitie_load_total_word_feature_extractor (
+    MITIE_API mitie_total_word_feature_extractor* mitie_load_total_word_feature_extractor (
         const char* filename
     );
     /*!
@@ -1190,7 +1186,7 @@ extern "C"
     !*/
 
 
-    MITIE_EXPORT unsigned long mitie_total_word_feature_extractor_fingerprint (
+    MITIE_API unsigned long mitie_total_word_feature_extractor_fingerprint (
         const mitie_total_word_feature_extractor* twfe
     );
     /*!
@@ -1200,7 +1196,7 @@ extern "C"
             - returns a 64bit ID number that uniquely identifies this object instance
     !*/    
 
-    MITIE_EXPORT unsigned long mitie_total_word_feature_extractor_num_dimensions (
+    MITIE_API unsigned long mitie_total_word_feature_extractor_num_dimensions (
         const mitie_total_word_feature_extractor* twfe
     );
     /*!
@@ -1210,7 +1206,7 @@ extern "C"
             - returns the dimensionality of the feature vectors produced by this object.
     !*/        
 
-    MITIE_EXPORT unsigned long mitie_total_word_feature_extractor_num_words_in_dictionary (
+    MITIE_API unsigned long mitie_total_word_feature_extractor_num_words_in_dictionary (
         const mitie_total_word_feature_extractor* twfe
     );
     /*!
@@ -1224,7 +1220,7 @@ extern "C"
             - Therefore, this function returns the number of words in the dictionary.
     !*/    
        
-    MITIE_EXPORT int mitie_total_word_feature_extractor_get_feature_vector (
+    MITIE_API int mitie_total_word_feature_extractor_get_feature_vector (
          const mitie_total_word_feature_extractor* twfe,
          const char* word,
          float* result
@@ -1239,7 +1235,7 @@ extern "C"
             - returns 0 if successful, 1 if there is an error.
     !*/
 
-    MITIE_EXPORT char** mitie_total_word_feature_extractor_get_words_in_dictionary (
+    MITIE_API char** mitie_total_word_feature_extractor_get_words_in_dictionary (
         const mitie_total_word_feature_extractor* twfe
     );
     /*!
