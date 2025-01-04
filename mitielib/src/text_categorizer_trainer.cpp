@@ -5,11 +5,11 @@
 #include <mitie/text_categorizer_trainer.h>
 #include <dlib/svm_threaded.h>
 
-using namespace std;
 using namespace dlib;
 
 namespace mitie
 {
+    using namespace std;
 
 // ----------------------------------------------------------------------------------------
     text_categorizer_trainer::

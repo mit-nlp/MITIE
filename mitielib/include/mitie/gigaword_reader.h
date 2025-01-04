@@ -82,11 +82,10 @@ namespace mitie
 
             if (!eh.no_errors)
             {
-                using namespace std;
-                cout << "doc.id:       " << doc.id << endl;
-                cout << "doc.type:     " << doc.type << endl;
-                cout << "doc.headline: " << doc.headline << endl;
-                cout << "Are there &AMP; references in the text?  Per the XML standard, these should be lowercase.\n" << endl;
+                std::cout << "doc.id:       " << doc.id << std::endl;
+                std::cout << "doc.type:     " << doc.type << std::endl;
+                std::cout << "doc.headline: " << doc.headline << std::endl;
+                std::cout << "Are there &AMP; references in the text?  Per the XML standard, these should be lowercase.\n" << std::endl;
             }
             return eh.no_errors && in->good();
         }

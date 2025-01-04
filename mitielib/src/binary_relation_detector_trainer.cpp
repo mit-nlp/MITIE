@@ -7,10 +7,10 @@
 #include <dlib/optimization.h>
 
 using namespace dlib;
-using namespace std;
 
 namespace mitie
 {
+    using namespace std;
 
 // ----------------------------------------------------------------------------------------
 
