@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.6)
 
 
 
-set(project_name train_relation_detector)
+set(project_name "${MITIE_EXECUTABLES_PREFIX}train_relation_detector")
 set(source
    src/main.cpp
    )

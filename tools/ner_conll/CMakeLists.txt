@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.6)
 
 
 
-set(project_name ner)
+set(project_name "${MITIE_EXECUTABLES_PREFIX}ner")
 set(source
    src/main.cpp
    )

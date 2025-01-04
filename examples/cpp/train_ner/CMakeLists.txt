@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.6)
 
 
 
-set(project_name train_ner_example)
+set(project_name "${MITIE_EXECUTABLES_PREFIX}train_ner_example")
 set(source
    train_ner_example.cpp
    )

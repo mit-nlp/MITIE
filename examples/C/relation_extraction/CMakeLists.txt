@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.6)
 
 
 
-set(project_name relation_extraction_example)
+set(project_name "${MITIE_EXECUTABLES_PREFIX}relation_extraction_c_example")
 set(source
    relation_extraction_example.c
    )
