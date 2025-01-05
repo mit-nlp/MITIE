@@ -46,10 +46,12 @@ if (NOT TARGET mitie)
       target_link_libraries(mitie dlib::dlib)
    endif()
 
-   # Determine the path to our CMakeLists.txt file.
-   string(REGEX REPLACE "CMakeLists.txt$" "" base_path ${CMAKE_CURRENT_LIST_FILE})
-   install(TARGETS mitie
-      DESTINATION ${base_path}
-      )
+
+   include(GNUInstallDirs)
+   install(TARGETS mitie)
+   install(DIRECTORY include/
+           TYPE INCLUDE
+           FILES_MATCHING REGEX ".*\.h(pp)?$"
+           )
 
 endif()

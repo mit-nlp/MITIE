@@ -3,7 +3,7 @@
 # information about it at http://www.cmake.org
 #
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.10)
 
 
 
@@ -23,4 +23,5 @@ ADD_EXECUTABLE(${project_name} ${source})
 TARGET_LINK_LIBRARIES(${project_name} mitie)
 
 
-
+include(GNUInstallDirs)
+install(TARGETS ${project_name})
