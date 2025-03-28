@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.10)
 
 
 
-set(project_name "${MITIE_EXECUTABLES_PREFIX}text_categorizer_example")
+set(project_name "${MITIE_EXECUTABLES_PREFIX}text_categorizer${MITIE_EXAMPLES_SUFFIX}")
 set(source
         text_categorizer_example.cpp
    )

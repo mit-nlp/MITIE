@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.10)
 
 
 
-set(project_name "${MITIE_EXECUTABLES_PREFIX}ner")
+set(project_name "${MITIE_EXECUTABLES_PREFIX}ner_conll")
 set(source
    src/main.cpp
    )
@@ -29,7 +29,7 @@ install(PROGRAMS "conlleval"
         TYPE BIN
         RENAME "${MITIE_EXECUTABLES_PREFIX}conlleval"
         )
-install(PROGRAMS "train-ner"
-        TYPE BIN
-        RENAME "${MITIE_EXECUTABLES_PREFIX}train-ner"
-        )
+#install(PROGRAMS "train-ner"
+#        TYPE BIN
+#        RENAME "${MITIE_EXECUTABLES_PREFIX}train-ner"
+#        )

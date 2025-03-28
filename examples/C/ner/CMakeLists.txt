@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.10)
 
 
 
-set(project_name "${MITIE_EXECUTABLES_PREFIX}ner_c_example")
+set(project_name "${MITIE_EXECUTABLES_PREFIX}ner_c${MITIE_EXAMPLES_SUFFIX}")
 set(source
    ner_example.c
    )

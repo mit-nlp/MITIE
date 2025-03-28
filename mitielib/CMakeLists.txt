@@ -43,7 +43,17 @@ if (NOT TARGET mitie)
       target_link_libraries(mitie dlib)
    else()
       find_package(dlib REQUIRED)
+      if (NOT dlib_FOUND)
+         message(FATAL_ERROR "System-installed dlib not found.")
+      endif()
       target_link_libraries(mitie dlib::dlib)
+   endif()
+
+   # Omit lib prefix on Windows MinGW
+   if (WIN32)
+      set(CMAKE_STATIC_LIBRARY_PREFIX "")
+      set(CMAKE_SHARED_LIBRARY_PREFIX "")
+      set(CMAKE_SHARED_MODULE_PREFIX  "")
    endif()
 
 

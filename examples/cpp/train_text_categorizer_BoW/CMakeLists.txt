@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.10)
 
 
 
-set(project_name "${MITIE_EXECUTABLES_PREFIX}train_text_categorizer_BoW_example")
+set(project_name "${MITIE_EXECUTABLES_PREFIX}train_text_categorizer_BoW${MITIE_EXAMPLES_SUFFIX}")
 set(source
         train_text_categorizer_BoW_example.cpp
    )
