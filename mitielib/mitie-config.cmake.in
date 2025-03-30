@@ -1,0 +1,16 @@
+set(MITIE_SHARED_LIB @BUILD_SHARED_LIBS@)
+
+@PACKAGE_INIT@
+
+find_package(dlib REQUIRED)
+
+find_library(mitie_LIBRARY mitie REQUIRED)
+
+add_library(mitie::mitie UNKNOWN IMPORTED)
+set_target_properties(mitie::mitie
+   PROPERTIES
+      IMPORTED_LOCATION "${mitie_LIBRARY}"
+      IMPORTED_LINK_INTERFACE_LANGUAGES "CXX"
+      INTERFACE_LINK_LIBRARIES "dlib::dlib"
+      POSITION_INDEPENDENT_CODE ON
+)

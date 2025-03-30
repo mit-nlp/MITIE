@@ -2,8 +2,8 @@
 # This is a CMake makefile.  You can find the cmake utility and
 # information about it at http://www.cmake.org
 #
-cmake_minimum_required(VERSION 3.10)
-project(mitie C CXX)
+cmake_minimum_required(VERSION 3.12)
+project(mitie VERSION 0.7 LANGUAGES C CXX)
 
 
 include(tell_visual_studio_to_use_static_runtime.cmake)
@@ -63,5 +63,38 @@ if (NOT TARGET mitie)
            TYPE INCLUDE
            FILES_MATCHING REGEX ".*\.h(pp)?$"
            )
+
+
+   include(CMakePackageConfigHelpers)
+
+   #
+   # Generate metadata for pkg-config
+   #
+   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/mitie.pc.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/mitie.pc"
+      @ONLY)
+   
+   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/mitie.pc"
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+
+   #
+   # Generate metadata for CMake package
+   #
+   configure_package_config_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/mitie-config.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/mitie-config.cmake
+      INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mitie
+   )
+
+   write_basic_package_version_file(
+      ${CMAKE_CURRENT_BINARY_DIR}/mitie-version.cmake
+      VERSION ${MITIE_VERSION}
+      COMPATIBILITY SameMajorVersion
+   )
+
+   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mitie-config.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/mitie-version.cmake
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mitie
+   )
 
 endif()
