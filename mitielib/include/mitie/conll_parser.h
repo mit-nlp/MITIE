@@ -4,6 +4,7 @@
 #ifndef MIT_LL_CONLL_PaRSER_H_
 #define MIT_LL_CONLL_PaRSER_H_
 
+#include <mitie/mitie_api_prefix.h>
 #include <vector>
 #include <string>
 
@@ -14,32 +15,32 @@ namespace mitie
 
     typedef unsigned long BIO_label;
 
-    const unsigned long I_PER  = 0;
-    const unsigned long B_PER  = 1;
-    const unsigned long O      = 2;
-    const unsigned long B_LOC  = 3;
-    const unsigned long B_ORG  = 4;
-    const unsigned long B_MISC = 5;
-    const unsigned long I_ORG  = 6;
-    const unsigned long I_LOC  = 7;
-    const unsigned long I_MISC = 8;
+    constexpr unsigned long I_PER  = 0;
+    constexpr unsigned long B_PER  = 1;
+    constexpr unsigned long O      = 2;
+    constexpr unsigned long B_LOC  = 3;
+    constexpr unsigned long B_ORG  = 4;
+    constexpr unsigned long B_MISC = 5;
+    constexpr unsigned long I_ORG  = 6;
+    constexpr unsigned long I_LOC  = 7;
+    constexpr unsigned long I_MISC = 8;
 
     // BILOU extension
-    const unsigned long L_PER  = 9;
-    const unsigned long L_ORG  = 10;
-    const unsigned long L_LOC  = 11;
-    const unsigned long L_MISC = 12;
-    const unsigned long U_PER  = 13;
-    const unsigned long U_ORG  = 14;
-    const unsigned long U_LOC  = 15;
-    const unsigned long U_MISC = 16;
+    constexpr unsigned long L_PER  = 9;
+    constexpr unsigned long L_ORG  = 10;
+    constexpr unsigned long L_LOC  = 11;
+    constexpr unsigned long L_MISC = 12;
+    constexpr unsigned long U_PER  = 13;
+    constexpr unsigned long U_ORG  = 14;
+    constexpr unsigned long U_LOC  = 15;
+    constexpr unsigned long U_MISC = 16;
 
     // chunk labels
-    const unsigned long PER  = 0;
-    const unsigned long LOC  = 1;
-    const unsigned long ORG  = 2;
-    const unsigned long MISC = 3;
-    const unsigned long NOT_ENTITY = 4;
+    constexpr unsigned long PER  = 0;
+    constexpr unsigned long LOC  = 1;
+    constexpr unsigned long ORG  = 2;
+    constexpr unsigned long MISC = 3;
+    constexpr unsigned long NOT_ENTITY = 4;
 
 // ----------------------------------------------------------------------------------------
 
@@ -47,7 +48,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void parse_conll_data (
+    MITIE_API void parse_conll_data (
         const std::string& filename,
         std::vector<std::vector<std::string> >& sentences,
         std::vector<std::vector<std::pair<unsigned long, unsigned long> > >& chunks,
@@ -70,7 +71,7 @@ namespace mitie
                 - #chunk_labels[i][j] is equal to either PER, ORG, LOC, or MISC.
     !*/
 
-    void parse_conll_data (
+    MITIE_API void parse_conll_data (
         const std::string& filename,
         std::vector<std::vector<std::string> >& sentences,
         std::vector<std::vector<std::pair<unsigned long, unsigned long> > >& chunks,
@@ -85,7 +86,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    std::vector<labeled_sentence> parse_conll_data (
+    MITIE_API std::vector<labeled_sentence> parse_conll_data (
         const std::string& filename
     );
     /*!
@@ -96,7 +97,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void print_conll_data (
+    MITIE_API void print_conll_data (
         const std::vector<labeled_sentence>& data
     );
     /*!
@@ -107,7 +108,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void print_conll_data (
+    MITIE_API void print_conll_data (
         const std::vector<labeled_sentence>& data,
         const std::vector<std::vector<BIO_label> >& extra_labels
     );
@@ -125,7 +126,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    void separate_labels_from_tokens (
+    MITIE_API void separate_labels_from_tokens (
         const std::vector<labeled_sentence>& data,
         std::vector<std::vector<std::string> >& tokens,
         std::vector<std::vector<BIO_label> >& labels
@@ -143,23 +144,23 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    std::string lookup_conll_label (
+    MITIE_API std::string lookup_conll_label (
         const BIO_label& label 
     );
 
-    void convert_from_BIO_to_BILOU (
+    MITIE_API void convert_from_BIO_to_BILOU (
         std::vector<BIO_label>& labels
     );
 
-    void convert_from_BILOU_to_BIO (
+    MITIE_API void convert_from_BILOU_to_BIO (
         std::vector<BIO_label>& labels
     );
 
-    void convert_from_BIO_to_BILOU (
+    MITIE_API void convert_from_BIO_to_BILOU (
         std::vector<std::vector<BIO_label> >& labels
     );
 
-    void convert_from_BILOU_to_BIO (
+    MITIE_API void convert_from_BILOU_to_BIO (
         std::vector<std::vector<BIO_label> >& labels
     );
 

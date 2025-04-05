@@ -4,6 +4,7 @@
 #ifndef MIT_LL_MITIE_NaMED_ENTITY_EXTRACTOR_H_
 #define MIT_LL_MITIE_NaMED_ENTITY_EXTRACTOR_H_
 
+#include <mitie/mitie_api_prefix.h>
 #include <mitie/total_word_feature_extractor.h>
 #include <mitie/ner_feature_extraction.h>
 #include <dlib/svm.h>
@@ -12,7 +13,7 @@
 
 namespace mitie
 {
-    class named_entity_extractor
+    class MITIE_API named_entity_extractor
     {
         /*!
             WHAT THIS OBJECT REPRESENTS

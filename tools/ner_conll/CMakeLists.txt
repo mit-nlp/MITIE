@@ -3,11 +3,11 @@
 # information about it at http://www.cmake.org
 #
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.10)
 
 
 
-set(project_name ner)
+set(project_name "${MITIE_EXECUTABLES_PREFIX}ner_conll")
 set(source
    src/main.cpp
    )
@@ -23,3 +23,13 @@ ADD_EXECUTABLE(${project_name} ${source})
 TARGET_LINK_LIBRARIES(${project_name} mitie)
 
 
+include(GNUInstallDirs)
+install(TARGETS ${project_name})
+install(PROGRAMS "conlleval"
+        TYPE BIN
+        RENAME "${MITIE_EXECUTABLES_PREFIX}conlleval"
+        )
+#install(PROGRAMS "train-ner"
+#        TYPE BIN
+#        RENAME "${MITIE_EXECUTABLES_PREFIX}train-ner"
+#        )

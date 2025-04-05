@@ -3,11 +3,11 @@
 # information about it at http://www.cmake.org
 #
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.10)
 
 
 
-set(project_name text_categorizer_example)
+set(project_name "${MITIE_EXECUTABLES_PREFIX}text_categorizer${MITIE_EXAMPLES_SUFFIX}")
 set(source
         text_categorizer_example.cpp
    )
@@ -23,3 +23,5 @@ ADD_EXECUTABLE(${project_name} ${source})
 TARGET_LINK_LIBRARIES(${project_name} mitie)
 
 
+include(GNUInstallDirs)
+install(TARGETS ${project_name})

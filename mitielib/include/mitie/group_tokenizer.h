@@ -9,7 +9,6 @@
 #include <dlib/dir_nav.h>
 #include <fstream>
 
-
 namespace mitie
 {
     template <

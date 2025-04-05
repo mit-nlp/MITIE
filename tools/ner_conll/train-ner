@@ -7,11 +7,11 @@ run_default_params()
 {
     THREADS="--threads=16"
     LOG=test_default.txt
-    ./ner --train-chunker eng.train_all_some_sentences_combined $THREADS > $LOG
-    ./ner --train-id      eng.train_all_some_sentences_combined $THREADS >> $LOG
+    ./ner_conll --train-chunker eng.train_all_some_sentences_combined $THREADS > $LOG
+    ./ner_conll --train-id      eng.train_all_some_sentences_combined $THREADS >> $LOG
 
-    ./ner --test-id eng.testb >> $LOG
-    ./ner --tag-conll-file ner_model.dat eng.testb | ./conlleval 
+    ./ner_conll --test-id eng.testb >> $LOG
+    ./ner_conll --tag-conll-file ner_model.dat eng.testb | ./conlleval 
     echo $LOG
     tail -n1 $LOG 
 }

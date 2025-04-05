@@ -4,6 +4,7 @@
 #ifndef MIT_LL_APPROXIMATE_SUBSTRiNG_SET_H_
 #define MIT_LL_APPROXIMATE_SUBSTRiNG_SET_H_
 
+#include <mitie/mitie_api_prefix.h>
 #include <iostream>
 #include <dlib/uintn.h>
 #include <dlib/serialize.h>
@@ -15,7 +16,7 @@ namespace mitie
 {
     using namespace std;
     
-    class approximate_substring_set
+    class MITIE_API approximate_substring_set
     {
         /*!
             WHAT THIS OBJECT REPRESENTS

@@ -4,6 +4,7 @@
 #ifndef MIT_LL_XTECH_UNIGRAM_ToKENIZER_H_
 #define MIT_LL_XTECH_UNIGRAM_ToKENIZER_H_
 
+#include <mitie/mitie_api_prefix.h>
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -14,7 +15,7 @@ namespace mitie
 
 // ----------------------------------------------------------------------------------------
 
-    class unigram_tokenizer
+    class MITIE_API unigram_tokenizer
     {
         /*!
             WHAT THIS OBJECT REPRESENTS

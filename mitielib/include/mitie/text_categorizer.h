@@ -2,6 +2,7 @@
 #ifndef MITIE_TexT_CATEGORIZER_H
 #define MITIE_TexT_CATEGORIZER_H
 
+#include <mitie/mitie_api_prefix.h>
 #include <mitie/text_feature_extraction.h>
 #include <mitie/total_word_feature_extractor.h>
 #include <mitie/ner_feature_extraction.h>
@@ -11,7 +12,7 @@
 
 namespace mitie
 {
-    class text_categorizer
+    class MITIE_API text_categorizer
     {
         /*!
             WHAT THIS OBJECT REPRESENTS

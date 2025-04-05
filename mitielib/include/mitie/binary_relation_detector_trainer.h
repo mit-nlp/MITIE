@@ -4,13 +4,14 @@
 #ifndef MIT_LL_BINARY_rELATION_DETECTION_TRAINER_H_
 #define MIT_LL_BINARY_rELATION_DETECTION_TRAINER_H_
 
+#include <mitie/mitie_api_prefix.h>
 #include <mitie/binary_relation_detector.h>
 #include <mitie/named_entity_extractor.h>
 #include <mitie.h>
 
 namespace mitie
 {
-    class binary_relation_detector_trainer 
+    class MITIE_API binary_relation_detector_trainer 
     {
         /*!
             WHAT THIS OBJECT REPRESENTS

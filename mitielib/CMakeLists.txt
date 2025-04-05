@@ -2,32 +2,17 @@
 # This is a CMake makefile.  You can find the cmake utility and
 # information about it at http://www.cmake.org
 #
+cmake_minimum_required(VERSION 3.12)
+project(mitie VERSION 0.7 LANGUAGES C CXX)
 
-# setting this makes CMake allow normal looking if else statements
-SET(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-cmake_minimum_required(VERSION 2.4)
-
-# Suppress cmake warnings about changes in new versions.
-if(COMMAND cmake_policy) 
-   cmake_policy(SET CMP0003 NEW) 
-endif()
-
-set(CMAKE_POSITION_INDEPENDENT_CODE True)
 include(tell_visual_studio_to_use_static_runtime.cmake)
+
 
 if (NOT TARGET mitie)
    if (NOT DEFINED BUILD_SHARED_LIBS)
-      set(BUILD_SHARED_LIBS 1)
+      set(BUILD_SHARED_LIBS ON)
    endif()
-
-   set(DLIB_LINK_WITH_LIBPNG OFF CACHE STRING "not needed by MITIE" FORCE)
-   set(DLIB_LINK_WITH_LIBJPEG OFF CACHE STRING "not needed by MITIE" FORCE)
-   set(DLIB_LINK_WITH_SQLITE3 OFF CACHE STRING "not needed by MITIE" FORCE)
-
-
-   include(../dlib/dlib/cmake)
-   include_directories(include)
 
    set(source_files 
          src/stemmer.cpp
@@ -45,12 +30,71 @@ if (NOT TARGET mitie)
          )
 
    add_library(mitie ${source_files})
-   target_link_libraries(mitie dlib)
+   set_target_properties(mitie PROPERTIES POSITION_INDEPENDENT_CODE ON)
+   target_compile_definitions(mitie PRIVATE MITIE_BUILD)
 
-   # Determine the path to our CMakeLists.txt file.
-   string(REGEX REPLACE "CMakeLists.txt$" "" base_path ${CMAKE_CURRENT_LIST_FILE})
-   install(TARGETS mitie
-      DESTINATION ${base_path}
-      )
+   if(BUILD_SHARED_LIBS)
+      target_compile_definitions(mitie PUBLIC MITIE_SHARED)
+   endif()
+
+   target_include_directories(mitie PUBLIC include)
+   
+   if(MITIE_INTEGRATED_DLIB)
+      target_link_libraries(mitie dlib)
+   else()
+      find_package(dlib REQUIRED)
+      if (NOT dlib_FOUND)
+         message(FATAL_ERROR "System-installed dlib not found.")
+      endif()
+      target_link_libraries(mitie dlib::dlib)
+   endif()
+
+   # Omit lib prefix on Windows MinGW
+   if (WIN32)
+      set(CMAKE_STATIC_LIBRARY_PREFIX "")
+      set(CMAKE_SHARED_LIBRARY_PREFIX "")
+      set(CMAKE_SHARED_MODULE_PREFIX  "")
+   endif()
+
+
+   include(GNUInstallDirs)
+   install(TARGETS mitie)
+   install(DIRECTORY include/
+           TYPE INCLUDE
+           FILES_MATCHING REGEX ".*\.h(pp)?$"
+           )
+
+
+   include(CMakePackageConfigHelpers)
+
+   #
+   # Generate metadata for pkg-config
+   #
+   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/mitie.pc.in"
+      "${CMAKE_CURRENT_BINARY_DIR}/mitie.pc"
+      @ONLY)
+   
+   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/mitie.pc"
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+
+   #
+   # Generate metadata for CMake package
+   #
+   configure_package_config_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/mitie-config.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/mitie-config.cmake
+      INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mitie
+   )
+
+   write_basic_package_version_file(
+      ${CMAKE_CURRENT_BINARY_DIR}/mitie-version.cmake
+      VERSION ${MITIE_VERSION}
+      COMPATIBILITY SameMajorVersion
+   )
+
+   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/mitie-config.cmake
+      ${CMAKE_CURRENT_BINARY_DIR}/mitie-version.cmake
+      DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/mitie
+   )
 
 endif()

@@ -1,6 +1,7 @@
 #ifndef MITIE_TEXT_CATEGORIZER_TRAINER_H
 #define MITIE_TEXT_CATEGORIZER_TRAINER_H
 
+#include <mitie/mitie_api_prefix.h>
 #include <vector>
 #include <string>
 #include <utility>
@@ -12,7 +13,7 @@
 
 namespace mitie
 {
-    class text_categorizer_trainer
+    class MITIE_API text_categorizer_trainer
     {
         /*!
             WHAT THIS OBJECT REPRESENTS

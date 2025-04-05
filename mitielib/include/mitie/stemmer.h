@@ -4,11 +4,12 @@
 #ifndef MIT_LL_STEM_WoRD_H_
 #define MIT_LL_STEM_WoRD_H_
 
+#include <mitie/mitie_api_prefix.h>
 #include <string>
 
 namespace mitie
 {
-    std::string stem_word (const std::string& word);
+    MITIE_API std::string stem_word (const std::string& word);
     /*!
         ensures
             - lowercases word and then applies the Porter stemmer.  The

@@ -3,11 +3,11 @@
 # information about it at http://www.cmake.org
 #
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.10)
 
 
 
-set(project_name relation_extraction_example)
+set(project_name "${MITIE_EXECUTABLES_PREFIX}relation_extraction_c${MITIE_EXAMPLES_SUFFIX}")
 set(source
    relation_extraction_example.c
    )
@@ -23,3 +23,5 @@ ADD_EXECUTABLE(${project_name} ${source})
 TARGET_LINK_LIBRARIES(${project_name} mitie)
 
 
+include(GNUInstallDirs)
+install(TARGETS ${project_name})

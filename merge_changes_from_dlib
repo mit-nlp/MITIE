@@ -1,1 +1,9 @@
-git subtree pull --prefix dlib https://github.com/davisking/dlib.git master --squash
+#!/bin/sh
+
+DLIB_LATEST_TAG=$(git ls-remote --tags https://github.com/davisking/dlib.git | \
+             awk '/refs\/tags\/v/ {print $2}' | \
+             sed 's|refs/tags/||' | \
+             sort -V | \
+             tail -n 1)
+
+git subtree pull --prefix dlib https://github.com/davisking/dlib.git $DLIB_LATEST_TAG --squash
