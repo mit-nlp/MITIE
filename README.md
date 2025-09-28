@@ -168,6 +168,23 @@ example models.  If you require a non-standard C++ compiler, change
 
 We have built Python 2.7 binaries packaged with sample models for 64bit Linux and Windows (both 32 and 64 bit version of Python).  You can download the precompiled package here: [Precompiled MITIE 0.2](https://github.com/mit-nlp/MITIE/releases/download/v0.4/mitie-v0.2-python-2.7-windows-or-linux64.zip)
 
+## Python Compatibility
+
+MITIE provides full compatibility across Python versions:
+
+| Python Version | Support Level | Status | Recommended Use |
+|----------------|---------------|--------|-----------------|
+| **2.7**        | Legacy        | ✅ Stable | Existing projects |
+| **3.6 - 3.7**  | Supported     | ✅ Stable | Migration projects |
+| **3.8+**       | Full Support  | ✅ Recommended | New projects |
+
+### Installation Notes
+- **All versions**: Uses standard library `ctypes` - no additional dependencies
+- **Python 2.7**: Includes automatic string encoding handling
+- **Python 3.x**: Enhanced Unicode support and better memory efficiency
+- **Cross-platform**: Windows, macOS, Linux, BSD systems supported
+
+**Recommendation**: Use Python 3.8+ for new projects to benefit from improved performance and modern language features.
 
 # Precompiled Java 64bit binaries
 
