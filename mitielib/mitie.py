@@ -103,32 +103,54 @@ _f.mitie_extract_binary_relation.restype = ctypes.c_void_p
 _f.mitie_extract_binary_relation.argtypes = (ctypes.c_void_p, ctypes.c_void_p, ctypes.c_ulong,
                                              ctypes.c_ulong, ctypes.c_ulong, ctypes.c_ulong)
 
+try :
+    string_types =  basestring #python 2
+
+except NameError: 
+    string_types = str  #python 3
 
 def to_bytes(string):
-    """Encode the string in utf-8. If the string is already encoded (bytes in Python 3
-       or str in Python 2), return the string unmodified."""
-    if hasattr(string, 'encode'):
+    """Enhanced function to encode string to bytes for ctypes."""
+    if string is None:
+        return None
+        
+    if isinstance(string, bytes):
+        return string
+        
+    if isinstance(string, string_types):
         try:
-            temp = string.encode('utf-8')
-            string = temp
-        except:
-            pass
-
-    return string
+            return string.encode('utf-8')
+        except (UnicodeDecodeError, UnicodeEncodeError):
+            return string if isinstance(string, bytes) else string.encode('utf-8', errors='replace')
+    
+    return str(string).encode('utf-8')
 
 
 def to_default_str_type(string):
-    """Convert if needed the string to the default string type (encoded str in Python2
-       or decoded str in Python3."""
+    """Enhanced function to convert to appropriate string type."""
+    if string is None:
+        return None
+        
     if PY3:
-        if hasattr(string, 'decode'):
-            string = string.decode('utf-8')
-
+        if isinstance(string, bytes):
+            try:
+                return string.decode('utf-8')
+            except UnicodeDecodeError:
+                return string.decode('utf-8', errors='replace')
+        return str(string)
     else:
-        if hasattr(string, 'encode'):
-            string = string.encode('utf-8')
-
-    return string
+        if isinstance(string, string_types):
+            if hasattr(string, 'decode'):  # bytes in Python 2
+                try:
+                    return string.decode('utf-8')
+                except UnicodeDecodeError:
+                    return string.decode('utf-8', errors='replace')
+            else:  # unicode in Python 2
+                try:
+                    return string.encode('utf-8')
+                except UnicodeEncodeError:
+                    return string.encode('utf-8', errors='replace')
+        return str(string)
 
 
 def _get_windowed_range(tokens, arg1, arg2):
@@ -865,7 +887,7 @@ class total_word_feature_extractor:
         return _result
 
     def get_words_in_dictionary(self):
-
+        """Get all words in dictionary with proper string conversion."""
         _f.mitie_total_word_feature_extractor_get_words_in_dictionary.restype = ctypes.POINTER(ctypes.c_char_p)
         _f.mitie_total_word_feature_extractor_get_words_in_dictionary.argtypes = ctypes.c_void_p, 
 
@@ -875,7 +897,9 @@ class total_word_feature_extractor:
         i = 0
         res = []
         while words[i] is not None:
-            res.append(words[i])
+            # Convert to appropriate string type for Python version
+            word = to_default_str_type(words[i])
+            res.append(word)
             i += 1
         _f.mitie_free(words)
         return res
